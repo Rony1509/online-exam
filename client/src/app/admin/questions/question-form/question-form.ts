@@ -118,7 +118,7 @@ export class QuestionForm {
       next: () => this.router.navigate(['/admin/questions']),
       error: (err) => {
         this.saving.set(false);
-        this.errorMessage.set(err.error?.message || 'Could not save question.');
+        this.errorMessage.set(err.message || 'Could not save question.');
       },
     });
   }

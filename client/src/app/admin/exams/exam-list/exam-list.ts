@@ -34,7 +34,7 @@ export class ExamList {
     if (!confirm(`Delete exam "${exam.title}"?`)) return;
     this.examService.delete(exam.id).subscribe({
       next: () => this.load(),
-      error: (err) => alert(err.error?.message || 'Could not delete exam.'),
+      error: (err) => alert(err.message || 'Could not delete exam.'),
     });
   }
 }

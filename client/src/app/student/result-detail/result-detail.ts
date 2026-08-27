@@ -28,7 +28,7 @@ export class ResultDetail {
         this.loading.set(false);
       },
       error: (err) => {
-        this.errorMessage.set(err.error?.message || 'Could not load this result.');
+        this.errorMessage.set(err.message || 'Could not load this result.');
         this.loading.set(false);
       },
     });

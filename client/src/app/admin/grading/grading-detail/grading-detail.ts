@@ -36,7 +36,7 @@ export class GradingDetail {
         this.loading.set(false);
       },
       error: (err) => {
-        this.errorMessage.set(err.error?.message || 'Could not load this submission.');
+        this.errorMessage.set(err.message || 'Could not load this submission.');
         this.loading.set(false);
       },
     });
@@ -57,7 +57,7 @@ export class GradingDetail {
       next: () => this.router.navigate(['/admin/grading']),
       error: (err) => {
         this.saving.set(false);
-        this.errorMessage.set(err.error?.message || 'Could not save grades.');
+        this.errorMessage.set(err.message || 'Could not save grades.');
       },
     });
   }

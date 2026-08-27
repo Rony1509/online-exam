@@ -1,0 +1,51 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isSignedIn() &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    // Profile documents (name, email, role, section), keyed by Firebase Auth uid.
+    match /users/{uid} {
+      allow read: if isOwner(uid) || isAdmin();
+      // Public registration always creates a student profile for the signed-in uid.
+      allow create: if isOwner(uid) && request.resource.data.role == 'student';
+      allow update, delete: if false;
+    }
+
+    // Question bank. Any signed-in user can read (needed to render exam
+    // content client-side); only admins can write. Note: this means the
+    // MCQ answer key is technically visible to any signed-in student who
+    // inspects network traffic — accepted trade-off of the no-backend setup.
+    match /questions/{id} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    // Exam definitions (title, section, subject, duration, question ids).
+    match /exams/{id} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    // Exam submissions. Students can create their own and read only their
+    // own; admins can read/update (grade) any of them.
+    match /results/{id} {
+      allow read: if isAdmin() || (isSignedIn() && resource.data.userId == request.auth.uid);
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow update: if isAdmin();
+      allow delete: if false;
+    }
+  }
+}

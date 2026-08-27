@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { AuthService } from '../../core/services/auth.service';
+import { AuthService, firebaseErrorMessage } from '../../core/services/auth.service';
 import { Section } from '../../core/models/models';
 
 @Component({
@@ -36,12 +36,14 @@ export class Register {
     const { name, email, password, section } = this.form.getRawValue();
 
     this.auth.register(name, email, password, section).subscribe({
-      next: (res) => {
-        this.router.navigate([res.user.role === 'admin' ? '/admin' : '/dashboard']);
+      next: (user) => {
+        this.router.navigate([user.role === 'admin' ? '/admin' : '/dashboard']);
       },
       error: (err) => {
         this.loading.set(false);
-        this.errorMessage.set(err.error?.message || 'Registration failed. Please try again.');
+        this.errorMessage.set(
+          firebaseErrorMessage(err, err.message || 'Registration failed. Please try again.'),
+        );
       },
     });
   }

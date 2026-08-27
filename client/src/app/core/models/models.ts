@@ -11,11 +11,6 @@ export interface User {
   createdAt: string;
 }
 
-export interface AuthResponse {
-  token: string;
-  user: User;
-}
-
 export interface Question {
   id: string;
   section: Section;

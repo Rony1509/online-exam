@@ -112,7 +112,7 @@ export class ExamForm {
       next: () => this.router.navigate(['/admin/exams']),
       error: (err) => {
         this.saving.set(false);
-        this.errorMessage.set(err.error?.message || 'Could not save exam.');
+        this.errorMessage.set(err.message || 'Could not save exam.');
       },
     });
   }

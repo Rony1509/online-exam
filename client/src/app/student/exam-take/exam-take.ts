@@ -43,7 +43,7 @@ export class ExamTake implements OnInit, OnDestroy {
         this.startTimer();
       },
       error: (err) => {
-        this.errorMessage.set(err.error?.message || 'Could not load this exam.');
+        this.errorMessage.set(err.message || 'Could not load this exam.');
         this.loading.set(false);
       },
     });
@@ -98,7 +98,7 @@ export class ExamTake implements OnInit, OnDestroy {
       },
       error: (err) => {
         this.submitting.set(false);
-        this.errorMessage.set(err.error?.message || 'Could not submit your answers.');
+        this.errorMessage.set(err.message || 'Could not submit your answers.');
       },
     });
   }

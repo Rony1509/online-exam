@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { AuthService } from '../../core/services/auth.service';
+import { AuthService, firebaseErrorMessage } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -33,12 +33,12 @@ export class Login {
     const { email, password } = this.form.getRawValue();
 
     this.auth.login(email, password).subscribe({
-      next: (res) => {
-        this.router.navigate([res.user.role === 'admin' ? '/admin' : '/dashboard']);
+      next: (user) => {
+        this.router.navigate([user.role === 'admin' ? '/admin' : '/dashboard']);
       },
       error: (err) => {
         this.loading.set(false);
-        this.errorMessage.set(err.error?.message || 'Login failed. Please try again.');
+        this.errorMessage.set(firebaseErrorMessage(err, err.message || 'Login failed. Please try again.'));
       },
     });
   }

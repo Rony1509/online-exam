@@ -46,7 +46,7 @@ export class QuestionList {
     if (!confirm(`Delete this question?\n\n"${question.question}"`)) return;
     this.questionService.delete(question.id).subscribe({
       next: () => this.load(),
-      error: (err) => alert(err.error?.message || 'Could not delete question.'),
+      error: (err) => alert(err.message || 'Could not delete question.'),
     });
   }
 }
