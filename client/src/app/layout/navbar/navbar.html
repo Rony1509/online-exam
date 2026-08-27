@@ -6,6 +6,7 @@
       @if (auth.isAdmin()) {
         <a routerLink="/admin/questions" routerLinkActive="active">Questions</a>
         <a routerLink="/admin/exams" routerLinkActive="active">Exams</a>
+        <a routerLink="/admin/results" routerLinkActive="active">Results</a>
         <a routerLink="/admin/grading" routerLinkActive="active">Grading</a>
       } @else {
         <a routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Exams</a>

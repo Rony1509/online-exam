@@ -66,6 +66,12 @@ export const routes: Routes = [
     loadComponent: () => import('./admin/exams/exam-form/exam-form').then((m) => m.ExamForm),
   },
   {
+    path: 'admin/results',
+    canActivate: [authGuard, adminGuard],
+    loadComponent: () =>
+      import('./admin/results/results-list/results-list').then((m) => m.ResultsList),
+  },
+  {
     path: 'admin/grading',
     canActivate: [authGuard, adminGuard],
     loadComponent: () =>

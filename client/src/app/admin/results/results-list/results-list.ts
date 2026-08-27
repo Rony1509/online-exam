@@ -1,0 +1,51 @@
+import { Component, computed, inject, signal } from '@angular/core';
+import { DatePipe } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
+import { ResultService } from '../../../core/services/result.service';
+import { ExamResult, Section } from '../../../core/models/models';
+
+@Component({
+  selector: 'app-admin-results-list',
+  standalone: true,
+  imports: [DatePipe, FormsModule, RouterLink],
+  templateUrl: './results-list.html',
+})
+export class ResultsList {
+  private resultService = inject(ResultService);
+
+  results = signal<ExamResult[]>([]);
+  loading = signal(true);
+
+  sectionFilter: '' | Section = '';
+  searchTerm = '';
+
+  filtered = computed(() => {
+    const section = this.sectionFilter;
+    const term = this.searchTerm.trim().toLowerCase();
+    return this.results().filter((r) => {
+      if (section && r.section !== section) return false;
+      if (!term) return true;
+      return (
+        r.studentName.toLowerCase().includes(term) ||
+        r.studentEmail.toLowerCase().includes(term) ||
+        r.examTitle.toLowerCase().includes(term)
+      );
+    });
+  });
+
+  ngOnInit(): void {
+    this.resultService.list().subscribe({
+      next: (results) => {
+        results.sort((a, b) => b.submittedAt.localeCompare(a.submittedAt));
+        this.results.set(results);
+        this.loading.set(false);
+      },
+      error: () => this.loading.set(false),
+    });
+  }
+
+  scoreLabel(r: ExamResult): string {
+    return r.cqGraded ? `${r.finalScore} / ${r.totalMarks}` : `${r.mcqScore} / ${r.mcqTotal} (MCQ only)`;
+  }
+}

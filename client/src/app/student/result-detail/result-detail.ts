@@ -2,6 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ResultService } from '../../core/services/result.service';
+import { AuthService } from '../../core/services/auth.service';
 import { ExamResult } from '../../core/models/models';
 
 @Component({
@@ -13,6 +14,7 @@ import { ExamResult } from '../../core/models/models';
 export class ResultDetail {
   private route = inject(ActivatedRoute);
   private resultService = inject(ResultService);
+  auth = inject(AuthService);
 
   result = signal<ExamResult | null>(null);
   loading = signal(true);
