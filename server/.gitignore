@@ -1,8 +1,0 @@
-node_modules/
-.env
-
-# Runtime data: real accounts and exam submissions. Self-seeded on first
-# boot from data/seed/*.seed.json (see src/utils/jsonStore.js) — never commit
-# actual user data (PII, password hashes, exam answers).
-data/users.json
-data/results.json
