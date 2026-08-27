@@ -1,0 +1,71 @@
+<div class="page">
+  @if (loading()) {
+    <p class="muted">Loading result...</p>
+  } @else if (errorMessage()) {
+    <p class="error-text">{{ errorMessage() }}</p>
+  } @else if (result(); as r) {
+    <div class="card">
+      <h2>{{ r.examTitle }}</h2>
+      <p class="muted">{{ r.section }} &middot; {{ r.subject }} &middot; Submitted {{ r.submittedAt | date: 'medium' }}</p>
+
+      <div class="row">
+        <div>
+          <p class="muted" style="margin-bottom: 0.15rem;">MCQ score</p>
+          <h3>{{ r.mcqScore }} / {{ r.mcqTotal }}</h3>
+        </div>
+        <div>
+          <p class="muted" style="margin-bottom: 0.15rem;">CQ score</p>
+          <h3>{{ r.cqGraded ? r.cqScore + ' / ' + r.cqTotal : 'Pending' }}</h3>
+        </div>
+        <div>
+          <p class="muted" style="margin-bottom: 0.15rem;">Total</p>
+          <h3>{{ r.cqGraded ? r.finalScore + ' / ' + r.totalMarks : 'Awaiting CQ grading' }}</h3>
+        </div>
+      </div>
+    </div>
+
+    @for (a of r.answers; track a.questionId; let i = $index) {
+      <div class="card">
+        <p class="muted" style="margin-bottom: 0.25rem;">
+          Question {{ i + 1 }} <span class="badge">{{ a.type }}</span>
+        </p>
+        <h3>{{ a.question }}</h3>
+
+        @if (a.type === 'MCQ') {
+          <div class="row" style="flex-direction: column;">
+            @for (option of a.options; track $index; let oi = $index) {
+              <div
+                [style.font-weight]="oi === a.correctAnswer ? 700 : 400"
+                [style.color]="oi === a.response && !a.isCorrect ? 'var(--color-danger)' : (oi === a.correctAnswer ? 'var(--color-success)' : 'inherit')"
+              >
+                {{ option }}
+                @if (oi === a.response) {
+                  <span class="muted">(your answer)</span>
+                }
+                @if (oi === a.correctAnswer) {
+                  <span class="muted">(correct)</span>
+                }
+              </div>
+            }
+          </div>
+          <p style="margin-top: 0.5rem;">
+            <span class="badge" [class.badge-success]="a.isCorrect" [class.badge-warning]="!a.isCorrect">
+              {{ a.marksAwarded }} / {{ a.maxMarks }} marks
+            </span>
+          </p>
+        } @else {
+          <p style="white-space: pre-wrap;">{{ a.response || '(no answer submitted)' }}</p>
+          <p>
+            @if (a.marksAwarded === null) {
+              <span class="badge badge-warning">Awaiting grading &middot; max {{ a.maxMarks }} marks</span>
+            } @else {
+              <span class="badge badge-success">{{ a.marksAwarded }} / {{ a.maxMarks }} marks</span>
+            }
+          </p>
+        }
+      </div>
+    }
+
+    <a class="btn btn-secondary" routerLink="/results">Back to results</a>
+  }
+</div>

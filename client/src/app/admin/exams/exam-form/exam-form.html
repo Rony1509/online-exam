@@ -1,0 +1,76 @@
+<div class="page" style="max-width: 720px;">
+  <h2>{{ editingId ? 'Edit exam' : 'Create exam' }}</h2>
+
+  @if (loading()) {
+    <p class="muted">Loading exam...</p>
+  } @else {
+    <div class="card">
+      <form [formGroup]="form" (ngSubmit)="submit()">
+        <div class="form-group">
+          <label for="title">Title</label>
+          <input id="title" type="text" formControlName="title" placeholder="e.g. SSC English Test 1" />
+        </div>
+
+        <div class="row">
+          <div class="form-group">
+            <label for="section">Section</label>
+            <select id="section" formControlName="section">
+              <option value="SSC">SSC</option>
+              <option value="HSC">HSC</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="subject">Subject</label>
+            <input id="subject" type="text" formControlName="subject" placeholder="e.g. Physics" />
+          </div>
+          <div class="form-group">
+            <label for="duration">Duration (minutes)</label>
+            <input id="duration" type="number" min="1" formControlName="duration" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Questions ({{ selectedCount }} selected)</label>
+          <input
+            type="text"
+            [(ngModel)]="subjectFilter"
+            [ngModelOptions]="{ standalone: true }"
+            placeholder="Filter question bank by subject..."
+          />
+        </div>
+
+        <div class="card" style="max-height: 360px; overflow-y: auto;">
+          @if (filteredQuestions.length === 0) {
+            <p class="muted">
+              No {{ form.controls.section.value }} questions match this filter. Add some in the question bank first.
+            </p>
+          } @else {
+            @for (q of filteredQuestions; track q.id) {
+              <label style="display: flex; align-items: flex-start; gap: 0.6rem; font-weight: 400; margin-bottom: 0.6rem;">
+                <input type="checkbox" [checked]="isSelected(q.id)" (change)="toggle(q.id)" style="margin-top: 0.25rem;" />
+                <span>
+                  {{ q.question }}
+                  <br />
+                  <span class="muted" style="font-size: 0.8rem;">
+                    {{ q.subject }} &middot; {{ q.type }} &middot; {{ q.marks }} marks
+                  </span>
+                </span>
+              </label>
+            }
+          }
+        </div>
+
+        @if (errorMessage()) {
+          <p class="error-text">{{ errorMessage() }}</p>
+        }
+
+        <div class="row" style="margin-top: 1rem;">
+          <button class="btn" type="submit" [disabled]="saving()">
+            {{ saving() ? 'Saving...' : 'Save exam' }}
+          </button>
+          <a class="btn btn-secondary" routerLink="/admin/exams">Cancel</a>
+        </div>
+      </form>
+    </div>
+  }
+</div>

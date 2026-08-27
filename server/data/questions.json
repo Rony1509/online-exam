@@ -1,0 +1,151 @@
+[
+  {
+    "id": "q-ssc-eng-1",
+    "section": "SSC",
+    "subject": "English",
+    "type": "MCQ",
+    "question": "Which word is a synonym of 'happy'?",
+    "options": [
+      "Sad",
+      "Joyful",
+      "Angry",
+      "Tired"
+    ],
+    "correctAnswer": 1,
+    "marks": 1
+  },
+  {
+    "id": "q-ssc-eng-2",
+    "section": "SSC",
+    "subject": "English",
+    "type": "MCQ",
+    "question": "Choose the correct article: '___ apple a day keeps the doctor away.'",
+    "options": [
+      "A",
+      "An",
+      "The",
+      "No article"
+    ],
+    "correctAnswer": 1,
+    "marks": 1
+  },
+  {
+    "id": "q-ssc-eng-3",
+    "section": "SSC",
+    "subject": "English",
+    "type": "MCQ",
+    "question": "What is the plural form of 'child'?",
+    "options": [
+      "Childs",
+      "Childes",
+      "Children",
+      "Childrens"
+    ],
+    "correctAnswer": 2,
+    "marks": 1
+  },
+  {
+    "id": "q-ssc-eng-cq-1",
+    "section": "SSC",
+    "subject": "English",
+    "type": "CQ",
+    "question": "Write a paragraph (about 150 words) on 'The Value of Time'.",
+    "marks": 10
+  },
+  {
+    "id": "q-hsc-phy-1",
+    "section": "HSC",
+    "subject": "Physics",
+    "type": "MCQ",
+    "question": "The SI unit of force is:",
+    "options": [
+      "Joule",
+      "Watt",
+      "Newton",
+      "Pascal"
+    ],
+    "correctAnswer": 2,
+    "marks": 1
+  },
+  {
+    "id": "q-hsc-phy-2",
+    "section": "HSC",
+    "subject": "Physics",
+    "type": "MCQ",
+    "question": "Which law states that every action has an equal and opposite reaction?",
+    "options": [
+      "Newton's First Law",
+      "Newton's Second Law",
+      "Newton's Third Law",
+      "Law of Conservation of Energy"
+    ],
+    "correctAnswer": 2,
+    "marks": 1
+  },
+  {
+    "id": "q-hsc-phy-3",
+    "section": "HSC",
+    "subject": "Physics",
+    "type": "MCQ",
+    "question": "The acceleration due to gravity on Earth is approximately:",
+    "options": [
+      "9.8 m/s^2",
+      "8.9 m/s^2",
+      "10.8 m/s^2",
+      "6.7 m/s^2"
+    ],
+    "correctAnswer": 0,
+    "marks": 1
+  },
+  {
+    "id": "q-hsc-phy-cq-1",
+    "section": "HSC",
+    "subject": "Physics",
+    "type": "CQ",
+    "question": "State Newton's three laws of motion and give one real-life example of each.",
+    "marks": 10
+  },
+  {
+    "id": "q-hsc-phy-bn-1",
+    "section": "HSC",
+    "subject": "Physics",
+    "type": "MCQ",
+    "question": "বলের এসআই একক কী?",
+    "options": ["জুল", "ওয়াট", "নিউটন", "প্যাসকেল"],
+    "correctAnswer": 2,
+    "marks": 1
+  },
+  {
+    "id": "q-hsc-phy-bn-2",
+    "section": "HSC",
+    "subject": "Physics",
+    "type": "MCQ",
+    "question": "নিউটনের কোন সূত্র অনুযায়ী প্রতিটি ক্রিয়ার একটি সমান ও বিপরীতমুখী প্রতিক্রিয়া থাকে?",
+    "options": [
+      "নিউটনের প্রথম সূত্র",
+      "নিউটনের দ্বিতীয় সূত্র",
+      "নিউটনের তৃতীয় সূত্র",
+      "শক্তির নিত্যতা সূত্র"
+    ],
+    "correctAnswer": 2,
+    "marks": 1
+  },
+  {
+    "id": "q-hsc-phy-bn-3",
+    "section": "HSC",
+    "subject": "Physics",
+    "type": "MCQ",
+    "question": "পৃথিবীপৃষ্ঠে মহাকর্ষীয় ত্বরণের মান আনুমানিক কত?",
+    "options": ["৯.৮ m/s²", "৮.৯ m/s²", "১০.৮ m/s²", "৬.৭ m/s²"],
+    "correctAnswer": 0,
+    "marks": 1
+  },
+  {
+    "id": "q-hsc-phy-bn-cq-1",
+    "section": "HSC",
+    "subject": "Physics",
+    "type": "CQ",
+    "question": "নিউটনের গতির তিনটি সূত্র বর্ণনা কর এবং প্রতিটির একটি করে বাস্তব উদাহরণ দাও।",
+    "marks": 10
+  }
+]

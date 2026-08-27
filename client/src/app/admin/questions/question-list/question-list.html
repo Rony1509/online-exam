@@ -1,0 +1,68 @@
+<div class="page">
+  <div class="card-header">
+    <h2 style="margin: 0;">Question bank</h2>
+    <a class="btn" routerLink="/admin/questions/new">Add question</a>
+  </div>
+
+  <div class="card">
+    <div class="row">
+      <div class="form-group">
+        <label>Section</label>
+        <select [(ngModel)]="sectionFilter" (ngModelChange)="load()">
+          <option value="">All</option>
+          <option value="SSC">SSC</option>
+          <option value="HSC">HSC</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Type</label>
+        <select [(ngModel)]="typeFilter" (ngModelChange)="load()">
+          <option value="">All</option>
+          <option value="MCQ">MCQ</option>
+          <option value="CQ">CQ</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Subject</label>
+        <input type="text" [(ngModel)]="subjectFilter" (ngModelChange)="load()" placeholder="e.g. Physics" />
+      </div>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <p class="muted">Loading questions...</p>
+  } @else if (questions().length === 0) {
+    <div class="empty-state">No questions match these filters.</div>
+  } @else {
+    <div class="card">
+      <table>
+        <thead>
+          <tr>
+            <th>Question</th>
+            <th>Section</th>
+            <th>Subject</th>
+            <th>Type</th>
+            <th>Marks</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (q of questions(); track q.id) {
+            <tr>
+              <td>{{ q.question }}</td>
+              <td>{{ q.section }}</td>
+              <td>{{ q.subject }}</td>
+              <td><span class="badge">{{ q.type }}</span></td>
+              <td>{{ q.marks }}</td>
+              <td>
+                <a [routerLink]="['/admin/questions', q.id]">Edit</a>
+                &nbsp;
+                <button class="link-btn" type="button" (click)="remove(q)">Delete</button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

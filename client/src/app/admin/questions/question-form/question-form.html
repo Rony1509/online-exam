@@ -1,0 +1,71 @@
+<div class="page" style="max-width: 640px;">
+  <h2>{{ editingId ? 'Edit question' : 'Add question' }}</h2>
+
+  @if (loading()) {
+    <p class="muted">Loading question...</p>
+  } @else {
+    <div class="card">
+      <form [formGroup]="form" (ngSubmit)="submit()">
+        <div class="row">
+          <div class="form-group">
+            <label for="section">Section</label>
+            <select id="section" formControlName="section">
+              <option value="SSC">SSC</option>
+              <option value="HSC">HSC</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="type">Type</label>
+            <select id="type" formControlName="type">
+              <option value="MCQ">MCQ</option>
+              <option value="CQ">CQ</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="marks">Marks</label>
+            <input id="marks" type="number" min="1" formControlName="marks" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="subject">Subject</label>
+          <input id="subject" type="text" formControlName="subject" placeholder="e.g. Physics" />
+        </div>
+
+        <div class="form-group">
+          <label for="question">Question text</label>
+          <textarea id="question" rows="3" formControlName="question"></textarea>
+        </div>
+
+        @if (isMcq) {
+          <div class="form-group">
+            <label>Options (select the correct one)</label>
+            <div formArrayName="options">
+              @for (opt of options.controls; track $index; let i = $index) {
+                <div class="row" style="align-items: center; margin-bottom: 0.5rem;">
+                  <input type="radio" name="correctAnswer" [value]="i" [formControl]="form.controls.correctAnswer" style="flex: 0 0 auto;" />
+                  <input type="text" [formControlName]="i" [placeholder]="'Option ' + (i + 1)" />
+                  @if (options.length > 2) {
+                    <button class="btn btn-secondary btn-sm" type="button" style="flex: 0 0 auto;" (click)="removeOption(i)">Remove</button>
+                  }
+                </div>
+              }
+            </div>
+            <button class="btn btn-secondary btn-sm" type="button" (click)="addOption()">Add option</button>
+          </div>
+        }
+
+        @if (errorMessage()) {
+          <p class="error-text">{{ errorMessage() }}</p>
+        }
+
+        <div class="row" style="margin-top: 1rem;">
+          <button class="btn" type="submit" [disabled]="saving()">
+            {{ saving() ? 'Saving...' : 'Save question' }}
+          </button>
+          <a class="btn btn-secondary" routerLink="/admin/questions">Cancel</a>
+        </div>
+      </form>
+    </div>
+  }
+</div>

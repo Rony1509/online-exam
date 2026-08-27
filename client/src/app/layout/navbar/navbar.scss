@@ -1,0 +1,38 @@
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.9rem 1.5rem;
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.brand {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--color-text);
+}
+
+.links {
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+  flex-wrap: wrap;
+}
+
+.links a {
+  color: var(--color-muted);
+  font-weight: 500;
+  font-size: 0.92rem;
+}
+
+.links a.active {
+  color: var(--color-primary);
+}
+
+.user {
+  color: var(--color-muted);
+  font-size: 0.88rem;
+}
