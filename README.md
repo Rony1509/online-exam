@@ -1,10 +1,11 @@
 # Exam Website
 
-An exam platform for HSC and SSC students: register, log in, take MCQ and CQ
-exams, and view results. Also has an Admission section (Medical /
-Engineering / Varsity) with expected-question practice exams, open to any
-logged-in student regardless of their HSC/SSC section. Admins manage the
-question bank, build exams, and grade CQ (long-form) answers.
+An exam platform with three fully isolated sections chosen at
+registration — HSC, SSC, or Admission (with a Medical / Engineering /
+Varsity category) — where a student only ever sees exams for their own
+section. Students register, log in, take MCQ and CQ exams, and view
+results. Admins manage the question bank, build exams, and grade CQ
+(long-form) answers.
 
 **Live site**: https://rony1509.github.io/online-exam/
 
