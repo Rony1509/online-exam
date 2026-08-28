@@ -4,18 +4,20 @@ An exam platform for HSC and SSC students: register, log in, take MCQ and CQ
 exams, and view results. Admins manage the question bank, build exams, and
 grade CQ (long-form) answers.
 
-- `client/` — Angular 22 frontend (standalone components, signals)
-- `server/` — Express backend, data persisted as JSON files in `server/data/`
+**Live**: https://rony1509.github.io/online-exam/
 
-## Running it
+- `client/` — Angular 22 frontend (standalone components, signals). This is
+  the whole app — it talks to Firebase directly from the browser, no backend
+  to host.
+- `server/` — the original Express + JSON-file backend. Superseded by
+  Firebase so the site could run as a static GitHub Pages site with nothing
+  to host, but kept in the repo for reference.
+- `scripts/` — one-time Firestore content seeding (`seed-firestore.mjs`) and
+  the GitHub Pages deploy script (`deploy-pages.mjs`).
+- `firestore.rules` — Firestore security rules (paste into Firebase Console
+  → Firestore Database → Rules whenever they change).
 
-Two terminals:
-
-```bash
-cd server
-npm install   # first time only
-npm run dev   # http://localhost:3000
-```
+## Running it locally
 
 ```bash
 cd client
@@ -23,29 +25,51 @@ npm install   # first time only
 npm start     # http://localhost:4200
 ```
 
-Open http://localhost:4200.
+It connects to the real Firebase project (`src/environments/environment.ts`)
+— there's no local/mock backend, so registering an account or taking an exam
+locally writes to the same live data as the deployed site.
 
 ## Accounts
 
-- **Admin**: `admin@example.com` / `admin123` — manage questions, exams, and grading.
-- **Students**: register your own via the Register page (choose HSC or SSC).
-
-Three sample exams are seeded: "SSC English Test 1", "HSC Physics Test 1",
-and a Bangla-medium "HSC পদার্থবিজ্ঞান পরীক্ষা ১", each with 3 MCQ + 1 CQ
-question.
+- **Admin**: promoted manually — register normally, then flip that user's
+  `role` field to `admin` in Firebase Console → Firestore Database → `users`.
+  Public registration always creates a `student`.
+- **Students**: register via the Register page (choose HSC or SSC).
 
 ## How it works
 
-- Students only ever see exam content with MCQ answer keys stripped
-  (`GET /api/exams/:id/take`); the question bank endpoints that hold answer
-  keys are admin-only.
-- Submitting an exam (`POST /api/exams/:id/submit`) auto-grades MCQs
-  immediately; CQ answers are stored ungraded until an admin scores them
-  from Admin → Grading.
-- Data lives in `server/data/*.json` (users, questions, exams, results) via a
-  small JSON-file store with per-file write serialization — no external
-  database required. Question/exam content (`questions.json`, `exams.json`)
-  is tracked in git as seed content. `users.json` and `results.json` hold
-  real accounts and submissions, so they're gitignored and self-seed from
-  `server/data/seed/*.seed.json` on first boot (just the admin account, no
-  students) — they're never committed.
+- **Auth**: Firebase Authentication (email/password). `users/{uid}` in
+  Firestore holds the profile (name, role, section).
+- **Data**: Firestore collections `questions`, `exams`, `results`. No server
+  — the Angular app reads/writes Firestore directly via the SDK.
+- **Grading**: MCQs auto-grade client-side on submit; CQ answers stay
+  ungraded until an admin scores them from Admin → Grading.
+- **Security trade-off**: without a trusted backend, Firestore rules can
+  restrict *which documents* a client can read, but not *which fields* — so
+  a signed-in student who inspects network traffic can technically see MCQ
+  answer keys. Accepted trade-off for running with no server to host; see
+  `firestore.rules` for what is enforced (students can only read/write their
+  own results; only admins can write questions/exams or grade).
+- **Routing**: hash-based (`#/login`, `#/dashboard`, …) since GitHub Pages
+  has no server-side SPA fallback.
+
+## Deploying
+
+```bash
+cd client
+npm run deploy
+```
+
+Builds the app and publishes `dist/client/browser` to the `production`
+branch (GitHub Pages' source) via `scripts/deploy-pages.mjs`, which always
+works through a throwaway clone in the OS temp directory — it never touches
+this repo's working tree or checked-out branch.
+
+Re-seeding Firestore content (questions/exams) after editing
+`server/data/questions.json` or `exams.json`:
+
+```bash
+cd scripts
+npm install   # first time only
+npm run seed -- /path/to/firebase-service-account.json
+```
