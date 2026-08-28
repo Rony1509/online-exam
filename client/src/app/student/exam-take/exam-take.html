@@ -3,6 +3,7 @@
     <p class="muted">Loading exam...</p>
   } @else if (errorMessage() && !exam()) {
     <p class="error-text">{{ errorMessage() }}</p>
+    <button class="btn btn-secondary" type="button" (click)="loadExam()">Retry</button>
   } @else if (exam(); as paper) {
     <div class="card" style="position: sticky; top: 1rem; z-index: 5;">
       <div class="card-header">

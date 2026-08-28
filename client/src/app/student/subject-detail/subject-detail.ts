@@ -17,6 +17,7 @@ export class SubjectDetail {
   private chapterService = inject(ChapterService);
   private examService = inject(ExamService);
 
+  subjectId = '';
   subject = signal<Subject | null>(null);
   chapters = signal<Chapter[]>([]);
   fullExams = signal<ExamSummary[]>([]);
@@ -24,24 +25,33 @@ export class SubjectDetail {
   errorMessage = signal<string | null>(null);
 
   ngOnInit(): void {
-    const subjectId = this.route.snapshot.paramMap.get('id') ?? '';
+    this.subjectId = this.route.snapshot.paramMap.get('id') ?? '';
+    this.load();
+  }
+
+  load(): void {
+    this.loading.set(true);
+    this.errorMessage.set(null);
 
     this.subjectService.list().subscribe({
       next: (subjects) => {
-        this.subject.set(subjects.find((s) => s.id === subjectId) ?? null);
+        this.subject.set(subjects.find((s) => s.id === this.subjectId) ?? null);
       },
-      error: () => this.errorMessage.set('Could not load this subject.'),
+      error: () => this.errorMessage.set('Could not load this subject — check your connection and try again.'),
     });
 
-    this.chapterService.list({ subjectId }).subscribe((chapters) => this.chapters.set(chapters));
+    this.chapterService.list({ subjectId: this.subjectId }).subscribe({
+      next: (chapters) => this.chapters.set(chapters),
+      error: () => this.errorMessage.set('Could not load chapters — check your connection and try again.'),
+    });
 
-    this.examService.listBySubject(subjectId).subscribe({
+    this.examService.listBySubject(this.subjectId).subscribe({
       next: (exams) => {
         this.fullExams.set(exams);
         this.loading.set(false);
       },
       error: () => {
-        this.errorMessage.set('Could not load exams for this subject.');
+        this.errorMessage.set('Could not load exams for this subject — check your connection and try again.');
         this.loading.set(false);
       },
     });

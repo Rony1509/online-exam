@@ -20,15 +20,23 @@ export class ResultDetail {
   loading = signal(true);
   errorMessage = signal<string | null>(null);
 
+  private id = '';
+
   ngOnInit(): void {
-    const id = this.route.snapshot.paramMap.get('id') ?? '';
-    this.resultService.get(id).subscribe({
+    this.id = this.route.snapshot.paramMap.get('id') ?? '';
+    this.load();
+  }
+
+  load(): void {
+    this.loading.set(true);
+    this.errorMessage.set(null);
+    this.resultService.get(this.id).subscribe({
       next: (result) => {
         this.result.set(result);
         this.loading.set(false);
       },
       error: (err) => {
-        this.errorMessage.set(err.message || 'Could not load this result.');
+        this.errorMessage.set(err.message || 'Could not load this result — check your connection and try again.');
         this.loading.set(false);
       },
     });

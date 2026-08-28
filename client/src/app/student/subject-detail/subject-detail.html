@@ -6,6 +6,7 @@
     <p class="muted">Loading...</p>
   } @else if (errorMessage()) {
     <p class="error-text">{{ errorMessage() }}</p>
+    <button class="btn btn-secondary" type="button" (click)="load()">Retry</button>
   } @else {
     @if (chapters().length > 0) {
       <h3>Chapter-wise</h3>

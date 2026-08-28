@@ -6,6 +6,7 @@
     <p class="muted">Loading exams...</p>
   } @else if (errorMessage()) {
     <p class="error-text">{{ errorMessage() }}</p>
+    <button class="btn btn-secondary" type="button" (click)="load()">Retry</button>
   } @else if (exams().length === 0) {
     <div class="empty-state">No exams for this chapter yet.</div>
   } @else {

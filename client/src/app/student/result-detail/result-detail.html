@@ -3,6 +3,7 @@
     <p class="muted">Loading result...</p>
   } @else if (errorMessage()) {
     <p class="error-text">{{ errorMessage() }}</p>
+    <button class="btn btn-secondary" type="button" (click)="load()">Retry</button>
   } @else if (result(); as r) {
     <div class="card">
       <h2>{{ r.examTitle }}</h2>

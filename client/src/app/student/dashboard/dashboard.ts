@@ -22,13 +22,19 @@ export class Dashboard {
   category = this.auth.currentUser()?.category;
 
   ngOnInit(): void {
+    this.load();
+  }
+
+  load(): void {
+    this.loading.set(true);
+    this.errorMessage.set(null);
     this.subjectService.list({ section: this.section, category: this.category }).subscribe({
       next: (subjects) => {
         this.subjects.set(subjects);
         this.loading.set(false);
       },
       error: () => {
-        this.errorMessage.set('Could not load subjects. Please try again later.');
+        this.errorMessage.set('Could not load subjects — check your connection and try again.');
         this.loading.set(false);
       },
     });

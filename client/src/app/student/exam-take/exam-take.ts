@@ -35,6 +35,12 @@ export class ExamTake implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.examId = this.route.snapshot.paramMap.get('id') ?? '';
+    this.loadExam();
+  }
+
+  loadExam(): void {
+    this.loading.set(true);
+    this.errorMessage.set(null);
     this.examService.take(this.examId).subscribe({
       next: (paper) => {
         this.exam.set(paper);
@@ -43,7 +49,7 @@ export class ExamTake implements OnInit, OnDestroy {
         this.startTimer();
       },
       error: (err) => {
-        this.errorMessage.set(err.message || 'Could not load this exam.');
+        this.errorMessage.set(err.message || 'Could not load this exam — check your connection and try again.');
         this.loading.set(false);
       },
     });

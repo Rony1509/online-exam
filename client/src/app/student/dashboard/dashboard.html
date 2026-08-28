@@ -6,6 +6,7 @@
     <p class="muted">Loading subjects...</p>
   } @else if (errorMessage()) {
     <p class="error-text">{{ errorMessage() }}</p>
+    <button class="btn btn-secondary" type="button" (click)="load()">Retry</button>
   } @else if (subjects().length === 0) {
     <div class="empty-state">No subjects are available for {{ category || section }} yet.</div>
   } @else {

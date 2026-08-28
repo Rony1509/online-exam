@@ -3,6 +3,9 @@
 
   @if (loading()) {
     <p class="muted">Loading results...</p>
+  } @else if (errorMessage()) {
+    <p class="error-text">{{ errorMessage() }}</p>
+    <button class="btn btn-secondary" type="button" (click)="load()">Retry</button>
   } @else if (results().length === 0) {
     <div class="empty-state">You haven't taken any exams yet.</div>
   } @else {
