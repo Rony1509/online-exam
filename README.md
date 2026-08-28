@@ -1,8 +1,10 @@
 # Exam Website
 
 An exam platform for HSC and SSC students: register, log in, take MCQ and CQ
-exams, and view results. Admins manage the question bank, build exams, and
-grade CQ (long-form) answers.
+exams, and view results. Also has an Admission section (Medical /
+Engineering / Varsity) with expected-question practice exams, open to any
+logged-in student regardless of their HSC/SSC section. Admins manage the
+question bank, build exams, and grade CQ (long-form) answers.
 
 **Live site**: https://rony1509.github.io/online-exam/
 
@@ -102,6 +104,11 @@ CQ shape (no options/correctAnswer):
   "marks": 10
 }
 ```
+
+For the Admission section, `section` must be `"Admission"` and you also need a
+`"category"` field set to `"Medical"`, `"Engineering"`, or `"Varsity"` — both
+the question and the exam that references it need matching `section`/
+`category` values, or the exam builder's question picker won't find it.
 
 Every `id` must be unique across the whole file — the naming pattern used
 here is `q-<section>-<subject>-<n>`. To turn a set of questions into an exam,
