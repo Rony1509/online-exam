@@ -1,0 +1,1 @@
+var r=[{bg:`#eaf0ff`,fg:`#2245b8`},{bg:`#fef1e2`,fg:`#b8630a`},{bg:`#e7f8f1`,fg:`#0f7a4d`},{bg:`#fdecec`,fg:`#b8332e`},{bg:`#f3e8fd`,fg:`#7b2fb8`},{bg:`#e2f4fd`,fg:`#0d6f95`}];function e(f){let g=0;for(let t=0;t<f.length;t++)g=g*31+f.charCodeAt(t)>>>0;return r[g%r.length]}function n(f){return(f.trim().charAt(0)||`?`).toUpperCase()}export{n,e as t};
