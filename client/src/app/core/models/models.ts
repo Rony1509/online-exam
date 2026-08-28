@@ -9,6 +9,7 @@ export interface User {
   email: string;
   role: Role;
   section: Section | null;
+  category?: AdmissionCategory;
   createdAt: string;
 }
 

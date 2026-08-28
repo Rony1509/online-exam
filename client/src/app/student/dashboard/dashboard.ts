@@ -19,9 +19,10 @@ export class Dashboard {
   errorMessage = signal<string | null>(null);
 
   section = this.auth.currentUser()?.section ?? undefined;
+  category = this.auth.currentUser()?.category;
 
   ngOnInit(): void {
-    this.examService.list(this.section).subscribe({
+    this.examService.list(this.section, this.category).subscribe({
       next: (exams) => {
         this.exams.set(exams);
         this.loading.set(false);

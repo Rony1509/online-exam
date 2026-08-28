@@ -1,7 +1,10 @@
 <div class="page" style="max-width: 420px;">
   <div class="card">
     <h2>Create your student account</h2>
-    <p class="muted">Register to take HSC or SSC exams.</p>
+    <p class="muted">
+      Register for HSC, SSC, or Admission (Medical/Engineering/Varsity) exams.
+      You'll only see exams for the section you choose here.
+    </p>
 
     <form [formGroup]="form" (ngSubmit)="submit()">
       <div class="form-group">
@@ -25,8 +28,21 @@
         <select id="section" formControlName="section">
           <option value="SSC">SSC</option>
           <option value="HSC">HSC</option>
+          <option value="Admission">Admission</option>
         </select>
       </div>
+
+      @if (isAdmission) {
+        <div class="form-group">
+          <label for="category">Category</label>
+          <select id="category" formControlName="category">
+            <option value="">Select...</option>
+            @for (cat of admissionCategories; track cat) {
+              <option [value]="cat">{{ cat }}</option>
+            }
+          </select>
+        </div>
+      }
 
       @if (errorMessage()) {
         <p class="error-text">{{ errorMessage() }}</p>

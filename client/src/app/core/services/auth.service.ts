@@ -8,7 +8,7 @@ import {
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { Observable, from } from 'rxjs';
 import { auth, db } from '../firebase';
-import { Section, User } from '../models/models';
+import { AdmissionCategory, Section, User } from '../models/models';
 
 const AUTH_ERROR_MESSAGES: Record<string, string> = {
   'auth/email-already-in-use': 'An account with this email already exists.',
@@ -63,6 +63,7 @@ export class AuthService {
       email: data['email'] ?? fallbackEmail,
       role: data['role'],
       section: data['section'] ?? null,
+      category: data['category'],
       createdAt: data['createdAt'],
     };
   }
@@ -79,8 +80,14 @@ export class AuthService {
     return profile;
   }
 
-  register(name: string, email: string, password: string, section: Section): Observable<User> {
-    return from(this.registerAsync(name, email, password, section));
+  register(
+    name: string,
+    email: string,
+    password: string,
+    section: Section,
+    category?: AdmissionCategory,
+  ): Observable<User> {
+    return from(this.registerAsync(name, email, password, section, category));
   }
 
   private async registerAsync(
@@ -88,16 +95,26 @@ export class AuthService {
     email: string,
     password: string,
     section: Section,
+    category?: AdmissionCategory,
   ): Promise<User> {
     const cred = await createUserWithEmailAndPassword(auth, email, password);
     const createdAt = new Date().toISOString();
-    const profile: User = { id: cred.user.uid, name, email, role: 'student', section, createdAt };
+    const profile: User = {
+      id: cred.user.uid,
+      name,
+      email,
+      role: 'student',
+      section,
+      createdAt,
+      ...(category ? { category } : {}),
+    };
     await setDoc(doc(db, 'users', cred.user.uid), {
       name,
       email,
       role: 'student',
       section,
       createdAt,
+      ...(category ? { category } : {}),
     });
     this.currentUser.set(profile);
     return profile;

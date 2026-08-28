@@ -1,5 +1,5 @@
 <div class="page">
-  <h2>{{ section }} Exams</h2>
+  <h2>{{ category ? category + ' (Admission)' : section }} Exams</h2>
   <p class="muted">Pick an exam to start. MCQs are graded instantly; CQ answers are graded by your teacher.</p>
 
   @if (loading()) {
@@ -7,7 +7,7 @@
   } @else if (errorMessage()) {
     <p class="error-text">{{ errorMessage() }}</p>
   } @else if (exams().length === 0) {
-    <div class="empty-state">No exams are available for {{ section }} yet.</div>
+    <div class="empty-state">No exams are available for {{ category || section }} yet.</div>
   } @else {
     @for (exam of exams(); track exam.id) {
       <div class="card">
