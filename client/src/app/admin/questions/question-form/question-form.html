@@ -67,6 +67,16 @@
           </div>
         }
 
+        <div class="form-group">
+          <label for="explanation">Explanation (optional)</label>
+          <textarea
+            id="explanation"
+            rows="3"
+            formControlName="explanation"
+            placeholder="Shown to students on their result page after they submit, if filled in"
+          ></textarea>
+        </div>
+
         @if (errorMessage()) {
           <p class="error-text">{{ errorMessage() }}</p>
         }

@@ -5,7 +5,12 @@
     "section": "SSC",
     "subject": "English",
     "duration": 30,
-    "questionIds": ["q-ssc-eng-1", "q-ssc-eng-2", "q-ssc-eng-3", "q-ssc-eng-cq-1"],
+    "questionIds": [
+      "q-ssc-eng-1",
+      "q-ssc-eng-2",
+      "q-ssc-eng-3",
+      "q-ssc-eng-cq-1"
+    ],
     "createdAt": "2026-01-01T00:00:00.000Z"
   },
   {
@@ -14,7 +19,12 @@
     "section": "HSC",
     "subject": "Physics",
     "duration": 30,
-    "questionIds": ["q-hsc-phy-1", "q-hsc-phy-2", "q-hsc-phy-3", "q-hsc-phy-cq-1"],
+    "questionIds": [
+      "q-hsc-phy-1",
+      "q-hsc-phy-2",
+      "q-hsc-phy-3",
+      "q-hsc-phy-cq-1"
+    ],
     "createdAt": "2026-01-01T00:00:00.000Z"
   },
   {
@@ -23,7 +33,12 @@
     "section": "HSC",
     "subject": "Physics",
     "duration": 30,
-    "questionIds": ["q-hsc-phy-bn-1", "q-hsc-phy-bn-2", "q-hsc-phy-bn-3", "q-hsc-phy-bn-cq-1"],
+    "questionIds": [
+      "q-hsc-phy-bn-1",
+      "q-hsc-phy-bn-2",
+      "q-hsc-phy-bn-3",
+      "q-hsc-phy-bn-cq-1"
+    ],
     "createdAt": "2026-01-01T00:00:00.000Z"
   },
   {
@@ -48,7 +63,12 @@
     "category": "Medical",
     "subject": "Biology",
     "duration": 30,
-    "questionIds": ["q-adm-medical-1", "q-adm-medical-2", "q-adm-medical-3", "q-adm-medical-cq-1"],
+    "questionIds": [
+      "q-adm-medical-1",
+      "q-adm-medical-2",
+      "q-adm-medical-3",
+      "q-adm-medical-cq-1"
+    ],
     "createdAt": "2026-01-01T00:00:00.000Z"
   },
   {
@@ -57,8 +77,13 @@
     "section": "Admission",
     "category": "Engineering",
     "subject": "Math & Physics",
-    "duration": 30,
-    "questionIds": ["q-adm-eng-1", "q-adm-eng-2", "q-adm-eng-3", "q-adm-eng-cq-1"],
+    "duration": 15,
+    "questionIds": [
+      "q-adm-eng-1",
+      "q-adm-eng-2",
+      "q-adm-eng-3",
+      "q-adm-eng-cq-1"
+    ],
     "createdAt": "2026-01-01T00:00:00.000Z"
   },
   {
@@ -67,8 +92,54 @@
     "section": "Admission",
     "category": "Varsity",
     "subject": "General Knowledge",
-    "duration": 30,
-    "questionIds": ["q-adm-varsity-1", "q-adm-varsity-2", "q-adm-varsity-3", "q-adm-varsity-cq-1"],
+    "duration": 15,
+    "questionIds": [
+      "q-adm-varsity-1",
+      "q-adm-varsity-2",
+      "q-adm-varsity-3",
+      "q-adm-varsity-cq-1"
+    ],
     "createdAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "exam-adm-medical-phy9-1",
+    "title": "Medical Admission Physics Mock Test (Chapter 9 - Waves)",
+    "section": "Admission",
+    "category": "Medical",
+    "subject": "Physics 1st Paper - Chapter 9",
+    "duration": 20,
+    "questionIds": [
+      "q-adm-medical-phy9-1",
+      "q-adm-medical-phy9-2",
+      "q-adm-medical-phy9-3",
+      "q-adm-medical-phy9-4",
+      "q-adm-medical-phy9-5",
+      "q-adm-medical-phy9-6",
+      "q-adm-medical-phy9-7",
+      "q-adm-medical-phy9-8",
+      "q-adm-medical-phy9-9",
+      "q-adm-medical-phy9-10",
+      "q-adm-medical-phy9-11",
+      "q-adm-medical-phy9-12",
+      "q-adm-medical-phy9-13",
+      "q-adm-medical-phy9-14",
+      "q-adm-medical-phy9-15",
+      "q-adm-medical-phy9-16",
+      "q-adm-medical-phy9-17",
+      "q-adm-medical-phy9-18",
+      "q-adm-medical-phy9-19",
+      "q-adm-medical-phy9-20",
+      "q-adm-medical-phy9-21",
+      "q-adm-medical-phy9-22",
+      "q-adm-medical-phy9-23",
+      "q-adm-medical-phy9-24",
+      "q-adm-medical-phy9-25",
+      "q-adm-medical-phy9-26",
+      "q-adm-medical-phy9-27",
+      "q-adm-medical-phy9-28",
+      "q-adm-medical-phy9-29",
+      "q-adm-medical-phy9-30"
+    ],
+    "createdAt": "2026-08-28T01:42:50.537Z"
   }
 ]

@@ -68,6 +68,13 @@
             }
           </p>
         }
+
+        @if (a.explanation) {
+          <div class="card" style="background: var(--color-bg); margin-top: 0.75rem; margin-bottom: 0;">
+            <p class="muted" style="margin-bottom: 0.25rem;">Explanation</p>
+            <p style="white-space: pre-wrap; margin: 0;">{{ a.explanation }}</p>
+          </div>
+        }
       </div>
     }
 

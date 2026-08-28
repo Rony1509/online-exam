@@ -31,6 +31,7 @@ export class QuestionForm {
     question: ['', [Validators.required]],
     marks: [1, [Validators.required, Validators.min(1)]],
     correctAnswer: [0],
+    explanation: [''],
     options: this.fb.array([this.fb.nonNullable.control('', Validators.required), this.fb.nonNullable.control('', Validators.required)]),
   });
 
@@ -73,6 +74,7 @@ export class QuestionForm {
       question: q.question,
       marks: q.marks,
       correctAnswer: q.correctAnswer ?? 0,
+      explanation: q.explanation ?? '',
     });
     if (q.options?.length) {
       this.options.clear();
@@ -121,6 +123,7 @@ export class QuestionForm {
       marks: Number(raw.marks),
       ...(this.isAdmission ? { category: raw.category as Question['category'] } : {}),
       ...(this.isMcq ? { options: raw.options, correctAnswer: Number(raw.correctAnswer) } : {}),
+      ...(raw.explanation.trim() ? { explanation: raw.explanation.trim() } : {}),
     };
 
     this.saving.set(true);

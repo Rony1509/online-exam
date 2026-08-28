@@ -22,6 +22,7 @@ export interface Question {
   marks: number;
   options?: string[];
   correctAnswer?: number;
+  explanation?: string;
 }
 
 export interface ExamSummary {
@@ -71,6 +72,7 @@ export interface ResultAnswer {
   question: string;
   options?: string[];
   correctAnswer?: number;
+  explanation?: string;
   response: number | string | null;
   isCorrect?: boolean;
   marksAwarded: number | null;
