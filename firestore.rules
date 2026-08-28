@@ -7,6 +7,14 @@ service cloud.firestore {
       return request.auth != null;
     }
 
+    // Email verification is required to actually use the app (see
+    // client/src/app/core/services/auth.service.ts) - enforced here too so
+    // an unverified account can't read exam content or write results even
+    // by calling Firestore directly, bypassing the UI gate.
+    function isVerified() {
+      return isSignedIn() && request.auth.token.email_verified == true;
+    }
+
     function isAdmin() {
       return isSignedIn() &&
         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
@@ -16,7 +24,9 @@ service cloud.firestore {
       return isSignedIn() && request.auth.uid == uid;
     }
 
-    // Profile documents (name, email, role, section), keyed by Firebase Auth uid.
+    // Profile documents (name, email, role, section), keyed by Firebase Auth
+    // uid. Read/create intentionally don't require isVerified(): a account
+    // needs to read/create its own profile before it has verified anything.
     match /users/{uid} {
       allow read: if isOwner(uid) || isAdmin();
       // Public registration always creates a student profile for the signed-in uid.
@@ -24,26 +34,26 @@ service cloud.firestore {
       allow update, delete: if false;
     }
 
-    // Question bank. Any signed-in user can read (needed to render exam
+    // Question bank. Any verified user can read (needed to render exam
     // content client-side); only admins can write. Note: this means the
     // MCQ answer key is technically visible to any signed-in student who
     // inspects network traffic — accepted trade-off of the no-backend setup.
     match /questions/{id} {
-      allow read: if isSignedIn();
+      allow read: if isVerified();
       allow write: if isAdmin();
     }
 
     // Exam definitions (title, section, subject, duration, question ids).
     match /exams/{id} {
-      allow read: if isSignedIn();
+      allow read: if isVerified();
       allow write: if isAdmin();
     }
 
     // Exam submissions. Students can create their own and read only their
     // own; admins can read/update (grade) any of them.
     match /results/{id} {
-      allow read: if isAdmin() || (isSignedIn() && resource.data.userId == request.auth.uid);
-      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow read: if isAdmin() || (isVerified() && resource.data.userId == request.auth.uid);
+      allow create: if isVerified() && request.resource.data.userId == request.auth.uid;
       allow update: if isAdmin();
       allow delete: if false;
     }

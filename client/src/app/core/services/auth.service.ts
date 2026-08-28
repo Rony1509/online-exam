@@ -2,6 +2,7 @@ import { Injectable, computed, signal } from '@angular/core';
 import {
   createUserWithEmailAndPassword,
   onAuthStateChanged,
+  sendEmailVerification,
   signInWithEmailAndPassword,
   signOut,
 } from 'firebase/auth';
@@ -25,11 +26,21 @@ export function firebaseErrorMessage(err: unknown, fallback: string): string {
   return (code && AUTH_ERROR_MESSAGES[code]) || fallback;
 }
 
+/** Thrown by login/register when the Firebase account exists but its email isn't verified yet. */
+export class EmailNotVerifiedError extends Error {
+  constructor(public readonly email: string) {
+    super('Please verify your email before logging in.');
+  }
+}
+
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   readonly currentUser = signal<User | null>(null);
   readonly isLoggedIn = computed(() => this.currentUser() !== null);
   readonly isAdmin = computed(() => this.currentUser()?.role === 'admin');
+
+  /** Set whenever a signed-in Firebase account's email isn't verified yet — lets the login/register UI show a "check your email" prompt. */
+  readonly pendingVerificationEmail = signal<string | null>(null);
 
   private readyResolve!: () => void;
   /** Resolves once the initial (possibly persisted) auth state has been checked. Guards await this. */
@@ -40,11 +51,16 @@ export class AuthService {
 
   constructor() {
     onAuthStateChanged(auth, async (fbUser) => {
-      if (fbUser) {
+      if (fbUser && fbUser.emailVerified) {
         const profile = await this.loadProfile(fbUser.uid, fbUser.email ?? '');
         this.currentUser.set(profile);
+        this.pendingVerificationEmail.set(null);
+      } else if (fbUser && !fbUser.emailVerified) {
+        this.currentUser.set(null);
+        this.pendingVerificationEmail.set(fbUser.email ?? null);
       } else {
         this.currentUser.set(null);
+        this.pendingVerificationEmail.set(null);
       }
       if (!this.hasResolvedOnce) {
         this.hasResolvedOnce = true;
@@ -74,6 +90,9 @@ export class AuthService {
 
   private async loginAsync(email: string, password: string): Promise<User> {
     const cred = await signInWithEmailAndPassword(auth, email, password);
+    if (!cred.user.emailVerified) {
+      throw new EmailNotVerifiedError(email);
+    }
     const profile = await this.loadProfile(cred.user.uid, cred.user.email ?? email);
     if (!profile) throw new Error('No profile found for this account. Contact an admin.');
     this.currentUser.set(profile);
@@ -86,7 +105,7 @@ export class AuthService {
     password: string,
     section: Section,
     category?: AdmissionCategory,
-  ): Observable<User> {
+  ): Observable<never> {
     return from(this.registerAsync(name, email, password, section, category));
   }
 
@@ -96,18 +115,9 @@ export class AuthService {
     password: string,
     section: Section,
     category?: AdmissionCategory,
-  ): Promise<User> {
+  ): Promise<never> {
     const cred = await createUserWithEmailAndPassword(auth, email, password);
     const createdAt = new Date().toISOString();
-    const profile: User = {
-      id: cred.user.uid,
-      name,
-      email,
-      role: 'student',
-      section,
-      createdAt,
-      ...(category ? { category } : {}),
-    };
     await setDoc(doc(db, 'users', cred.user.uid), {
       name,
       email,
@@ -116,12 +126,30 @@ export class AuthService {
       createdAt,
       ...(category ? { category } : {}),
     });
+    await sendEmailVerification(cred.user);
+    throw new EmailNotVerifiedError(email);
+  }
+
+  /** Resends the verification email to whichever Firebase account is currently signed in (verified or not). */
+  async resendVerificationEmail(): Promise<void> {
+    if (auth.currentUser) await sendEmailVerification(auth.currentUser);
+  }
+
+  /** Re-checks verification status after the user claims to have clicked the email link. Returns true if now verified (and logs them in). */
+  async refreshVerificationStatus(): Promise<boolean> {
+    if (!auth.currentUser) return false;
+    await auth.currentUser.reload();
+    if (!auth.currentUser.emailVerified) return false;
+    const profile = await this.loadProfile(auth.currentUser.uid, auth.currentUser.email ?? '');
+    if (!profile) return false;
     this.currentUser.set(profile);
-    return profile;
+    this.pendingVerificationEmail.set(null);
+    return true;
   }
 
   logout(): void {
     signOut(auth);
     this.currentUser.set(null);
+    this.pendingVerificationEmail.set(null);
   }
 }

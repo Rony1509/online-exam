@@ -1,7 +1,11 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
-import { AuthService, firebaseErrorMessage } from '../../core/services/auth.service';
+import { RouterLink } from '@angular/router';
+import {
+  AuthService,
+  EmailNotVerifiedError,
+  firebaseErrorMessage,
+} from '../../core/services/auth.service';
 import { AdmissionCategory, Section } from '../../core/models/models';
 
 const ADMISSION_CATEGORIES: AdmissionCategory[] = ['Medical', 'Engineering', 'Varsity'];
@@ -15,10 +19,11 @@ const ADMISSION_CATEGORIES: AdmissionCategory[] = ['Medical', 'Engineering', 'Va
 export class Register {
   private fb = inject(FormBuilder);
   private auth = inject(AuthService);
-  private router = inject(Router);
 
   loading = signal(false);
   errorMessage = signal<string | null>(null);
+  registeredEmail = signal<string | null>(null);
+  resendStatus = signal<'idle' | 'sending' | 'sent'>('idle');
   readonly admissionCategories = ADMISSION_CATEGORIES;
 
   form = this.fb.nonNullable.group({
@@ -57,15 +62,24 @@ export class Register {
         this.isAdmission ? (category as AdmissionCategory) : undefined,
       )
       .subscribe({
-        next: (user) => {
-          this.router.navigate([user.role === 'admin' ? '/admin' : '/dashboard']);
-        },
         error: (err) => {
           this.loading.set(false);
-          this.errorMessage.set(
-            firebaseErrorMessage(err, err.message || 'Registration failed. Please try again.'),
-          );
+          if (err instanceof EmailNotVerifiedError) {
+            this.registeredEmail.set(err.email);
+          } else {
+            this.errorMessage.set(
+              firebaseErrorMessage(err, err.message || 'Registration failed. Please try again.'),
+            );
+          }
         },
       });
+  }
+
+  resend(): void {
+    this.resendStatus.set('sending');
+    this.auth
+      .resendVerificationEmail()
+      .then(() => this.resendStatus.set('sent'))
+      .catch(() => this.resendStatus.set('idle'));
   }
 }
