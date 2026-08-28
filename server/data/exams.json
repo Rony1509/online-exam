@@ -25,5 +25,20 @@
     "duration": 30,
     "questionIds": ["q-hsc-phy-bn-1", "q-hsc-phy-bn-2", "q-hsc-phy-bn-3", "q-hsc-phy-bn-cq-1"],
     "createdAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "exam-ssc-hist-1971-1",
+    "title": "মুক্তিযুদ্ধ ১৯৭১ পরীক্ষা",
+    "section": "SSC",
+    "subject": "বাংলাদেশের ইতিহাস",
+    "duration": 30,
+    "questionIds": [
+      "q-ssc-hist-1971-1",
+      "q-ssc-hist-1971-2",
+      "q-ssc-hist-1971-3",
+      "q-ssc-hist-1971-4",
+      "q-ssc-hist-1971-cq-1"
+    ],
+    "createdAt": "2026-01-01T00:00:00.000Z"
   }
 ]
