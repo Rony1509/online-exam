@@ -24,6 +24,7 @@ export class ExamTake implements OnInit, OnDestroy {
 
   private timerHandle?: ReturnType<typeof setInterval>;
   private examId = '';
+  private totalSeconds = 0;
 
   get minutes(): number {
     return Math.floor(this.remainingSeconds() / 60);
@@ -31,6 +32,18 @@ export class ExamTake implements OnInit, OnDestroy {
 
   get seconds(): number {
     return this.remainingSeconds() % 60;
+  }
+
+  get progressPercent(): number {
+    if (!this.totalSeconds) return 0;
+    return Math.max(0, Math.min(100, (this.remainingSeconds() / this.totalSeconds) * 100));
+  }
+
+  get timerUrgency(): 'normal' | 'warning' | 'danger' {
+    const pct = this.progressPercent;
+    if (pct <= 10) return 'danger';
+    if (pct <= 30) return 'warning';
+    return 'normal';
   }
 
   ngOnInit(): void {
@@ -44,7 +57,8 @@ export class ExamTake implements OnInit, OnDestroy {
     this.examService.take(this.examId).subscribe({
       next: (paper) => {
         this.exam.set(paper);
-        this.remainingSeconds.set(paper.duration * 60);
+        this.totalSeconds = paper.duration * 60;
+        this.remainingSeconds.set(this.totalSeconds);
         this.loading.set(false);
         this.startTimer();
       },

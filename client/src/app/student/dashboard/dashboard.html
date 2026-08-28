@@ -3,7 +3,11 @@
   <p class="muted">Pick a subject, then choose a chapter or the full-subject exam list.</p>
 
   @if (loading()) {
-    <p class="muted">Loading subjects...</p>
+    <div class="row">
+      @for (s of skeletons; track s) {
+        <div class="skeleton skeleton-card"></div>
+      }
+    </div>
   } @else if (errorMessage()) {
     <p class="error-text">{{ errorMessage() }}</p>
     <button class="btn btn-secondary" type="button" (click)="load()">Retry</button>
@@ -12,10 +16,13 @@
   } @else {
     <div class="row">
       @for (subject of subjects(); track subject.id) {
-        <div class="card">
-          <h3>{{ subject.name }}</h3>
-          <a class="btn" [routerLink]="['/subject', subject.id]">View exams</a>
-        </div>
+        <a class="card card-interactive tile" [routerLink]="['/subject', subject.id]">
+          <span class="icon-avatar" [style.background]="colorFor(subject.name).bg" [style.color]="colorFor(subject.name).fg">
+            {{ initialsFor(subject.name) }}
+          </span>
+          <h3 style="margin: 0;">{{ subject.name }}</h3>
+          <span class="tile-arrow" aria-hidden="true">&rarr;</span>
+        </a>
       }
     </div>
   }

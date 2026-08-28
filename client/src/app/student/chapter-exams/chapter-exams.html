@@ -1,9 +1,10 @@
 <div class="page">
-  <a [routerLink]="['/subject', subjectId]" class="muted">&larr; Back to subject</a>
+  <a [routerLink]="['/subject', subjectId]" class="back-link">&larr; Back to subject</a>
   <h2>{{ chapter()?.name || 'Chapter' }}</h2>
 
   @if (loading()) {
-    <p class="muted">Loading exams...</p>
+    <div class="skeleton skeleton-card"></div>
+    <div class="skeleton skeleton-card"></div>
   } @else if (errorMessage()) {
     <p class="error-text">{{ errorMessage() }}</p>
     <button class="btn btn-secondary" type="button" (click)="load()">Retry</button>
@@ -14,10 +15,9 @@
       <div class="card">
         <div class="card-header">
           <div>
-            <h3 style="margin: 0;">{{ exam.title }}</h3>
-            <p class="muted" style="margin: 0;">
-              {{ exam.questionCount }} questions &middot; {{ exam.duration }} min
-            </p>
+            <h3 style="margin: 0 0 0.35rem;">{{ exam.title }}</h3>
+            <span class="badge">{{ exam.questionCount }} questions</span>
+            <span class="badge">{{ exam.duration }} min</span>
           </div>
           <a class="btn" [routerLink]="['/exam', exam.id]">Start exam</a>
         </div>

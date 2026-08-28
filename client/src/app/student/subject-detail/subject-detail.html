@@ -1,28 +1,30 @@
 <div class="page">
-  <a routerLink="/dashboard" class="muted">&larr; Back to subjects</a>
+  <a routerLink="/dashboard" class="back-link">&larr; Back to subjects</a>
   <h2>{{ subject()?.name || 'Subject' }}</h2>
 
   @if (loading()) {
-    <p class="muted">Loading...</p>
+    <div class="skeleton skeleton-card"></div>
+    <div class="skeleton skeleton-card"></div>
   } @else if (errorMessage()) {
     <p class="error-text">{{ errorMessage() }}</p>
     <button class="btn btn-secondary" type="button" (click)="load()">Retry</button>
   } @else {
     @if (chapters().length > 0) {
-      <h3>Chapter-wise</h3>
+      <p class="section-label">Chapter-wise</p>
       <div class="row">
         @for (chapter of chapters(); track chapter.id) {
-          <div class="card">
-            <h4 style="margin: 0 0 0.75rem;">{{ chapter.name }}</h4>
-            <a class="btn btn-secondary" [routerLink]="['/subject', subject()?.id, 'chapter', chapter.id]">
-              View exams
-            </a>
-          </div>
+          <a class="card card-interactive tile" [routerLink]="['/subject', subject()?.id, 'chapter', chapter.id]">
+            <span class="icon-avatar" [style.background]="colorFor(chapter.name).bg" [style.color]="colorFor(chapter.name).fg">
+              {{ initialsFor(chapter.name) }}
+            </span>
+            <h4 style="margin: 0;">{{ chapter.name }}</h4>
+            <span class="tile-arrow" aria-hidden="true">&rarr;</span>
+          </a>
         }
       </div>
     }
 
-    <h3>Full Subject</h3>
+    <p class="section-label">Full Subject</p>
     @if (fullExams().length === 0) {
       <div class="empty-state">No full-subject exams yet{{ chapters().length > 0 ? ' — try a chapter above' : '' }}.</div>
     } @else {
@@ -30,10 +32,9 @@
         <div class="card">
           <div class="card-header">
             <div>
-              <h3 style="margin: 0;">{{ exam.title }}</h3>
-              <p class="muted" style="margin: 0;">
-                {{ exam.questionCount }} questions &middot; {{ exam.duration }} min
-              </p>
+              <h3 style="margin: 0 0 0.35rem;">{{ exam.title }}</h3>
+              <span class="badge">{{ exam.questionCount }} questions</span>
+              <span class="badge">{{ exam.duration }} min</span>
             </div>
             <a class="btn" [routerLink]="['/exam', exam.id]">Start exam</a>
           </div>

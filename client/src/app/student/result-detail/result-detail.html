@@ -1,10 +1,12 @@
 <div class="page">
   @if (loading()) {
-    <p class="muted">Loading result...</p>
+    <div class="skeleton skeleton-card"></div>
   } @else if (errorMessage()) {
     <p class="error-text">{{ errorMessage() }}</p>
     <button class="btn btn-secondary" type="button" (click)="load()">Retry</button>
   } @else if (result(); as r) {
+    <a [routerLink]="auth.isAdmin() ? '/admin/results' : '/results'" class="back-link">&larr; Back to results</a>
+
     <div class="card">
       <h2>{{ r.examTitle }}</h2>
       <p class="muted">
@@ -14,18 +16,30 @@
         <p class="muted">Student: {{ r.studentName }} ({{ r.studentEmail }})</p>
       }
 
-      <div class="row">
-        <div>
-          <p class="muted" style="margin-bottom: 0.15rem;">MCQ score</p>
-          <h3>{{ r.mcqScore }} / {{ r.mcqTotal }}</h3>
+      <div class="row" style="margin-top: 1rem;">
+        <div class="stat-card">
+          <p class="stat-label">MCQ score</p>
+          <p class="stat-value">{{ r.mcqScore }}<span class="muted" style="font-size: 1rem; font-weight: 500;"> / {{ r.mcqTotal }}</span></p>
         </div>
-        <div>
-          <p class="muted" style="margin-bottom: 0.15rem;">CQ score</p>
-          <h3>{{ r.cqGraded ? r.cqScore + ' / ' + r.cqTotal : 'Pending' }}</h3>
+        <div class="stat-card">
+          <p class="stat-label">CQ score</p>
+          <p class="stat-value">
+            @if (r.cqGraded) {
+              {{ r.cqScore }}<span class="muted" style="font-size: 1rem; font-weight: 500;"> / {{ r.cqTotal }}</span>
+            } @else {
+              <span style="font-size: 1.1rem; color: var(--color-warning);">Pending</span>
+            }
+          </p>
         </div>
-        <div>
-          <p class="muted" style="margin-bottom: 0.15rem;">Total</p>
-          <h3>{{ r.cqGraded ? r.finalScore + ' / ' + r.totalMarks : 'Awaiting CQ grading' }}</h3>
+        <div class="stat-card">
+          <p class="stat-label">Total</p>
+          <p class="stat-value">
+            @if (r.cqGraded) {
+              {{ r.finalScore }}<span class="muted" style="font-size: 1rem; font-weight: 500;"> / {{ r.totalMarks }}</span>
+            } @else {
+              <span style="font-size: 1.1rem; color: var(--color-warning);">Awaiting CQ</span>
+            }
+          </p>
         </div>
       </div>
     </div>
@@ -38,11 +52,13 @@
         <h3>{{ a.question }}</h3>
 
         @if (a.type === 'MCQ') {
-          <div class="row" style="flex-direction: column;">
+          <div>
             @for (option of a.options; track $index; let oi = $index) {
               <div
-                [style.font-weight]="oi === a.correctAnswer ? 700 : 400"
-                [style.color]="oi === a.response && !a.isCorrect ? 'var(--color-danger)' : (oi === a.correctAnswer ? 'var(--color-success)' : 'inherit')"
+                class="choice"
+                [class.choice-correct]="oi === a.correctAnswer"
+                [class.choice-incorrect]="oi === a.response && !a.isCorrect"
+                style="cursor: default;"
               >
                 {{ option }}
                 @if (oi === a.response) {
@@ -55,7 +71,7 @@
             }
           </div>
           <p style="margin-top: 0.5rem;">
-            <span class="badge" [class.badge-success]="a.isCorrect" [class.badge-warning]="!a.isCorrect">
+            <span class="badge" [class.badge-success]="a.isCorrect" [class.badge-danger]="!a.isCorrect">
               {{ a.marksAwarded }} / {{ a.maxMarks }} marks
             </span>
           </p>
@@ -71,8 +87,8 @@
         }
 
         @if (a.explanation) {
-          <div class="card" style="background: var(--color-bg); margin-top: 0.75rem; margin-bottom: 0;">
-            <p class="muted" style="margin-bottom: 0.25rem;">Explanation</p>
+          <div class="card" style="background: var(--color-surface-alt); margin-top: 0.75rem; margin-bottom: 0; box-shadow: none;">
+            <p class="muted" style="margin-bottom: 0.25rem; font-weight: 600;">💡 Explanation</p>
             <p style="white-space: pre-wrap; margin: 0;">{{ a.explanation }}</p>
           </div>
         }

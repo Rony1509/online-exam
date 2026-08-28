@@ -3,6 +3,7 @@ import { RouterLink } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { SubjectService } from '../../core/services/subject.service';
 import { Subject } from '../../core/models/models';
+import { colorFor, initialsFor } from '../../core/utils/avatar-color';
 
 @Component({
   selector: 'app-dashboard',
@@ -17,9 +18,13 @@ export class Dashboard {
   subjects = signal<Subject[]>([]);
   loading = signal(true);
   errorMessage = signal<string | null>(null);
+  skeletons = [0, 1, 2, 3];
 
   section = this.auth.currentUser()?.section ?? undefined;
   category = this.auth.currentUser()?.category;
+
+  readonly colorFor = colorFor;
+  readonly initialsFor = initialsFor;
 
   ngOnInit(): void {
     this.load();

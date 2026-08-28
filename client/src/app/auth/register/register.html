@@ -1,5 +1,10 @@
-<div class="page" style="max-width: 420px;">
-  <div class="card">
+<div class="auth-shell">
+  <div class="auth-card" style="max-width: 460px;">
+    <div class="auth-brand">
+      <img src="favicon.png" alt="" width="36" height="36" />
+      <span>Questify</span>
+    </div>
+
     @if (registeredEmail()) {
       <h2>Check your email</h2>
       <p class="muted">
@@ -19,7 +24,7 @@
         </button>
       </div>
     } @else {
-      <h2>Create your student account</h2>
+      <h2>Create your account</h2>
       <p class="muted">
         Register for HSC, SSC, or Admission (Medical/Engineering/Varsity) exams.
         You'll only see exams for the section you choose here.
@@ -28,51 +33,53 @@
       <form [formGroup]="form" (ngSubmit)="submit()">
         <div class="form-group">
           <label for="name">Full name</label>
-          <input id="name" type="text" formControlName="name" autocomplete="name" />
+          <input id="name" type="text" formControlName="name" autocomplete="name" placeholder="Your name" />
         </div>
 
         <div class="form-group">
           <label for="email">Email</label>
-          <input id="email" type="email" formControlName="email" autocomplete="email" />
+          <input id="email" type="email" formControlName="email" autocomplete="email" placeholder="you@example.com" />
         </div>
 
         <div class="form-group">
           <label for="password">Password</label>
-          <input id="password" type="password" formControlName="password" autocomplete="new-password" />
-          <span class="muted" style="font-size: 0.8rem;">At least 6 characters</span>
+          <input id="password" type="password" formControlName="password" autocomplete="new-password" placeholder="At least 6 characters" />
         </div>
 
-        <div class="form-group">
-          <label for="section">Section</label>
-          <select id="section" formControlName="section">
-            <option value="SSC">SSC</option>
-            <option value="HSC">HSC</option>
-            <option value="Admission">Admission</option>
-          </select>
-        </div>
-
-        @if (isAdmission) {
+        <div class="row">
           <div class="form-group">
-            <label for="category">Category</label>
-            <select id="category" formControlName="category">
-              <option value="">Select...</option>
-              @for (cat of admissionCategories; track cat) {
-                <option [value]="cat">{{ cat }}</option>
-              }
+            <label for="section">Section</label>
+            <select id="section" formControlName="section">
+              <option value="SSC">SSC</option>
+              <option value="HSC">HSC</option>
+              <option value="Admission">Admission</option>
             </select>
           </div>
-        }
+
+          @if (isAdmission) {
+            <div class="form-group">
+              <label for="category">Category</label>
+              <select id="category" formControlName="category">
+                <option value="">Select...</option>
+                @for (cat of admissionCategories; track cat) {
+                  <option [value]="cat">{{ cat }}</option>
+                }
+              </select>
+            </div>
+          }
+        </div>
 
         @if (errorMessage()) {
           <p class="error-text">{{ errorMessage() }}</p>
         }
 
         <button class="btn" type="submit" [disabled]="loading()">
+          @if (loading()) { <span class="spinner"></span> }
           {{ loading() ? 'Creating account...' : 'Register' }}
         </button>
       </form>
 
-      <p class="muted" style="margin-top: 1rem;">
+      <p class="muted" style="margin-top: 1.25rem; text-align: center;">
         Already have an account? <a routerLink="/login">Log in</a>
       </p>
     }

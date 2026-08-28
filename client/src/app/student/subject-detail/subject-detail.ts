@@ -4,6 +4,7 @@ import { SubjectService } from '../../core/services/subject.service';
 import { ChapterService } from '../../core/services/chapter.service';
 import { ExamService } from '../../core/services/exam.service';
 import { Chapter, ExamSummary, Subject } from '../../core/models/models';
+import { colorFor, initialsFor } from '../../core/utils/avatar-color';
 
 @Component({
   selector: 'app-subject-detail',
@@ -23,6 +24,9 @@ export class SubjectDetail {
   fullExams = signal<ExamSummary[]>([]);
   loading = signal(true);
   errorMessage = signal<string | null>(null);
+
+  readonly colorFor = colorFor;
+  readonly initialsFor = initialsFor;
 
   ngOnInit(): void {
     this.subjectId = this.route.snapshot.paramMap.get('id') ?? '';

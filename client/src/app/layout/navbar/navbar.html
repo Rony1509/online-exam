@@ -4,7 +4,11 @@
     Questify
   </a>
 
-  <div class="links">
+  <button class="menu-toggle" type="button" [class.is-open]="menuOpen()" (click)="toggleMenu()" aria-label="Toggle menu">
+    <span></span><span></span><span></span>
+  </button>
+
+  <div class="links" [class.is-open]="menuOpen()">
     @if (auth.isLoggedIn()) {
       @if (auth.isAdmin()) {
         <a routerLink="/admin/subjects" routerLinkActive="active">Subjects</a>
@@ -16,11 +20,14 @@
         <a routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Exams</a>
         <a routerLink="/results" routerLinkActive="active">My Results</a>
       }
-      <span class="user">{{ auth.currentUser()?.name }}</span>
-      <button class="link-btn" type="button" (click)="logout()">Logout</button>
+      <span class="user">
+        <span class="avatar">{{ (auth.currentUser()?.name || '?').charAt(0).toUpperCase() }}</span>
+        {{ auth.currentUser()?.name }}
+      </span>
+      <button class="link-btn logout-btn" type="button" (click)="logout()">Logout</button>
     } @else {
       <a routerLink="/login" routerLinkActive="active">Login</a>
-      <a routerLink="/register" routerLinkActive="active">Register</a>
+      <a routerLink="/register" routerLinkActive="active" class="btn btn-sm">Register</a>
     }
   </div>
 </nav>

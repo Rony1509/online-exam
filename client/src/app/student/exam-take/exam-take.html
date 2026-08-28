@@ -1,11 +1,13 @@
 <div class="page">
   @if (loading()) {
-    <p class="muted">Loading exam...</p>
+    <div class="skeleton skeleton-card"></div>
+    <div class="skeleton skeleton-card"></div>
+    <div class="skeleton skeleton-card"></div>
   } @else if (errorMessage() && !exam()) {
     <p class="error-text">{{ errorMessage() }}</p>
     <button class="btn btn-secondary" type="button" (click)="loadExam()">Retry</button>
   } @else if (exam(); as paper) {
-    <div class="card" style="position: sticky; top: 1rem; z-index: 5;">
+    <div class="card" style="position: sticky; top: 0.75rem; z-index: 5;">
       <div class="card-header">
         <div>
           <h2 style="margin-bottom: 0.15rem;">{{ paper.title }}</h2>
@@ -13,24 +15,39 @@
             {{ paper.subjectName }} &middot; {{ answeredCount() }}/{{ paper.questions.length }} answered
           </p>
         </div>
-        <div class="badge" [class.badge-warning]="remainingSeconds() < 60">
+        <div
+          class="badge"
+          [class.badge-warning]="timerUrgency === 'warning'"
+          [class.badge-danger]="timerUrgency === 'danger'"
+        >
           {{ minutes }}:{{ seconds < 10 ? '0' + seconds : seconds }} left
         </div>
+      </div>
+      <div class="progress-track">
+        <div
+          class="progress-fill"
+          [class.is-warning]="timerUrgency === 'warning'"
+          [class.is-danger]="timerUrgency === 'danger'"
+          [style.width.%]="progressPercent"
+        ></div>
       </div>
     </div>
 
     @for (q of paper.questions; track q.id; let i = $index) {
       <div class="card">
-        <p class="muted" style="margin-bottom: 0.25rem;">
-          Question {{ i + 1 }} &middot; {{ q.marks }} mark{{ q.marks > 1 ? 's' : '' }}
+        <p class="muted" style="margin-bottom: 0.25rem; display: flex; align-items: center; gap: 0.5rem;">
+          Question {{ i + 1 }} of {{ paper.questions.length }} &middot; {{ q.marks }} mark{{ q.marks > 1 ? 's' : '' }}
           <span class="badge">{{ q.type }}</span>
+          @if (answers()[q.id] !== undefined) {
+            <span class="badge badge-success">Answered</span>
+          }
         </p>
         <h3>{{ q.question }}</h3>
 
         @if (q.type === 'MCQ') {
-          <div class="row" style="flex-direction: column;">
+          <div>
             @for (option of q.options; track $index; let oi = $index) {
-              <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: 400;">
+              <label class="choice" [class.is-selected]="isSelected(q.id, oi)">
                 <input
                   type="radio"
                   [name]="q.id"
@@ -56,6 +73,7 @@
     }
 
     <button class="btn" type="button" [disabled]="submitting()" (click)="submit()">
+      @if (submitting()) { <span class="spinner"></span> }
       {{ submitting() ? 'Submitting...' : 'Submit exam' }}
     </button>
   }

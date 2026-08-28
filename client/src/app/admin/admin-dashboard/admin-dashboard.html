@@ -1,32 +1,85 @@
 <div class="page">
-  <h2>Admin</h2>
-  <p class="muted">Manage the question bank, build exams, and grade CQ submissions.</p>
+  <h2>Admin Dashboard</h2>
+  <p class="muted">An overview of your platform. Click any card to manage that area.</p>
 
+  <div class="stat-grid">
+    <a class="stat-card card-interactive" routerLink="/admin/subjects">
+      <p class="stat-label">Subjects</p>
+      @if (loading()) { <div class="skeleton" style="height: 2rem; width: 3rem;"></div> } @else {
+        <p class="stat-value">{{ subjectCount() }}</p>
+      }
+    </a>
+    <a class="stat-card card-interactive" routerLink="/admin/questions">
+      <p class="stat-label">Questions</p>
+      @if (loading()) { <div class="skeleton" style="height: 2rem; width: 3rem;"></div> } @else {
+        <p class="stat-value">{{ questionCount() }}</p>
+      }
+    </a>
+    <a class="stat-card card-interactive" routerLink="/admin/exams">
+      <p class="stat-label">Exams</p>
+      @if (loading()) { <div class="skeleton" style="height: 2rem; width: 3rem;"></div> } @else {
+        <p class="stat-value">{{ examCount() }}</p>
+      }
+    </a>
+    <a class="stat-card card-interactive" routerLink="/admin/results">
+      <p class="stat-label">Students</p>
+      @if (loading()) { <div class="skeleton" style="height: 2rem; width: 3rem;"></div> } @else {
+        <p class="stat-value">{{ studentCount() }}</p>
+      }
+    </a>
+    <a class="stat-card card-interactive" routerLink="/admin/grading">
+      <p class="stat-label">Pending grading</p>
+      @if (loading()) {
+        <div class="skeleton" style="height: 2rem; width: 3rem;"></div>
+      } @else {
+        <p class="stat-value" [style.color]="pendingGradingCount() > 0 ? 'var(--color-warning)' : 'inherit'">
+          {{ pendingGradingCount() }}
+        </p>
+      }
+    </a>
+  </div>
+
+  <p class="section-label">Manage</p>
   <div class="row">
-    <div class="card">
-      <h3>Subjects</h3>
-      <p class="muted">Manage subjects and their chapters — the catalog questions and exams draw from.</p>
-      <a class="btn" routerLink="/admin/subjects">Manage subjects</a>
-    </div>
-    <div class="card">
-      <h3>Question bank</h3>
-      <p class="muted">Add and edit MCQ / CQ questions for HSC, SSC, and Admission.</p>
-      <a class="btn" routerLink="/admin/questions">Manage questions</a>
-    </div>
-    <div class="card">
-      <h3>Exams</h3>
-      <p class="muted">Build exams by picking questions from the bank.</p>
-      <a class="btn" routerLink="/admin/exams">Manage exams</a>
-    </div>
-    <div class="card">
-      <h3>Results</h3>
-      <p class="muted">See every exam attempt from every student.</p>
-      <a class="btn" routerLink="/admin/results">View results</a>
-    </div>
-    <div class="card">
-      <h3>Grading</h3>
-      <p class="muted">Grade submitted CQ answers.</p>
-      <a class="btn" routerLink="/admin/grading">Go to grading</a>
-    </div>
+    <a class="card card-interactive tile" routerLink="/admin/subjects">
+      <span class="icon-avatar" style="background: var(--color-primary-light); color: var(--color-primary-dark);">📚</span>
+      <div>
+        <h3 style="margin: 0;">Subjects</h3>
+        <p class="muted" style="margin: 0; font-size: 0.85rem;">Manage subjects &amp; chapters</p>
+      </div>
+      <span class="tile-arrow" aria-hidden="true">&rarr;</span>
+    </a>
+    <a class="card card-interactive tile" routerLink="/admin/questions">
+      <span class="icon-avatar" style="background: var(--color-accent-light); color: #b8630a;">❓</span>
+      <div>
+        <h3 style="margin: 0;">Question bank</h3>
+        <p class="muted" style="margin: 0; font-size: 0.85rem;">Add &amp; edit MCQ / CQ questions</p>
+      </div>
+      <span class="tile-arrow" aria-hidden="true">&rarr;</span>
+    </a>
+    <a class="card card-interactive tile" routerLink="/admin/exams">
+      <span class="icon-avatar" style="background: var(--color-success-light); color: var(--color-success);">📝</span>
+      <div>
+        <h3 style="margin: 0;">Exams</h3>
+        <p class="muted" style="margin: 0; font-size: 0.85rem;">Build full-subject &amp; chapter exams</p>
+      </div>
+      <span class="tile-arrow" aria-hidden="true">&rarr;</span>
+    </a>
+    <a class="card card-interactive tile" routerLink="/admin/results">
+      <span class="icon-avatar" style="background: #f3e8fd; color: #7b2fb8;">📊</span>
+      <div>
+        <h3 style="margin: 0;">Results</h3>
+        <p class="muted" style="margin: 0; font-size: 0.85rem;">Every attempt from every student</p>
+      </div>
+      <span class="tile-arrow" aria-hidden="true">&rarr;</span>
+    </a>
+    <a class="card card-interactive tile" routerLink="/admin/grading">
+      <span class="icon-avatar" style="background: var(--color-warning-light); color: var(--color-warning);">✅</span>
+      <div>
+        <h3 style="margin: 0;">Grading</h3>
+        <p class="muted" style="margin: 0; font-size: 0.85rem;">Grade submitted CQ answers</p>
+      </div>
+      <span class="tile-arrow" aria-hidden="true">&rarr;</span>
+    </a>
   </div>
 </div>
