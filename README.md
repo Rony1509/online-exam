@@ -152,10 +152,12 @@ must match that subpath (already set correctly in `client/package.json`'s
 
 ## How it works
 
-- **Auth**: Firebase Authentication (email/password). `users/{uid}` in
-  Firestore holds the profile (name, role, section). Public registration
-  always creates a `student` — admin accounts are promoted manually (see
-  setup step 6).
+- **Auth**: Firebase Authentication (email/password) with required email
+  verification — registering sends a verification link instead of signing
+  the student straight in, and login is blocked (with a resend option) until
+  they click it. `users/{uid}` in Firestore holds the profile (name, role,
+  section, category). Public registration always creates a `student` —
+  admin accounts are promoted manually (see setup step 6).
 - **Data**: Firestore collections `questions`, `exams`, `results`. The
   Angular app reads/writes Firestore directly via the SDK — no server in
   between.
@@ -184,3 +186,9 @@ must match that subpath (already set correctly in `client/package.json`'s
 - **New questions don't show up on the live site**: editing the JSON files
   only changes what's in the repo — you still need to run the seed script
   (or add them via the admin UI) to get them into Firestore.
+- **A student can't log in even after registering**: they need to click the
+  verification link emailed to them first — check spam, or use "Resend
+  email" on the login screen.
+- **After changing `firestore.rules`**: always re-paste the whole file into
+  Firebase Console → Firestore Database → Rules → Publish. Nothing deploys
+  automatically from the repo — the file here is just the source of truth.
