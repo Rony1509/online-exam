@@ -12,8 +12,20 @@
             <select id="section" formControlName="section">
               <option value="SSC">SSC</option>
               <option value="HSC">HSC</option>
+              <option value="Admission">Admission</option>
             </select>
           </div>
+          @if (isAdmission) {
+            <div class="form-group">
+              <label for="category">Category</label>
+              <select id="category" formControlName="category">
+                <option value="">Select...</option>
+                @for (cat of admissionCategories; track cat) {
+                  <option [value]="cat">{{ cat }}</option>
+                }
+              </select>
+            </div>
+          }
           <div class="form-group">
             <label for="type">Type</label>
             <select id="type" formControlName="type">

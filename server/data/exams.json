@@ -40,5 +40,35 @@
       "q-ssc-hist-1971-cq-1"
     ],
     "createdAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "exam-adm-medical-1",
+    "title": "Medical Admission Test 1",
+    "section": "Admission",
+    "category": "Medical",
+    "subject": "Biology",
+    "duration": 30,
+    "questionIds": ["q-adm-medical-1", "q-adm-medical-2", "q-adm-medical-3", "q-adm-medical-cq-1"],
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "exam-adm-eng-1",
+    "title": "Engineering Admission Test 1",
+    "section": "Admission",
+    "category": "Engineering",
+    "subject": "Math & Physics",
+    "duration": 30,
+    "questionIds": ["q-adm-eng-1", "q-adm-eng-2", "q-adm-eng-3", "q-adm-eng-cq-1"],
+    "createdAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "exam-adm-varsity-1",
+    "title": "Varsity Admission Test 1",
+    "section": "Admission",
+    "category": "Varsity",
+    "subject": "General Knowledge",
+    "duration": 30,
+    "questionIds": ["q-adm-varsity-1", "q-adm-varsity-2", "q-adm-varsity-3", "q-adm-varsity-cq-1"],
+    "createdAt": "2026-01-01T00:00:00.000Z"
   }
 ]

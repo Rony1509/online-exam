@@ -10,6 +10,7 @@
         <a routerLink="/admin/grading" routerLinkActive="active">Grading</a>
       } @else {
         <a routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Exams</a>
+        <a routerLink="/admission" routerLinkActive="active">Admission</a>
         <a routerLink="/results" routerLinkActive="active">My Results</a>
       }
       <span class="user">{{ auth.currentUser()?.name }}</span>

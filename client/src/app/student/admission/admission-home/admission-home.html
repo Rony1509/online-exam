@@ -1,0 +1,14 @@
+<div class="page">
+  <h2>Admission Test Prep</h2>
+  <p class="muted">Practice expected questions for university admission tests, by category.</p>
+
+  <div class="row">
+    @for (cat of categories; track cat.key) {
+      <div class="card">
+        <h3>{{ cat.label }}</h3>
+        <p class="muted">{{ cat.description }}</p>
+        <a class="btn" [routerLink]="['/admission', cat.key]">View exams</a>
+      </div>
+    }
+  </div>
+</div>

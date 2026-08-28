@@ -4,7 +4,9 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ExamService } from '../../../core/services/exam.service';
 import { QuestionService } from '../../../core/services/question.service';
-import { Question, Section } from '../../../core/models/models';
+import { AdmissionCategory, Question, Section } from '../../../core/models/models';
+
+const ADMISSION_CATEGORIES: AdmissionCategory[] = ['Medical', 'Engineering', 'Varsity'];
 
 @Component({
   selector: 'app-exam-form',
@@ -27,19 +29,27 @@ export class ExamForm {
   allQuestions = signal<Question[]>([]);
   selectedIds = signal<Set<string>>(new Set());
   subjectFilter = '';
+  readonly admissionCategories = ADMISSION_CATEGORIES;
 
   form = this.fb.nonNullable.group({
     title: ['', [Validators.required]],
     section: ['SSC', [Validators.required]],
+    category: [''],
     subject: ['', [Validators.required]],
     duration: [30, [Validators.required, Validators.min(1)]],
   });
 
+  get isAdmission(): boolean {
+    return this.form.controls.section.value === 'Admission';
+  }
+
   get filteredQuestions(): Question[] {
     const section = this.form.controls.section.value;
+    const category = this.form.controls.category.value;
     return this.allQuestions().filter(
       (q) =>
         q.section === section &&
+        (!this.isAdmission || q.category === category) &&
         (!this.subjectFilter || q.subject.toLowerCase().includes(this.subjectFilter.toLowerCase())),
     );
   }
@@ -60,6 +70,7 @@ export class ExamForm {
           this.form.patchValue({
             title: exam.title,
             section: exam.section,
+            category: exam.category ?? '',
             subject: exam.subject,
             duration: exam.duration,
           });
@@ -92,6 +103,11 @@ export class ExamForm {
       return;
     }
 
+    if (this.isAdmission && !this.form.controls.category.value) {
+      this.errorMessage.set('Select a category for an Admission exam.');
+      return;
+    }
+
     const raw = this.form.getRawValue();
     const payload = {
       title: raw.title,
@@ -99,6 +115,7 @@ export class ExamForm {
       subject: raw.subject,
       duration: Number(raw.duration),
       questionIds: Array.from(this.selectedIds()),
+      ...(this.isAdmission ? { category: raw.category as AdmissionCategory } : {}),
     };
 
     this.saving.set(true);

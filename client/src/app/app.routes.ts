@@ -26,6 +26,18 @@ export const routes: Routes = [
     loadComponent: () => import('./student/exam-take/exam-take').then((m) => m.ExamTake),
   },
   {
+    path: 'admission',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./student/admission/admission-home/admission-home').then((m) => m.AdmissionHome),
+  },
+  {
+    path: 'admission/:category',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./student/admission/admission-exams/admission-exams').then((m) => m.AdmissionExams),
+  },
+  {
     path: 'results',
     canActivate: [authGuard],
     loadComponent: () => import('./student/results/results').then((m) => m.Results),

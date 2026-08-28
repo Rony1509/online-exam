@@ -25,7 +25,7 @@
           @for (e of exams(); track e.id) {
             <tr>
               <td>{{ e.title }}</td>
-              <td>{{ e.section }}</td>
+              <td>{{ e.section }}{{ e.category ? ' · ' + e.category : '' }}</td>
               <td>{{ e.subject }}</td>
               <td>{{ e.questionCount }}</td>
               <td>{{ e.duration }} min</td>

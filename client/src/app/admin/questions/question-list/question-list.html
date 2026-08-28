@@ -12,8 +12,20 @@
           <option value="">All</option>
           <option value="SSC">SSC</option>
           <option value="HSC">HSC</option>
+          <option value="Admission">Admission</option>
         </select>
       </div>
+      @if (sectionFilter === 'Admission') {
+        <div class="form-group">
+          <label>Category</label>
+          <select [(ngModel)]="categoryFilter" (ngModelChange)="load()">
+            <option value="">All</option>
+            @for (cat of admissionCategories; track cat) {
+              <option [value]="cat">{{ cat }}</option>
+            }
+          </select>
+        </div>
+      }
       <div class="form-group">
         <label>Type</label>
         <select [(ngModel)]="typeFilter" (ngModelChange)="load()">
@@ -50,7 +62,7 @@
           @for (q of questions(); track q.id) {
             <tr>
               <td>{{ q.question }}</td>
-              <td>{{ q.section }}</td>
+              <td>{{ q.section }}{{ q.category ? ' · ' + q.category : '' }}</td>
               <td>{{ q.subject }}</td>
               <td><span class="badge">{{ q.type }}</span></td>
               <td>{{ q.marks }}</td>

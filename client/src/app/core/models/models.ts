@@ -1,4 +1,5 @@
-export type Section = 'HSC' | 'SSC';
+export type Section = 'HSC' | 'SSC' | 'Admission';
+export type AdmissionCategory = 'Medical' | 'Engineering' | 'Varsity';
 export type QuestionType = 'MCQ' | 'CQ';
 export type Role = 'student' | 'admin';
 
@@ -14,6 +15,7 @@ export interface User {
 export interface Question {
   id: string;
   section: Section;
+  category?: AdmissionCategory;
   subject: string;
   type: QuestionType;
   question: string;
@@ -26,6 +28,7 @@ export interface ExamSummary {
   id: string;
   title: string;
   section: Section;
+  category?: AdmissionCategory;
   subject: string;
   duration: number;
   questionCount: number;
@@ -39,6 +42,7 @@ export interface Exam extends ExamSummary {
 export interface ExamQuestion {
   id: string;
   section: Section;
+  category?: AdmissionCategory;
   subject: string;
   type: QuestionType;
   question: string;
@@ -50,6 +54,7 @@ export interface ExamPaper {
   id: string;
   title: string;
   section: Section;
+  category?: AdmissionCategory;
   subject: string;
   duration: number;
   questions: ExamQuestion[];

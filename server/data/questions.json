@@ -195,5 +195,131 @@
     "type": "CQ",
     "question": "১৯৭১ সালের মুক্তিযুদ্ধের পটভূমি ও এর ঐতিহাসিক গুরুত্ব সংক্ষেপে বর্ণনা কর।",
     "marks": 10
+  },
+  {
+    "id": "q-adm-medical-1",
+    "section": "Admission",
+    "category": "Medical",
+    "subject": "Biology",
+    "type": "MCQ",
+    "question": "মানবদেহে মোট হাড়ের সংখ্যা কত?",
+    "options": ["১৯৬", "২০৬", "২১৬", "৩০৬"],
+    "correctAnswer": 1,
+    "marks": 1
+  },
+  {
+    "id": "q-adm-medical-2",
+    "section": "Admission",
+    "category": "Medical",
+    "subject": "Biology",
+    "type": "MCQ",
+    "question": "রক্তের লোহিত কণিকা তৈরি হয় কোথায়?",
+    "options": ["যকৃত", "প্লীহা", "অস্থিমজ্জা", "কিডনি"],
+    "correctAnswer": 2,
+    "marks": 1
+  },
+  {
+    "id": "q-adm-medical-3",
+    "section": "Admission",
+    "category": "Medical",
+    "subject": "Biology",
+    "type": "MCQ",
+    "question": "ভিটামিন সি এর অভাবে কোন রোগ হয়?",
+    "options": ["রিকেটস", "স্কার্ভি", "রাতকানা", "বেরিবেরি"],
+    "correctAnswer": 1,
+    "marks": 1
+  },
+  {
+    "id": "q-adm-medical-cq-1",
+    "section": "Admission",
+    "category": "Medical",
+    "subject": "Biology",
+    "type": "CQ",
+    "question": "মানবদেহের রক্ত সংবহনতন্ত্রের কাজ ব্যাখ্যা কর।",
+    "marks": 10
+  },
+  {
+    "id": "q-adm-eng-1",
+    "section": "Admission",
+    "category": "Engineering",
+    "subject": "Math",
+    "type": "MCQ",
+    "question": "x² - 5x + 6 = 0 এর মূলদ্বয়ের সমষ্টি কত?",
+    "options": ["৫", "৬", "২", "৩"],
+    "correctAnswer": 0,
+    "marks": 1
+  },
+  {
+    "id": "q-adm-eng-2",
+    "section": "Admission",
+    "category": "Engineering",
+    "subject": "Physics",
+    "type": "MCQ",
+    "question": "আলোর বেগ কত?",
+    "options": ["৩×10⁸ m/s", "৩×10⁶ m/s", "৩×10⁹ m/s", "৩×10⁷ m/s"],
+    "correctAnswer": 0,
+    "marks": 1
+  },
+  {
+    "id": "q-adm-eng-3",
+    "section": "Admission",
+    "category": "Engineering",
+    "subject": "Math",
+    "type": "MCQ",
+    "question": "একটি সমকোণী ত্রিভুজের অতিভুজ ৫ এবং একটি বাহু ৩ হলে অপর বাহুর দৈর্ঘ্য কত?",
+    "options": ["৪", "৩", "৬", "৫"],
+    "correctAnswer": 0,
+    "marks": 1
+  },
+  {
+    "id": "q-adm-eng-cq-1",
+    "section": "Admission",
+    "category": "Engineering",
+    "subject": "Physics",
+    "type": "CQ",
+    "question": "নিউটনের মহাকর্ষ সূত্রটি লিখ এবং এর ব্যবহারিক গুরুত্ব ব্যাখ্যা কর।",
+    "marks": 10
+  },
+  {
+    "id": "q-adm-varsity-1",
+    "section": "Admission",
+    "category": "Varsity",
+    "subject": "General Knowledge",
+    "type": "MCQ",
+    "question": "বাংলাদেশের জাতীয় সংসদ ভবনের স্থপতি কে?",
+    "options": ["লুই কান", "এফ. আর. খান", "মাজহারুল ইসলাম", "বশিরুল হক"],
+    "correctAnswer": 0,
+    "marks": 1
+  },
+  {
+    "id": "q-adm-varsity-2",
+    "section": "Admission",
+    "category": "Varsity",
+    "subject": "English",
+    "type": "MCQ",
+    "question": "'Eradicate' শব্দটির অর্থ কী?",
+    "options": ["বৃদ্ধি করা", "নির্মূল করা", "স্থানান্তর করা", "সংরক্ষণ করা"],
+    "correctAnswer": 1,
+    "marks": 1
+  },
+  {
+    "id": "q-adm-varsity-3",
+    "section": "Admission",
+    "category": "Varsity",
+    "subject": "General Knowledge",
+    "type": "MCQ",
+    "question": "বাংলাদেশের সংবিধান কার্যকর হয় কোন তারিখে?",
+    "options": ["৪ নভেম্বর ১৯৭২", "১৬ ডিসেম্বর ১৯৭২", "২৬ মার্চ ১৯৭২", "১ জানুয়ারি ১৯৭৩"],
+    "correctAnswer": 1,
+    "marks": 1
+  },
+  {
+    "id": "q-adm-varsity-cq-1",
+    "section": "Admission",
+    "category": "Varsity",
+    "subject": "General Knowledge",
+    "type": "CQ",
+    "question": "বাংলাদেশের সংবিধানের মূলনীতিগুলো আলোচনা কর।",
+    "marks": 10
   }
 ]

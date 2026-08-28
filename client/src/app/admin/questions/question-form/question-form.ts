@@ -4,6 +4,8 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { QuestionService } from '../../../core/services/question.service';
 import { Question } from '../../../core/models/models';
 
+const ADMISSION_CATEGORIES = ['Medical', 'Engineering', 'Varsity'] as const;
+
 @Component({
   selector: 'app-question-form',
   standalone: true,
@@ -23,6 +25,7 @@ export class QuestionForm {
 
   form = this.fb.nonNullable.group({
     section: ['SSC', [Validators.required]],
+    category: [''],
     subject: ['', [Validators.required]],
     type: ['MCQ', [Validators.required]],
     question: ['', [Validators.required]],
@@ -31,12 +34,18 @@ export class QuestionForm {
     options: this.fb.array([this.fb.nonNullable.control('', Validators.required), this.fb.nonNullable.control('', Validators.required)]),
   });
 
+  readonly admissionCategories = ADMISSION_CATEGORIES;
+
   get options(): FormArray {
     return this.form.get('options') as FormArray;
   }
 
   get isMcq(): boolean {
     return this.form.controls.type.value === 'MCQ';
+  }
+
+  get isAdmission(): boolean {
+    return this.form.controls.section.value === 'Admission';
   }
 
   ngOnInit(): void {
@@ -58,6 +67,7 @@ export class QuestionForm {
   private populate(q: Question): void {
     this.form.patchValue({
       section: q.section,
+      category: q.category ?? '',
       subject: q.subject,
       type: q.type,
       question: q.question,
@@ -97,6 +107,11 @@ export class QuestionForm {
       return;
     }
 
+    if (this.isAdmission && !this.form.controls.category.value) {
+      this.errorMessage.set('Select a category for an Admission question.');
+      return;
+    }
+
     const raw = this.form.getRawValue();
     const payload: Omit<Question, 'id'> = {
       section: raw.section as Question['section'],
@@ -104,6 +119,7 @@ export class QuestionForm {
       type: raw.type as Question['type'],
       question: raw.question,
       marks: Number(raw.marks),
+      ...(this.isAdmission ? { category: raw.category as Question['category'] } : {}),
       ...(this.isMcq ? { options: raw.options, correctAnswer: Number(raw.correctAnswer) } : {}),
     };
 

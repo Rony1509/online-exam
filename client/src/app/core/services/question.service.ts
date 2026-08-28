@@ -16,17 +16,21 @@ import { Question } from '../models/models';
 
 @Injectable({ providedIn: 'root' })
 export class QuestionService {
-  list(filters: { section?: string; subject?: string; type?: string } = {}): Observable<Question[]> {
+  list(
+    filters: { section?: string; category?: string; subject?: string; type?: string } = {},
+  ): Observable<Question[]> {
     return from(this.listAsync(filters));
   }
 
   private async listAsync(filters: {
     section?: string;
+    category?: string;
     subject?: string;
     type?: string;
   }): Promise<Question[]> {
     const constraints: QueryConstraint[] = [];
     if (filters.section) constraints.push(where('section', '==', filters.section));
+    if (filters.category) constraints.push(where('category', '==', filters.category));
     if (filters.type) constraints.push(where('type', '==', filters.type));
 
     const snap = await getDocs(query(collection(db, 'questions'), ...constraints));

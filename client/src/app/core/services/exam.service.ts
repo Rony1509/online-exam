@@ -15,6 +15,7 @@ import { Observable, from } from 'rxjs';
 import { db } from '../firebase';
 import { AuthService } from './auth.service';
 import {
+  AdmissionCategory,
   AnswerSubmission,
   Exam,
   ExamPaper,
@@ -30,13 +31,14 @@ import {
 export class ExamService {
   private auth = inject(AuthService);
 
-  list(section?: Section): Observable<ExamSummary[]> {
-    return from(this.listAsync(section));
+  list(section?: Section, category?: AdmissionCategory): Observable<ExamSummary[]> {
+    return from(this.listAsync(section, category));
   }
 
-  private async listAsync(section?: Section): Promise<ExamSummary[]> {
+  private async listAsync(section?: Section, category?: AdmissionCategory): Promise<ExamSummary[]> {
     const constraints: QueryConstraint[] = [];
     if (section) constraints.push(where('section', '==', section));
+    if (category) constraints.push(where('category', '==', category));
 
     const snap = await getDocs(query(collection(db, 'exams'), ...constraints));
     return snap.docs.map((d) => {
@@ -45,6 +47,7 @@ export class ExamService {
         id: d.id,
         title: data.title,
         section: data.section,
+        category: data.category,
         subject: data.subject,
         duration: data.duration,
         createdAt: data.createdAt,
@@ -108,6 +111,7 @@ export class ExamService {
       id: examSnap.id,
       title: exam.title,
       section: exam.section,
+      category: exam.category,
       subject: exam.subject,
       duration: exam.duration,
       questions: sanitized,

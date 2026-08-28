@@ -17,7 +17,10 @@ export class QuestionList {
   loading = signal(true);
   errorMessage = signal<string | null>(null);
 
+  readonly admissionCategories = ['Medical', 'Engineering', 'Varsity'];
+
   sectionFilter = '';
+  categoryFilter = '';
   subjectFilter = '';
   typeFilter = '';
 
@@ -30,6 +33,7 @@ export class QuestionList {
     this.questionService
       .list({
         section: this.sectionFilter || undefined,
+        category: this.sectionFilter === 'Admission' ? this.categoryFilter || undefined : undefined,
         subject: this.subjectFilter || undefined,
         type: this.typeFilter || undefined,
       })
