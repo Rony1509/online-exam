@@ -1,0 +1,41 @@
+[
+  {
+    "id": "subj-ssc-english",
+    "name": "English",
+    "section": "SSC"
+  },
+  {
+    "id": "subj-ssc-history",
+    "name": "বাংলাদেশের ইতিহাস",
+    "section": "SSC"
+  },
+  {
+    "id": "subj-hsc-physics",
+    "name": "Physics",
+    "section": "HSC"
+  },
+  {
+    "id": "subj-adm-medical-biology",
+    "name": "Biology",
+    "section": "Admission",
+    "category": "Medical"
+  },
+  {
+    "id": "subj-adm-medical-physics",
+    "name": "Physics",
+    "section": "Admission",
+    "category": "Medical"
+  },
+  {
+    "id": "subj-adm-engineering-mathphysics",
+    "name": "Math & Physics",
+    "section": "Admission",
+    "category": "Engineering"
+  },
+  {
+    "id": "subj-adm-varsity-gk",
+    "name": "General Knowledge",
+    "section": "Admission",
+    "category": "Varsity"
+  }
+]

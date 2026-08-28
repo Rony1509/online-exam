@@ -1,8 +1,8 @@
 import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
-import { ExamService } from '../../core/services/exam.service';
-import { ExamSummary } from '../../core/models/models';
+import { SubjectService } from '../../core/services/subject.service';
+import { Subject } from '../../core/models/models';
 
 @Component({
   selector: 'app-dashboard',
@@ -12,9 +12,9 @@ import { ExamSummary } from '../../core/models/models';
 })
 export class Dashboard {
   private auth = inject(AuthService);
-  private examService = inject(ExamService);
+  private subjectService = inject(SubjectService);
 
-  exams = signal<ExamSummary[]>([]);
+  subjects = signal<Subject[]>([]);
   loading = signal(true);
   errorMessage = signal<string | null>(null);
 
@@ -22,13 +22,13 @@ export class Dashboard {
   category = this.auth.currentUser()?.category;
 
   ngOnInit(): void {
-    this.examService.list(this.section, this.category).subscribe({
-      next: (exams) => {
-        this.exams.set(exams);
+    this.subjectService.list({ section: this.section, category: this.category }).subscribe({
+      next: (subjects) => {
+        this.subjects.set(subjects);
         this.loading.set(false);
       },
       error: () => {
-        this.errorMessage.set('Could not load exams. Please try again later.');
+        this.errorMessage.set('Could not load subjects. Please try again later.');
         this.loading.set(false);
       },
     });

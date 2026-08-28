@@ -4,6 +4,7 @@
   <div class="links">
     @if (auth.isLoggedIn()) {
       @if (auth.isAdmin()) {
+        <a routerLink="/admin/subjects" routerLinkActive="active">Subjects</a>
         <a routerLink="/admin/questions" routerLinkActive="active">Questions</a>
         <a routerLink="/admin/exams" routerLinkActive="active">Exams</a>
         <a routerLink="/admin/results" routerLinkActive="active">Results</a>

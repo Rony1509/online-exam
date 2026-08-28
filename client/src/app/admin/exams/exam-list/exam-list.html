@@ -26,7 +26,14 @@
             <tr>
               <td>{{ e.title }}</td>
               <td>{{ e.section }}{{ e.category ? ' · ' + e.category : '' }}</td>
-              <td>{{ e.subject }}</td>
+              <td>
+                {{ e.subjectName }}
+                @if (e.mode === 'chapter') {
+                  <span class="badge">{{ e.chapterName }}</span>
+                } @else {
+                  <span class="badge">Full subject</span>
+                }
+              </td>
               <td>{{ e.questionCount }}</td>
               <td>{{ e.duration }} min</td>
               <td>

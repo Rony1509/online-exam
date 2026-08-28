@@ -9,7 +9,7 @@
         <div>
           <h2 style="margin-bottom: 0.15rem;">{{ paper.title }}</h2>
           <p class="muted" style="margin: 0;">
-            {{ paper.subject }} &middot; {{ answeredCount() }}/{{ paper.questions.length }} answered
+            {{ paper.subjectName }} &middot; {{ answeredCount() }}/{{ paper.questions.length }} answered
           </p>
         </div>
         <div class="badge" [class.badge-warning]="remainingSeconds() < 60">

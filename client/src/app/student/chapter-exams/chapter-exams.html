@@ -1,0 +1,26 @@
+<div class="page">
+  <a [routerLink]="['/subject', subjectId]" class="muted">&larr; Back to subject</a>
+  <h2>{{ chapter()?.name || 'Chapter' }}</h2>
+
+  @if (loading()) {
+    <p class="muted">Loading exams...</p>
+  } @else if (errorMessage()) {
+    <p class="error-text">{{ errorMessage() }}</p>
+  } @else if (exams().length === 0) {
+    <div class="empty-state">No exams for this chapter yet.</div>
+  } @else {
+    @for (exam of exams(); track exam.id) {
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h3 style="margin: 0;">{{ exam.title }}</h3>
+            <p class="muted" style="margin: 0;">
+              {{ exam.questionCount }} questions &middot; {{ exam.duration }} min
+            </p>
+          </div>
+          <a class="btn" [routerLink]="['/exam', exam.id]">Start exam</a>
+        </div>
+      </div>
+    }
+  }
+</div>

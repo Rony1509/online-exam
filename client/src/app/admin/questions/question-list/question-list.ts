@@ -2,7 +2,8 @@ import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { QuestionService } from '../../../core/services/question.service';
-import { Question } from '../../../core/models/models';
+import { SubjectService } from '../../../core/services/subject.service';
+import { Question, Subject } from '../../../core/models/models';
 
 @Component({
   selector: 'app-question-list',
@@ -12,8 +13,10 @@ import { Question } from '../../../core/models/models';
 })
 export class QuestionList {
   private questionService = inject(QuestionService);
+  private subjectService = inject(SubjectService);
 
   questions = signal<Question[]>([]);
+  allSubjects = signal<Subject[]>([]);
   loading = signal(true);
   errorMessage = signal<string | null>(null);
 
@@ -24,7 +27,16 @@ export class QuestionList {
   subjectFilter = '';
   typeFilter = '';
 
+  get filteredSubjects(): Subject[] {
+    return this.allSubjects().filter(
+      (s) =>
+        (!this.sectionFilter || s.section === this.sectionFilter) &&
+        (this.sectionFilter !== 'Admission' || !this.categoryFilter || s.category === this.categoryFilter),
+    );
+  }
+
   ngOnInit(): void {
+    this.subjectService.list().subscribe((subjects) => this.allSubjects.set(subjects));
     this.load();
   }
 
@@ -34,7 +46,7 @@ export class QuestionList {
       .list({
         section: this.sectionFilter || undefined,
         category: this.sectionFilter === 'Admission' ? this.categoryFilter || undefined : undefined,
-        subject: this.subjectFilter || undefined,
+        subjectId: this.subjectFilter || undefined,
         type: this.typeFilter || undefined,
       })
       .subscribe({

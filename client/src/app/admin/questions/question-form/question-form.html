@@ -39,9 +39,32 @@
           </div>
         </div>
 
-        <div class="form-group">
-          <label for="subject">Subject</label>
-          <input id="subject" type="text" formControlName="subject" placeholder="e.g. Physics" />
+        <div class="row">
+          <div class="form-group">
+            <label for="subjectId">Subject</label>
+            <select id="subjectId" formControlName="subjectId">
+              <option value="">Select...</option>
+              @for (s of filteredSubjects; track s.id) {
+                <option [value]="s.id">{{ s.name }}</option>
+              }
+            </select>
+            @if (filteredSubjects.length === 0) {
+              <span class="muted" style="font-size: 0.8rem;">
+                No subjects for this section yet — <a routerLink="/admin/subjects/new">add one</a>.
+              </span>
+            }
+          </div>
+          @if (form.controls.subjectId.value) {
+            <div class="form-group">
+              <label for="chapterId">Chapter (optional)</label>
+              <select id="chapterId" formControlName="chapterId">
+                <option value="">None (subject-level)</option>
+                @for (c of chapters(); track c.id) {
+                  <option [value]="c.id">{{ c.name }}</option>
+                }
+              </select>
+            </div>
+          }
         </div>
 
         <div class="form-group">

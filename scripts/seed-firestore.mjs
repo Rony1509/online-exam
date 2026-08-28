@@ -1,6 +1,8 @@
-// One-time content seed: pushes the curated question bank and exams into
-// Firestore, preserving the same document ids so exams' questionIds arrays
-// stay valid. Run once after creating the Firebase project:
+// One-time content seed: pushes the subject/chapter catalog and the
+// curated question bank and exams into Firestore, preserving the same
+// document ids so exams' questionIds and questions' subjectId/chapterId
+// references stay valid. Run once after creating the Firebase project, and
+// again any time server/data/*.json changes:
 //
 //   cd scripts
 //   npm install
@@ -27,23 +29,25 @@ const serviceAccount = JSON.parse(readFileSync(path.resolve(serviceAccountPath),
 initializeApp({ credential: cert(serviceAccount) });
 const db = getFirestore();
 
-const questions = JSON.parse(
-  readFileSync(path.join(__dirname, '..', 'server', 'data', 'questions.json'), 'utf-8'),
-);
-const exams = JSON.parse(
-  readFileSync(path.join(__dirname, '..', 'server', 'data', 'exams.json'), 'utf-8'),
-);
+const dataDir = path.join(__dirname, '..', 'server', 'data');
+const subjects = JSON.parse(readFileSync(path.join(dataDir, 'subjects.json'), 'utf-8'));
+const chapters = JSON.parse(readFileSync(path.join(dataDir, 'chapters.json'), 'utf-8'));
+const questions = JSON.parse(readFileSync(path.join(dataDir, 'questions.json'), 'utf-8'));
+const exams = JSON.parse(readFileSync(path.join(dataDir, 'exams.json'), 'utf-8'));
+
+async function seedCollection(name, items) {
+  for (const { id, ...data } of items) {
+    await db.collection(name).doc(id).set(data);
+  }
+  console.log(`Seeded ${items.length} ${name}.`);
+}
 
 async function seed() {
-  for (const { id, ...data } of questions) {
-    await db.collection('questions').doc(id).set(data);
-  }
-  console.log(`Seeded ${questions.length} questions.`);
-
-  for (const { id, ...data } of exams) {
-    await db.collection('exams').doc(id).set(data);
-  }
-  console.log(`Seeded ${exams.length} exams.`);
+  // Subjects/chapters first since questions/exams reference their ids.
+  await seedCollection('subjects', subjects);
+  await seedCollection('chapters', chapters);
+  await seedCollection('questions', questions);
+  await seedCollection('exams', exams);
 }
 
 seed()

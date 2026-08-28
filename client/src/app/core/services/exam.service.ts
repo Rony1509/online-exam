@@ -18,6 +18,7 @@ import {
   AdmissionCategory,
   AnswerSubmission,
   Exam,
+  ExamMode,
   ExamPaper,
   ExamQuestion,
   ExamResult,
@@ -26,6 +27,23 @@ import {
   ResultAnswer,
   Section,
 } from '../models/models';
+
+function toSummary(id: string, data: Omit<Exam, 'id' | 'questionCount'>): ExamSummary {
+  return {
+    id,
+    title: data.title,
+    section: data.section,
+    category: data.category,
+    subjectId: data.subjectId,
+    subjectName: data.subjectName,
+    mode: data.mode,
+    chapterId: data.chapterId,
+    chapterName: data.chapterName,
+    duration: data.duration,
+    createdAt: data.createdAt,
+    questionCount: (data.questionIds || []).length,
+  };
+}
 
 @Injectable({ providedIn: 'root' })
 export class ExamService {
@@ -41,19 +59,33 @@ export class ExamService {
     if (category) constraints.push(where('category', '==', category));
 
     const snap = await getDocs(query(collection(db, 'exams'), ...constraints));
-    return snap.docs.map((d) => {
-      const data = d.data() as Omit<Exam, 'id' | 'questionCount'>;
-      return {
-        id: d.id,
-        title: data.title,
-        section: data.section,
-        category: data.category,
-        subject: data.subject,
-        duration: data.duration,
-        createdAt: data.createdAt,
-        questionCount: (data.questionIds || []).length,
-      };
-    });
+    return snap.docs.map((d) => toSummary(d.id, d.data() as Omit<Exam, 'id' | 'questionCount'>));
+  }
+
+  /** Full-subject exams for a given subject (mode: 'full'). */
+  listBySubject(subjectId: string): Observable<ExamSummary[]> {
+    return from(this.listBySubjectAsync(subjectId));
+  }
+
+  private async listBySubjectAsync(subjectId: string): Promise<ExamSummary[]> {
+    const snap = await getDocs(
+      query(
+        collection(db, 'exams'),
+        where('subjectId', '==', subjectId),
+        where('mode', '==', 'full' as ExamMode),
+      ),
+    );
+    return snap.docs.map((d) => toSummary(d.id, d.data() as Omit<Exam, 'id' | 'questionCount'>));
+  }
+
+  /** Chapter-wise exams for a given chapter (mode: 'chapter'). */
+  listByChapter(chapterId: string): Observable<ExamSummary[]> {
+    return from(this.listByChapterAsync(chapterId));
+  }
+
+  private async listByChapterAsync(chapterId: string): Promise<ExamSummary[]> {
+    const snap = await getDocs(query(collection(db, 'exams'), where('chapterId', '==', chapterId)));
+    return snap.docs.map((d) => toSummary(d.id, d.data() as Omit<Exam, 'id' | 'questionCount'>));
   }
 
   get(id: string): Observable<Exam> {
@@ -64,7 +96,7 @@ export class ExamService {
     const snap = await getDoc(doc(db, 'exams', id));
     if (!snap.exists()) throw new Error('Exam not found');
     const data = snap.data() as Omit<Exam, 'id' | 'questionCount'>;
-    return { id: snap.id, ...data, questionCount: (data.questionIds || []).length };
+    return { ...toSummary(snap.id, data), questionIds: data.questionIds };
   }
 
   create(exam: Omit<Exam, 'id' | 'questionCount' | 'createdAt'>): Observable<Exam> {
@@ -112,7 +144,7 @@ export class ExamService {
       title: exam.title,
       section: exam.section,
       category: exam.category,
-      subject: exam.subject,
+      subjectName: exam.subjectName,
       duration: exam.duration,
       questions: sanitized,
     };
@@ -185,7 +217,7 @@ export class ExamService {
       examId: examSnap.id,
       examTitle: exam.title,
       section: exam.section,
-      subject: exam.subject,
+      subjectName: exam.subjectName,
       answers: gradedAnswers,
       mcqScore,
       mcqTotal,

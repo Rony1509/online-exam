@@ -3,7 +3,6 @@
     "id": "exam-ssc-eng-1",
     "title": "SSC English Test 1",
     "section": "SSC",
-    "subject": "English",
     "duration": 30,
     "questionIds": [
       "q-ssc-eng-1",
@@ -11,13 +10,15 @@
       "q-ssc-eng-3",
       "q-ssc-eng-cq-1"
     ],
-    "createdAt": "2026-01-01T00:00:00.000Z"
+    "createdAt": "2026-01-01T00:00:00.000Z",
+    "subjectId": "subj-ssc-english",
+    "subjectName": "English",
+    "mode": "full"
   },
   {
     "id": "exam-hsc-phy-1",
     "title": "HSC Physics Test 1",
     "section": "HSC",
-    "subject": "Physics",
     "duration": 30,
     "questionIds": [
       "q-hsc-phy-1",
@@ -25,13 +26,15 @@
       "q-hsc-phy-3",
       "q-hsc-phy-cq-1"
     ],
-    "createdAt": "2026-01-01T00:00:00.000Z"
+    "createdAt": "2026-01-01T00:00:00.000Z",
+    "subjectId": "subj-hsc-physics",
+    "subjectName": "Physics",
+    "mode": "full"
   },
   {
     "id": "exam-hsc-phy-bn-1",
     "title": "HSC পদার্থবিজ্ঞান পরীক্ষা ১",
     "section": "HSC",
-    "subject": "Physics",
     "duration": 30,
     "questionIds": [
       "q-hsc-phy-bn-1",
@@ -39,13 +42,15 @@
       "q-hsc-phy-bn-3",
       "q-hsc-phy-bn-cq-1"
     ],
-    "createdAt": "2026-01-01T00:00:00.000Z"
+    "createdAt": "2026-01-01T00:00:00.000Z",
+    "subjectId": "subj-hsc-physics",
+    "subjectName": "Physics",
+    "mode": "full"
   },
   {
     "id": "exam-ssc-hist-1971-1",
     "title": "মুক্তিযুদ্ধ ১৯৭১ পরীক্ষা",
     "section": "SSC",
-    "subject": "বাংলাদেশের ইতিহাস",
     "duration": 30,
     "questionIds": [
       "q-ssc-hist-1971-1",
@@ -54,14 +59,16 @@
       "q-ssc-hist-1971-4",
       "q-ssc-hist-1971-cq-1"
     ],
-    "createdAt": "2026-01-01T00:00:00.000Z"
+    "createdAt": "2026-01-01T00:00:00.000Z",
+    "subjectId": "subj-ssc-history",
+    "subjectName": "বাংলাদেশের ইতিহাস",
+    "mode": "full"
   },
   {
     "id": "exam-adm-medical-1",
     "title": "Medical Admission Test 1",
     "section": "Admission",
     "category": "Medical",
-    "subject": "Biology",
     "duration": 30,
     "questionIds": [
       "q-adm-medical-1",
@@ -69,14 +76,16 @@
       "q-adm-medical-3",
       "q-adm-medical-cq-1"
     ],
-    "createdAt": "2026-01-01T00:00:00.000Z"
+    "createdAt": "2026-01-01T00:00:00.000Z",
+    "subjectId": "subj-adm-medical-biology",
+    "subjectName": "Biology",
+    "mode": "full"
   },
   {
     "id": "exam-adm-eng-1",
     "title": "Engineering Admission Test 1",
     "section": "Admission",
     "category": "Engineering",
-    "subject": "Math & Physics",
     "duration": 15,
     "questionIds": [
       "q-adm-eng-1",
@@ -84,14 +93,16 @@
       "q-adm-eng-3",
       "q-adm-eng-cq-1"
     ],
-    "createdAt": "2026-01-01T00:00:00.000Z"
+    "createdAt": "2026-01-01T00:00:00.000Z",
+    "subjectId": "subj-adm-engineering-mathphysics",
+    "subjectName": "Math & Physics",
+    "mode": "full"
   },
   {
     "id": "exam-adm-varsity-1",
     "title": "Varsity Admission Test 1",
     "section": "Admission",
     "category": "Varsity",
-    "subject": "General Knowledge",
     "duration": 15,
     "questionIds": [
       "q-adm-varsity-1",
@@ -99,14 +110,16 @@
       "q-adm-varsity-3",
       "q-adm-varsity-cq-1"
     ],
-    "createdAt": "2026-01-01T00:00:00.000Z"
+    "createdAt": "2026-01-01T00:00:00.000Z",
+    "subjectId": "subj-adm-varsity-gk",
+    "subjectName": "General Knowledge",
+    "mode": "full"
   },
   {
     "id": "exam-adm-medical-phy9-1",
     "title": "Medical Admission Physics Mock Test (Chapter 9 - Waves)",
     "section": "Admission",
     "category": "Medical",
-    "subject": "Physics 1st Paper - Chapter 9",
     "duration": 20,
     "questionIds": [
       "q-adm-medical-phy9-1",
@@ -140,6 +153,11 @@
       "q-adm-medical-phy9-29",
       "q-adm-medical-phy9-30"
     ],
-    "createdAt": "2026-08-28T01:42:50.537Z"
+    "createdAt": "2026-08-28T01:42:50.537Z",
+    "subjectId": "subj-adm-medical-physics",
+    "subjectName": "Physics",
+    "mode": "chapter",
+    "chapterId": "chap-adm-medical-physics-ch9",
+    "chapterName": "Chapter 9 - Waves"
   }
 ]

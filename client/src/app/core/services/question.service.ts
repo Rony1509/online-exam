@@ -17,7 +17,13 @@ import { Question } from '../models/models';
 @Injectable({ providedIn: 'root' })
 export class QuestionService {
   list(
-    filters: { section?: string; category?: string; subject?: string; type?: string } = {},
+    filters: {
+      section?: string;
+      category?: string;
+      subjectId?: string;
+      chapterId?: string;
+      type?: string;
+    } = {},
   ): Observable<Question[]> {
     return from(this.listAsync(filters));
   }
@@ -25,23 +31,19 @@ export class QuestionService {
   private async listAsync(filters: {
     section?: string;
     category?: string;
-    subject?: string;
+    subjectId?: string;
+    chapterId?: string;
     type?: string;
   }): Promise<Question[]> {
     const constraints: QueryConstraint[] = [];
     if (filters.section) constraints.push(where('section', '==', filters.section));
     if (filters.category) constraints.push(where('category', '==', filters.category));
+    if (filters.subjectId) constraints.push(where('subjectId', '==', filters.subjectId));
+    if (filters.chapterId) constraints.push(where('chapterId', '==', filters.chapterId));
     if (filters.type) constraints.push(where('type', '==', filters.type));
 
     const snap = await getDocs(query(collection(db, 'questions'), ...constraints));
-    let questions = snap.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<Question, 'id'>) }));
-
-    // Subject is filtered client-side (case-insensitive contains, matching the old API behavior).
-    if (filters.subject) {
-      const term = filters.subject.toLowerCase();
-      questions = questions.filter((q) => q.subject.toLowerCase().includes(term));
-    }
-    return questions;
+    return snap.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<Question, 'id'>) }));
   }
 
   create(question: Omit<Question, 'id'>): Observable<Question> {

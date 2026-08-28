@@ -1,0 +1,43 @@
+<div class="page">
+  <div class="card-header">
+    <h2 style="margin: 0;">Subjects</h2>
+    <a class="btn" routerLink="/admin/subjects/new">Add subject</a>
+  </div>
+  <p class="muted">
+    Subjects and chapters organize the question bank and exams. Students browse by subject, then
+    choose a chapter or the full-subject exam list.
+  </p>
+
+  @if (loading()) {
+    <p class="muted">Loading subjects...</p>
+  } @else if (subjects().length === 0) {
+    <div class="empty-state">No subjects yet. Add one to start building exams.</div>
+  } @else {
+    <div class="card">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Section</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (s of subjects(); track s.id) {
+            <tr>
+              <td>{{ s.name }}</td>
+              <td>{{ s.section }}{{ s.category ? ' · ' + s.category : '' }}</td>
+              <td>
+                <a [routerLink]="['/admin/subjects', s.id, 'chapters']">Chapters</a>
+                &nbsp;
+                <a [routerLink]="['/admin/subjects', s.id]">Edit</a>
+                &nbsp;
+                <button class="link-btn" type="button" (click)="remove(s)">Delete</button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

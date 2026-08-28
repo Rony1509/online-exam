@@ -1,0 +1,49 @@
+<div class="page" style="max-width: 480px;">
+  <h2>{{ editingId ? 'Edit subject' : 'Add subject' }}</h2>
+
+  @if (loading()) {
+    <p class="muted">Loading subject...</p>
+  } @else {
+    <div class="card">
+      <form [formGroup]="form" (ngSubmit)="submit()">
+        <div class="form-group">
+          <label for="name">Name</label>
+          <input id="name" type="text" formControlName="name" placeholder="e.g. Physics" />
+        </div>
+
+        <div class="row">
+          <div class="form-group">
+            <label for="section">Section</label>
+            <select id="section" formControlName="section">
+              <option value="SSC">SSC</option>
+              <option value="HSC">HSC</option>
+              <option value="Admission">Admission</option>
+            </select>
+          </div>
+          @if (isAdmission) {
+            <div class="form-group">
+              <label for="category">Category</label>
+              <select id="category" formControlName="category">
+                <option value="">Select...</option>
+                @for (cat of admissionCategories; track cat) {
+                  <option [value]="cat">{{ cat }}</option>
+                }
+              </select>
+            </div>
+          }
+        </div>
+
+        @if (errorMessage()) {
+          <p class="error-text">{{ errorMessage() }}</p>
+        }
+
+        <div class="row" style="margin-top: 1rem;">
+          <button class="btn" type="submit" [disabled]="saving()">
+            {{ saving() ? 'Saving...' : 'Save subject' }}
+          </button>
+          <a class="btn btn-secondary" routerLink="/admin/subjects">Cancel</a>
+        </div>
+      </form>
+    </div>
+  }
+</div>

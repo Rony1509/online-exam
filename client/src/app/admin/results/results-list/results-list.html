@@ -42,7 +42,7 @@
             <tr>
               <td>{{ r.studentName }}<br /><span class="muted" style="font-size: 0.8rem;">{{ r.studentEmail }}</span></td>
               <td>{{ r.examTitle }}</td>
-              <td>{{ r.section }} &middot; {{ r.subject }}</td>
+              <td>{{ r.section }} &middot; {{ r.subjectName }}</td>
               <td>{{ r.submittedAt | date: 'medium' }}</td>
               <td>
                 @if (r.cqGraded) {

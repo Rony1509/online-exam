@@ -21,6 +21,18 @@ export const routes: Routes = [
     loadComponent: () => import('./student/dashboard/dashboard').then((m) => m.Dashboard),
   },
   {
+    path: 'subject/:id',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./student/subject-detail/subject-detail').then((m) => m.SubjectDetail),
+  },
+  {
+    path: 'subject/:id/chapter/:chapterId',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./student/chapter-exams/chapter-exams').then((m) => m.ChapterExams),
+  },
+  {
     path: 'exam/:id',
     canActivate: [authGuard],
     loadComponent: () => import('./student/exam-take/exam-take').then((m) => m.ExamTake),
@@ -42,6 +54,30 @@ export const routes: Routes = [
     canActivate: [authGuard, adminGuard],
     loadComponent: () =>
       import('./admin/admin-dashboard/admin-dashboard').then((m) => m.AdminDashboard),
+  },
+  {
+    path: 'admin/subjects',
+    canActivate: [authGuard, adminGuard],
+    loadComponent: () =>
+      import('./admin/subjects/subject-list/subject-list').then((m) => m.SubjectList),
+  },
+  {
+    path: 'admin/subjects/new',
+    canActivate: [authGuard, adminGuard],
+    loadComponent: () =>
+      import('./admin/subjects/subject-form/subject-form').then((m) => m.SubjectForm),
+  },
+  {
+    path: 'admin/subjects/:id/chapters',
+    canActivate: [authGuard, adminGuard],
+    loadComponent: () =>
+      import('./admin/subjects/chapter-list/chapter-list').then((m) => m.ChapterList),
+  },
+  {
+    path: 'admin/subjects/:id',
+    canActivate: [authGuard, adminGuard],
+    loadComponent: () =>
+      import('./admin/subjects/subject-form/subject-form').then((m) => m.SubjectForm),
   },
   {
     path: 'admin/questions',

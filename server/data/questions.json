@@ -2,7 +2,6 @@
   {
     "id": "q-ssc-eng-1",
     "section": "SSC",
-    "subject": "English",
     "type": "MCQ",
     "question": "Which word is a synonym of 'happy'?",
     "options": [
@@ -12,12 +11,13 @@
       "Tired"
     ],
     "correctAnswer": 1,
-    "marks": 1
+    "marks": 1,
+    "subjectId": "subj-ssc-english",
+    "subjectName": "English"
   },
   {
     "id": "q-ssc-eng-2",
     "section": "SSC",
-    "subject": "English",
     "type": "MCQ",
     "question": "Choose the correct article: '___ apple a day keeps the doctor away.'",
     "options": [
@@ -27,12 +27,13 @@
       "No article"
     ],
     "correctAnswer": 1,
-    "marks": 1
+    "marks": 1,
+    "subjectId": "subj-ssc-english",
+    "subjectName": "English"
   },
   {
     "id": "q-ssc-eng-3",
     "section": "SSC",
-    "subject": "English",
     "type": "MCQ",
     "question": "What is the plural form of 'child'?",
     "options": [
@@ -42,20 +43,22 @@
       "Childrens"
     ],
     "correctAnswer": 2,
-    "marks": 1
+    "marks": 1,
+    "subjectId": "subj-ssc-english",
+    "subjectName": "English"
   },
   {
     "id": "q-ssc-eng-cq-1",
     "section": "SSC",
-    "subject": "English",
     "type": "CQ",
     "question": "Write a paragraph (about 150 words) on 'The Value of Time'.",
-    "marks": 10
+    "marks": 10,
+    "subjectId": "subj-ssc-english",
+    "subjectName": "English"
   },
   {
     "id": "q-hsc-phy-1",
     "section": "HSC",
-    "subject": "Physics",
     "type": "MCQ",
     "question": "The SI unit of force is:",
     "options": [
@@ -65,12 +68,13 @@
       "Pascal"
     ],
     "correctAnswer": 2,
-    "marks": 1
+    "marks": 1,
+    "subjectId": "subj-hsc-physics",
+    "subjectName": "Physics"
   },
   {
     "id": "q-hsc-phy-2",
     "section": "HSC",
-    "subject": "Physics",
     "type": "MCQ",
     "question": "Which law states that every action has an equal and opposite reaction?",
     "options": [
@@ -80,12 +84,13 @@
       "Law of Conservation of Energy"
     ],
     "correctAnswer": 2,
-    "marks": 1
+    "marks": 1,
+    "subjectId": "subj-hsc-physics",
+    "subjectName": "Physics"
   },
   {
     "id": "q-hsc-phy-3",
     "section": "HSC",
-    "subject": "Physics",
     "type": "MCQ",
     "question": "The acceleration due to gravity on Earth is approximately:",
     "options": [
@@ -95,20 +100,22 @@
       "6.7 m/s^2"
     ],
     "correctAnswer": 0,
-    "marks": 1
+    "marks": 1,
+    "subjectId": "subj-hsc-physics",
+    "subjectName": "Physics"
   },
   {
     "id": "q-hsc-phy-cq-1",
     "section": "HSC",
-    "subject": "Physics",
     "type": "CQ",
     "question": "State Newton's three laws of motion and give one real-life example of each.",
-    "marks": 10
+    "marks": 10,
+    "subjectId": "subj-hsc-physics",
+    "subjectName": "Physics"
   },
   {
     "id": "q-hsc-phy-bn-1",
     "section": "HSC",
-    "subject": "Physics",
     "type": "MCQ",
     "question": "বলের এসআই একক কী?",
     "options": [
@@ -118,12 +125,13 @@
       "প্যাসকেল"
     ],
     "correctAnswer": 2,
-    "marks": 1
+    "marks": 1,
+    "subjectId": "subj-hsc-physics",
+    "subjectName": "Physics"
   },
   {
     "id": "q-hsc-phy-bn-2",
     "section": "HSC",
-    "subject": "Physics",
     "type": "MCQ",
     "question": "নিউটনের কোন সূত্র অনুযায়ী প্রতিটি ক্রিয়ার একটি সমান ও বিপরীতমুখী প্রতিক্রিয়া থাকে?",
     "options": [
@@ -133,12 +141,13 @@
       "শক্তির নিত্যতা সূত্র"
     ],
     "correctAnswer": 2,
-    "marks": 1
+    "marks": 1,
+    "subjectId": "subj-hsc-physics",
+    "subjectName": "Physics"
   },
   {
     "id": "q-hsc-phy-bn-3",
     "section": "HSC",
-    "subject": "Physics",
     "type": "MCQ",
     "question": "পৃথিবীপৃষ্ঠে মহাকর্ষীয় ত্বরণের মান আনুমানিক কত?",
     "options": [
@@ -148,20 +157,22 @@
       "৬.৭ m/s²"
     ],
     "correctAnswer": 0,
-    "marks": 1
+    "marks": 1,
+    "subjectId": "subj-hsc-physics",
+    "subjectName": "Physics"
   },
   {
     "id": "q-hsc-phy-bn-cq-1",
     "section": "HSC",
-    "subject": "Physics",
     "type": "CQ",
     "question": "নিউটনের গতির তিনটি সূত্র বর্ণনা কর এবং প্রতিটির একটি করে বাস্তব উদাহরণ দাও।",
-    "marks": 10
+    "marks": 10,
+    "subjectId": "subj-hsc-physics",
+    "subjectName": "Physics"
   },
   {
     "id": "q-ssc-hist-1971-1",
     "section": "SSC",
-    "subject": "বাংলাদেশের ইতিহাস",
     "type": "MCQ",
     "question": "মুক্তিযুদ্ধ শুরু হয় কত সালে?",
     "options": [
@@ -171,12 +182,13 @@
       "১৯৭২"
     ],
     "correctAnswer": 2,
-    "marks": 1
+    "marks": 1,
+    "subjectId": "subj-ssc-history",
+    "subjectName": "বাংলাদেশের ইতিহাস"
   },
   {
     "id": "q-ssc-hist-1971-2",
     "section": "SSC",
-    "subject": "বাংলাদেশের ইতিহাস",
     "type": "MCQ",
     "question": "স্বাধীনতার ঘোষণা দেন কে?",
     "options": [
@@ -186,12 +198,13 @@
       "এ. কে. ফজলুল হক"
     ],
     "correctAnswer": 0,
-    "marks": 1
+    "marks": 1,
+    "subjectId": "subj-ssc-history",
+    "subjectName": "বাংলাদেশের ইতিহাস"
   },
   {
     "id": "q-ssc-hist-1971-3",
     "section": "SSC",
-    "subject": "বাংলাদেশের ইতিহাস",
     "type": "MCQ",
     "question": "মুক্তিযুদ্ধ কত মাস স্থায়ী ছিল?",
     "options": [
@@ -201,12 +214,13 @@
       "১২ মাস"
     ],
     "correctAnswer": 2,
-    "marks": 1
+    "marks": 1,
+    "subjectId": "subj-ssc-history",
+    "subjectName": "বাংলাদেশের ইতিহাস"
   },
   {
     "id": "q-ssc-hist-1971-4",
     "section": "SSC",
-    "subject": "বাংলাদেশের ইতিহাস",
     "type": "MCQ",
     "question": "বাংলাদেশ বিজয় লাভ করে কোন তারিখে?",
     "options": [
@@ -216,21 +230,23 @@
       "১৬ ডিসেম্বর"
     ],
     "correctAnswer": 3,
-    "marks": 1
+    "marks": 1,
+    "subjectId": "subj-ssc-history",
+    "subjectName": "বাংলাদেশের ইতিহাস"
   },
   {
     "id": "q-ssc-hist-1971-cq-1",
     "section": "SSC",
-    "subject": "বাংলাদেশের ইতিহাস",
     "type": "CQ",
     "question": "১৯৭১ সালের মুক্তিযুদ্ধের পটভূমি ও এর ঐতিহাসিক গুরুত্ব সংক্ষেপে বর্ণনা কর।",
-    "marks": 10
+    "marks": 10,
+    "subjectId": "subj-ssc-history",
+    "subjectName": "বাংলাদেশের ইতিহাস"
   },
   {
     "id": "q-adm-medical-1",
     "section": "Admission",
     "category": "Medical",
-    "subject": "Biology",
     "type": "MCQ",
     "question": "মানবদেহে মোট হাড়ের সংখ্যা কত?",
     "options": [
@@ -240,13 +256,14 @@
       "৩০৬"
     ],
     "correctAnswer": 1,
-    "marks": 1
+    "marks": 1,
+    "subjectId": "subj-adm-medical-biology",
+    "subjectName": "Biology"
   },
   {
     "id": "q-adm-medical-2",
     "section": "Admission",
     "category": "Medical",
-    "subject": "Biology",
     "type": "MCQ",
     "question": "রক্তের লোহিত কণিকা তৈরি হয় কোথায়?",
     "options": [
@@ -256,13 +273,14 @@
       "কিডনি"
     ],
     "correctAnswer": 2,
-    "marks": 1
+    "marks": 1,
+    "subjectId": "subj-adm-medical-biology",
+    "subjectName": "Biology"
   },
   {
     "id": "q-adm-medical-3",
     "section": "Admission",
     "category": "Medical",
-    "subject": "Biology",
     "type": "MCQ",
     "question": "ভিটামিন সি এর অভাবে কোন রোগ হয়?",
     "options": [
@@ -272,22 +290,24 @@
       "বেরিবেরি"
     ],
     "correctAnswer": 1,
-    "marks": 1
+    "marks": 1,
+    "subjectId": "subj-adm-medical-biology",
+    "subjectName": "Biology"
   },
   {
     "id": "q-adm-medical-cq-1",
     "section": "Admission",
     "category": "Medical",
-    "subject": "Biology",
     "type": "CQ",
     "question": "মানবদেহের রক্ত সংবহনতন্ত্রের কাজ ব্যাখ্যা কর।",
-    "marks": 10
+    "marks": 10,
+    "subjectId": "subj-adm-medical-biology",
+    "subjectName": "Biology"
   },
   {
     "id": "q-adm-eng-1",
     "section": "Admission",
     "category": "Engineering",
-    "subject": "Math",
     "type": "MCQ",
     "question": "x² - 5x + 6 = 0 এর মূলদ্বয়ের সমষ্টি কত?",
     "options": [
@@ -297,13 +317,14 @@
       "৩"
     ],
     "correctAnswer": 0,
-    "marks": 1
+    "marks": 1,
+    "subjectId": "subj-adm-engineering-mathphysics",
+    "subjectName": "Math & Physics"
   },
   {
     "id": "q-adm-eng-2",
     "section": "Admission",
     "category": "Engineering",
-    "subject": "Physics",
     "type": "MCQ",
     "question": "আলোর বেগ কত?",
     "options": [
@@ -313,13 +334,14 @@
       "৩×10⁷ m/s"
     ],
     "correctAnswer": 0,
-    "marks": 1
+    "marks": 1,
+    "subjectId": "subj-adm-engineering-mathphysics",
+    "subjectName": "Math & Physics"
   },
   {
     "id": "q-adm-eng-3",
     "section": "Admission",
     "category": "Engineering",
-    "subject": "Math",
     "type": "MCQ",
     "question": "একটি সমকোণী ত্রিভুজের অতিভুজ ৫ এবং একটি বাহু ৩ হলে অপর বাহুর দৈর্ঘ্য কত?",
     "options": [
@@ -329,22 +351,24 @@
       "৫"
     ],
     "correctAnswer": 0,
-    "marks": 1
+    "marks": 1,
+    "subjectId": "subj-adm-engineering-mathphysics",
+    "subjectName": "Math & Physics"
   },
   {
     "id": "q-adm-eng-cq-1",
     "section": "Admission",
     "category": "Engineering",
-    "subject": "Physics",
     "type": "CQ",
     "question": "নিউটনের মহাকর্ষ সূত্রটি লিখ এবং এর ব্যবহারিক গুরুত্ব ব্যাখ্যা কর।",
-    "marks": 10
+    "marks": 10,
+    "subjectId": "subj-adm-engineering-mathphysics",
+    "subjectName": "Math & Physics"
   },
   {
     "id": "q-adm-varsity-1",
     "section": "Admission",
     "category": "Varsity",
-    "subject": "General Knowledge",
     "type": "MCQ",
     "question": "বাংলাদেশের জাতীয় সংসদ ভবনের স্থপতি কে?",
     "options": [
@@ -354,13 +378,14 @@
       "বশিরুল হক"
     ],
     "correctAnswer": 0,
-    "marks": 1
+    "marks": 1,
+    "subjectId": "subj-adm-varsity-gk",
+    "subjectName": "General Knowledge"
   },
   {
     "id": "q-adm-varsity-2",
     "section": "Admission",
     "category": "Varsity",
-    "subject": "English",
     "type": "MCQ",
     "question": "'Eradicate' শব্দটির অর্থ কী?",
     "options": [
@@ -370,13 +395,14 @@
       "সংরক্ষণ করা"
     ],
     "correctAnswer": 1,
-    "marks": 1
+    "marks": 1,
+    "subjectId": "subj-adm-varsity-gk",
+    "subjectName": "General Knowledge"
   },
   {
     "id": "q-adm-varsity-3",
     "section": "Admission",
     "category": "Varsity",
-    "subject": "General Knowledge",
     "type": "MCQ",
     "question": "বাংলাদেশের সংবিধান কার্যকর হয় কোন তারিখে?",
     "options": [
@@ -386,22 +412,24 @@
       "১ জানুয়ারি ১৯৭৩"
     ],
     "correctAnswer": 1,
-    "marks": 1
+    "marks": 1,
+    "subjectId": "subj-adm-varsity-gk",
+    "subjectName": "General Knowledge"
   },
   {
     "id": "q-adm-varsity-cq-1",
     "section": "Admission",
     "category": "Varsity",
-    "subject": "General Knowledge",
     "type": "CQ",
     "question": "বাংলাদেশের সংবিধানের মূলনীতিগুলো আলোচনা কর।",
-    "marks": 10
+    "marks": 10,
+    "subjectId": "subj-adm-varsity-gk",
+    "subjectName": "General Knowledge"
   },
   {
     "id": "q-adm-medical-phy9-1",
     "section": "Admission",
     "category": "Medical",
-    "subject": "Physics 1st Paper - Chapter 9",
     "type": "MCQ",
     "question": "অনুপ্রস্থ তরঙ্গের ক্ষেত্রে কণার কম্পন ও তরঙ্গ অগ্রগতির দিকের মধ্যবর্তী কোণ কত?",
     "options": [
@@ -412,13 +440,16 @@
     ],
     "correctAnswer": 1,
     "marks": 1,
-    "explanation": "অনুপ্রস্থ তরঙ্গের কণাগুলোর কম্পন তরঙ্গ সঞ্চালনের দিকের সাথে লম্বভাবে বা 90° কোণে সম্পন্ন হয়।"
+    "explanation": "অনুপ্রস্থ তরঙ্গের কণাগুলোর কম্পন তরঙ্গ সঞ্চালনের দিকের সাথে লম্বভাবে বা 90° কোণে সম্পন্ন হয়।",
+    "subjectId": "subj-adm-medical-physics",
+    "subjectName": "Physics",
+    "chapterId": "chap-adm-medical-physics-ch9",
+    "chapterName": "Chapter 9 - Waves"
   },
   {
     "id": "q-adm-medical-phy9-2",
     "section": "Admission",
     "category": "Medical",
-    "subject": "Physics 1st Paper - Chapter 9",
     "type": "MCQ",
     "question": "শব্দ তরঙ্গ বায়ুতে কোন ধরনের তরঙ্গ হিসেবে সঞ্চালিত হয়?",
     "options": [
@@ -429,13 +460,16 @@
     ],
     "correctAnswer": 0,
     "marks": 1,
-    "explanation": "শব্দ তরঙ্গ সংকোচন ও প্রসারণের মাধ্যমে অগ্রসর হয় এবং এর কণাগুলো তরঙ্গ গতির দিকের সমান্তরালে কাঁপে, যা অনুদৈর্ঘ্য তরঙ্গ।"
+    "explanation": "শব্দ তরঙ্গ সংকোচন ও প্রসারণের মাধ্যমে অগ্রসর হয় এবং এর কণাগুলো তরঙ্গ গতির দিকের সমান্তরালে কাঁপে, যা অনুদৈর্ঘ্য তরঙ্গ।",
+    "subjectId": "subj-adm-medical-physics",
+    "subjectName": "Physics",
+    "chapterId": "chap-adm-medical-physics-ch9",
+    "chapterName": "Chapter 9 - Waves"
   },
   {
     "id": "q-adm-medical-phy9-3",
     "section": "Admission",
     "category": "Medical",
-    "subject": "Physics 1st Paper - Chapter 9",
     "type": "MCQ",
     "question": "নিচের কোন মাধ্যমে শব্দের বেগ সর্বাধিক? (মেডিকেল ভর্তি পরীক্ষা)",
     "options": [
@@ -446,13 +480,16 @@
     ],
     "correctAnswer": 2,
     "marks": 1,
-    "explanation": "কঠিন পদার্থের স্থিতিস্থাপকতা বেশি থাকায় কঠিন মাধ্যমে (যেমন লোহা বা ইস্পাত) শব্দের বেগ সবচেয়ে বেশি হয়।"
+    "explanation": "কঠিন পদার্থের স্থিতিস্থাপকতা বেশি থাকায় কঠিন মাধ্যমে (যেমন লোহা বা ইস্পাত) শব্দের বেগ সবচেয়ে বেশি হয়।",
+    "subjectId": "subj-adm-medical-physics",
+    "subjectName": "Physics",
+    "chapterId": "chap-adm-medical-physics-ch9",
+    "chapterName": "Chapter 9 - Waves"
   },
   {
     "id": "q-adm-medical-phy9-4",
     "section": "Admission",
     "category": "Medical",
-    "subject": "Physics 1st Paper - Chapter 9",
     "type": "MCQ",
     "question": "একটি তরঙ্গের কম্পাঙ্ক 500 Hz এবং তরঙ্গদৈর্ঘ্য 0.6 m হলে, তরঙ্গটির বেগ কত?",
     "options": [
@@ -463,13 +500,16 @@
     ],
     "correctAnswer": 1,
     "marks": 1,
-    "explanation": "v = fλ সূত্রানুসারে, v = 500 × 0.6 = 300 m/s।"
+    "explanation": "v = fλ সূত্রানুসারে, v = 500 × 0.6 = 300 m/s।",
+    "subjectId": "subj-adm-medical-physics",
+    "subjectName": "Physics",
+    "chapterId": "chap-adm-medical-physics-ch9",
+    "chapterName": "Chapter 9 - Waves"
   },
   {
     "id": "q-adm-medical-phy9-5",
     "section": "Admission",
     "category": "Medical",
-    "subject": "Physics 1st Paper - Chapter 9",
     "type": "MCQ",
     "question": "সুস্থ ও স্বাভাবিক মানুষের কান কত কম্পাঙ্কের শব্দ শুনতে পায়? (মেডিকেল ভর্তি পরীক্ষা)",
     "options": [
@@ -480,13 +520,16 @@
     ],
     "correctAnswer": 2,
     "marks": 1,
-    "explanation": "মানুষের শ্রবণযোগ্য কম্পাঙ্কের পাল্লা বা শ্রাব্যতার সীমা হলো 20 Hz থেকে 20,000 Hz পর্যন্ত।"
+    "explanation": "মানুষের শ্রবণযোগ্য কম্পাঙ্কের পাল্লা বা শ্রাব্যতার সীমা হলো 20 Hz থেকে 20,000 Hz পর্যন্ত।",
+    "subjectId": "subj-adm-medical-physics",
+    "subjectName": "Physics",
+    "chapterId": "chap-adm-medical-physics-ch9",
+    "chapterName": "Chapter 9 - Waves"
   },
   {
     "id": "q-adm-medical-phy9-6",
     "section": "Admission",
     "category": "Medical",
-    "subject": "Physics 1st Paper - Chapter 9",
     "type": "MCQ",
     "question": "গ্যাস মাধ্যমে পরম তাপমাত্রা চারগুণ বৃদ্ধি করলে শব্দের বেগের কী পরিবর্তন হবে?",
     "options": [
@@ -497,13 +540,16 @@
     ],
     "correctAnswer": 3,
     "marks": 1,
-    "explanation": "শব্দের বেগ তাপমাত্রার বর্গমূলের সমানুপাতিক (v ∝ √T)। তাপমাত্রা 4 গুণ বাড়লে বেগ √4 = 2 গুণ অর্থাৎ দ্বিগুণ হবে।"
+    "explanation": "শব্দের বেগ তাপমাত্রার বর্গমূলের সমানুপাতিক (v ∝ √T)। তাপমাত্রা 4 গুণ বাড়লে বেগ √4 = 2 গুণ অর্থাৎ দ্বিগুণ হবে।",
+    "subjectId": "subj-adm-medical-physics",
+    "subjectName": "Physics",
+    "chapterId": "chap-adm-medical-physics-ch9",
+    "chapterName": "Chapter 9 - Waves"
   },
   {
     "id": "q-adm-medical-phy9-7",
     "section": "Admission",
     "category": "Medical",
-    "subject": "Physics 1st Paper - Chapter 9",
     "type": "MCQ",
     "question": "শব্দের তীব্রতা লেভেল (Sound intensity level) পরিমাপের ব্যবহারিক একক নিচের কোনটি?",
     "options": [
@@ -514,13 +560,16 @@
     ],
     "correctAnswer": 2,
     "marks": 1,
-    "explanation": "শব্দের তীব্রতা লেভেল সাধারণত বেল অথবা এর দশমাংশ অর্থাৎ ডেসিবেল (dB)-এ প্রকাশ করা হয়।"
+    "explanation": "শব্দের তীব্রতা লেভেল সাধারণত বেল অথবা এর দশমাংশ অর্থাৎ ডেসিবেল (dB)-এ প্রকাশ করা হয়।",
+    "subjectId": "subj-adm-medical-physics",
+    "subjectName": "Physics",
+    "chapterId": "chap-adm-medical-physics-ch9",
+    "chapterName": "Chapter 9 - Waves"
   },
   {
     "id": "q-adm-medical-phy9-8",
     "section": "Admission",
     "category": "Medical",
-    "subject": "Physics 1st Paper - Chapter 9",
     "type": "MCQ",
     "question": "দুটি শব্দ তরঙ্গের কম্পাঙ্ক যথাক্রমে 256 Hz এবং 260 Hz। একত্রে শব্দ করলে প্রতি সেকেন্ডে কয়টি বিট শোনা যাবে?",
     "options": [
@@ -531,13 +580,16 @@
     ],
     "correctAnswer": 0,
     "marks": 1,
-    "explanation": "প্রতি সেকেন্ডে উৎপাদিত বিট সংখ্যা হলো দুটি কম্পাঙ্কের অন্তর: 260 - 256 = 4।"
+    "explanation": "প্রতি সেকেন্ডে উৎপাদিত বিট সংখ্যা হলো দুটি কম্পাঙ্কের অন্তর: 260 - 256 = 4।",
+    "subjectId": "subj-adm-medical-physics",
+    "subjectName": "Physics",
+    "chapterId": "chap-adm-medical-physics-ch9",
+    "chapterName": "Chapter 9 - Waves"
   },
   {
     "id": "q-adm-medical-phy9-9",
     "section": "Admission",
     "category": "Medical",
-    "subject": "Physics 1st Paper - Chapter 9",
     "type": "MCQ",
     "question": "স্থির তরঙ্গের পরপর দুটি সুস্পন্দ বিন্দু (Antinode) বা নিস্পন্দ বিন্দুর (Node) মধ্যকার দূরত্ব কত?",
     "options": [
@@ -548,13 +600,16 @@
     ],
     "correctAnswer": 2,
     "marks": 1,
-    "explanation": "স্থির তরঙ্গের দুটি পাশাপাশি নিস্পন্দ বিন্দু বা দুটি পাশাপাশি সুস্পন্দ বিন্দুর মধ্যকার দূরত্ব সর্বদা λ/2 হয়।"
+    "explanation": "স্থির তরঙ্গের দুটি পাশাপাশি নিস্পন্দ বিন্দু বা দুটি পাশাপাশি সুস্পন্দ বিন্দুর মধ্যকার দূরত্ব সর্বদা λ/2 হয়।",
+    "subjectId": "subj-adm-medical-physics",
+    "subjectName": "Physics",
+    "chapterId": "chap-adm-medical-physics-ch9",
+    "chapterName": "Chapter 9 - Waves"
   },
   {
     "id": "q-adm-medical-phy9-10",
     "section": "Admission",
     "category": "Medical",
-    "subject": "Physics 1st Paper - Chapter 9",
     "type": "MCQ",
     "question": "একটি স্থির তরঙ্গের একটি নিস্পন্দ বিন্দু (Node) ও ঠিক তার পার্শ্ববর্তী সুস্পন্দ বিন্দুর (Antinode) মধ্যবর্তী দূরত্ব কত?",
     "options": [
@@ -565,13 +620,16 @@
     ],
     "correctAnswer": 1,
     "marks": 1,
-    "explanation": "নিস্পন্দ বিন্দু ও তার ঠিক পাশের সুস্পন্দ বিন্দুর দূরত্ব তরঙ্গদৈর্ঘ্যের এক-চতুর্থাংশ বা λ/4 হয়।"
+    "explanation": "নিস্পন্দ বিন্দু ও তার ঠিক পাশের সুস্পন্দ বিন্দুর দূরত্ব তরঙ্গদৈর্ঘ্যের এক-চতুর্থাংশ বা λ/4 হয়।",
+    "subjectId": "subj-adm-medical-physics",
+    "subjectName": "Physics",
+    "chapterId": "chap-adm-medical-physics-ch9",
+    "chapterName": "Chapter 9 - Waves"
   },
   {
     "id": "q-adm-medical-phy9-11",
     "section": "Admission",
     "category": "Medical",
-    "subject": "Physics 1st Paper - Chapter 9",
     "type": "MCQ",
     "question": "দুটি তরঙ্গের বিস্তারের অনুপাত 2:3 হলে, তাদের তীব্রতার অনুপাত কত হবে?",
     "options": [
@@ -582,13 +640,16 @@
     ],
     "correctAnswer": 2,
     "marks": 1,
-    "explanation": "তরঙ্গের তীব্রতা বিস্তারের বর্গের সমানুপাতিক (I ∝ A^2)। তাই (2/3)^2 = 4/9।"
+    "explanation": "তরঙ্গের তীব্রতা বিস্তারের বর্গের সমানুপাতিক (I ∝ A^2)। তাই (2/3)^2 = 4/9।",
+    "subjectId": "subj-adm-medical-physics",
+    "subjectName": "Physics",
+    "chapterId": "chap-adm-medical-physics-ch9",
+    "chapterName": "Chapter 9 - Waves"
   },
   {
     "id": "q-adm-medical-phy9-12",
     "section": "Admission",
     "category": "Medical",
-    "subject": "Physics 1st Paper - Chapter 9",
     "type": "MCQ",
     "question": "দুটি তরঙ্গের পথপার্থক্য λ হলে, তাদের দশা পার্থক্য (Phase difference) কত হবে?",
     "options": [
@@ -599,13 +660,16 @@
     ],
     "correctAnswer": 3,
     "marks": 1,
-    "explanation": "দশা পার্থক্য Δφ = (2π/λ) × Δx। পথপার্থক্য Δx = λ বসালে দশা পার্থক্য হয় 2π।"
+    "explanation": "দশা পার্থক্য Δφ = (2π/λ) × Δx। পথপার্থক্য Δx = λ বসালে দশা পার্থক্য হয় 2π।",
+    "subjectId": "subj-adm-medical-physics",
+    "subjectName": "Physics",
+    "chapterId": "chap-adm-medical-physics-ch9",
+    "chapterName": "Chapter 9 - Waves"
   },
   {
     "id": "q-adm-medical-phy9-13",
     "section": "Admission",
     "category": "Medical",
-    "subject": "Physics 1st Paper - Chapter 9",
     "type": "MCQ",
     "question": "একটি খোলা নলের (Open pipe) ক্ষেত্রে উৎপন্ন সুরের তরঙ্গের বৈশিষ্ট্য অনুযায়ী কোন হারমোনিকসগুলো পাওয়া যায়?",
     "options": [
@@ -616,13 +680,16 @@
     ],
     "correctAnswer": 1,
     "marks": 1,
-    "explanation": "খোলা নলের উভয় প্রান্তে সুস্পন্দ বিন্দু থাকে, যার ফলে মৌলিক সুরসহ সকল (জোড় ও বিজোড়) হারমোনিকস উৎপন্ন হয়।"
+    "explanation": "খোলা নলের উভয় প্রান্তে সুস্পন্দ বিন্দু থাকে, যার ফলে মৌলিক সুরসহ সকল (জোড় ও বিজোড়) হারমোনিকস উৎপন্ন হয়।",
+    "subjectId": "subj-adm-medical-physics",
+    "subjectName": "Physics",
+    "chapterId": "chap-adm-medical-physics-ch9",
+    "chapterName": "Chapter 9 - Waves"
   },
   {
     "id": "q-adm-medical-phy9-14",
     "section": "Admission",
     "category": "Medical",
-    "subject": "Physics 1st Paper - Chapter 9",
     "type": "MCQ",
     "question": "একটি বন্ধ নলের (Closed pipe) ক্ষেত্রে কোন হারমোনিকসগুলো উৎপন্ন হয়? (মেডিকেল ভর্তি পরীক্ষা)",
     "options": [
@@ -633,13 +700,16 @@
     ],
     "correctAnswer": 2,
     "marks": 1,
-    "explanation": "বন্ধ নলের একপ্রান্ত নিস্পন্দ ও অন্যপ্রান্ত সুস্পন্দ হওয়ায় কেবলমাত্র বিজোড় গুণিতক বা বিজোড় হারমোনিকসগুলো উৎপন্ন হয়।"
+    "explanation": "বন্ধ নলের একপ্রান্ত নিস্পন্দ ও অন্যপ্রান্ত সুস্পন্দ হওয়ায় কেবলমাত্র বিজোড় গুণিতক বা বিজোড় হারমোনিকসগুলো উৎপন্ন হয়।",
+    "subjectId": "subj-adm-medical-physics",
+    "subjectName": "Physics",
+    "chapterId": "chap-adm-medical-physics-ch9",
+    "chapterName": "Chapter 9 - Waves"
   },
   {
     "id": "q-adm-medical-phy9-15",
     "section": "Admission",
     "category": "Medical",
-    "subject": "Physics 1st Paper - Chapter 9",
     "type": "MCQ",
     "question": "একটি প্রগামী তরঙ্গের সমীকরণ y = A sin(ωt - kx) হলে, তরঙ্গটির বেগ v প্রকাশের সঠিক রাশিমালা কোনটি?",
     "options": [
@@ -650,13 +720,16 @@
     ],
     "correctAnswer": 2,
     "marks": 1,
-    "explanation": "কৌণিক কম্পাঙ্ক ω এবং তরঙ্গ সংখ্যা k এর অনুপাত হলো তরঙ্গ বেগ v = ω/k।"
+    "explanation": "কৌণিক কম্পাঙ্ক ω এবং তরঙ্গ সংখ্যা k এর অনুপাত হলো তরঙ্গ বেগ v = ω/k।",
+    "subjectId": "subj-adm-medical-physics",
+    "subjectName": "Physics",
+    "chapterId": "chap-adm-medical-physics-ch9",
+    "chapterName": "Chapter 9 - Waves"
   },
   {
     "id": "q-adm-medical-phy9-16",
     "section": "Admission",
     "category": "Medical",
-    "subject": "Physics 1st Paper - Chapter 9",
     "type": "MCQ",
     "question": "শব্দের তীক্ষ্ণতা বা পিচ (Pitch) কিসের উপর সরাসরি নির্ভর করে? (মেডিকেল ভর্তি পরীক্ষা)",
     "options": [
@@ -667,13 +740,16 @@
     ],
     "correctAnswer": 1,
     "marks": 1,
-    "explanation": "শব্দের তীক্ষ্ণতা বা পিচ সরাসরি কম্পাঙ্কের (Frequency) উপর নির্ভর করে। কম্পাঙ্ক বেশি হলে শব্দ চিকন বা তীক্ষ্ণ হয়।"
+    "explanation": "শব্দের তীক্ষ্ণতা বা পিচ সরাসরি কম্পাঙ্কের (Frequency) উপর নির্ভর করে। কম্পাঙ্ক বেশি হলে শব্দ চিকন বা তীক্ষ্ণ হয়।",
+    "subjectId": "subj-adm-medical-physics",
+    "subjectName": "Physics",
+    "chapterId": "chap-adm-medical-physics-ch9",
+    "chapterName": "Chapter 9 - Waves"
   },
   {
     "id": "q-adm-medical-phy9-17",
     "section": "Admission",
     "category": "Medical",
-    "subject": "Physics 1st Paper - Chapter 9",
     "type": "MCQ",
     "question": "বিট উৎপন্ন হওয়ার মূল শর্ত হলো দুটি তরঙ্গের কম্পাঙ্কের পার্থক্য হতে হবে— (মেডিকেল ভর্তি পরীক্ষা)",
     "options": [
@@ -684,13 +760,16 @@
     ],
     "correctAnswer": 0,
     "marks": 1,
-    "explanation": "মানুষের কান প্রতি সেকেন্ডে 10টির বেশি পৃথক শব্দ আলাদা করতে পারে না, তাই বিট স্পষ্টভাবে শোনার জন্য কম্পাঙ্কের পার্থক্য 10 Hz এর কম হতে হয়।"
+    "explanation": "মানুষের কান প্রতি সেকেন্ডে 10টির বেশি পৃথক শব্দ আলাদা করতে পারে না, তাই বিট স্পষ্টভাবে শোনার জন্য কম্পাঙ্কের পার্থক্য 10 Hz এর কম হতে হয়।",
+    "subjectId": "subj-adm-medical-physics",
+    "subjectName": "Physics",
+    "chapterId": "chap-adm-medical-physics-ch9",
+    "chapterName": "Chapter 9 - Waves"
   },
   {
     "id": "q-adm-medical-phy9-18",
     "section": "Admission",
     "category": "Medical",
-    "subject": "Physics 1st Paper - Chapter 9",
     "type": "MCQ",
     "question": "বায়ুতে শব্দের বেগ নিচের কোনটির উপর নির্ভর করে না? (বোর্ড প্রশ্ন)",
     "options": [
@@ -701,13 +780,16 @@
     ],
     "correctAnswer": 2,
     "marks": 1,
-    "explanation": "সমষ্ণ বা রুদ্ধতাপীয় প্রক্রিয়ায় চাপের পরিবর্তনে ঘনত্ব এমনভাবে পরিবর্তিত হয় যে v ধ্রুবক থাকে; তাই বায়ুতে শব্দের বেগ চাপের উপর নির্ভর করে না।"
+    "explanation": "সমষ্ণ বা রুদ্ধতাপীয় প্রক্রিয়ায় চাপের পরিবর্তনে ঘনত্ব এমনভাবে পরিবর্তিত হয় যে v ধ্রুবক থাকে; তাই বায়ুতে শব্দের বেগ চাপের উপর নির্ভর করে না।",
+    "subjectId": "subj-adm-medical-physics",
+    "subjectName": "Physics",
+    "chapterId": "chap-adm-medical-physics-ch9",
+    "chapterName": "Chapter 9 - Waves"
   },
   {
     "id": "q-adm-medical-phy9-19",
     "section": "Admission",
     "category": "Medical",
-    "subject": "Physics 1st Paper - Chapter 9",
     "type": "MCQ",
     "question": "শব্দের প্রাবল্য (Loudness) মূলত কিসের উপর নির্ভর করে?",
     "options": [
@@ -718,13 +800,16 @@
     ],
     "correctAnswer": 2,
     "marks": 1,
-    "explanation": "প্রাবল্য একটি শারীরিক অনুভূতি যা শব্দের তীব্রতা এবং মানুষের কানের সংবেদনশীলতার উপর নির্ভর করে।"
+    "explanation": "প্রাবল্য একটি শারীরিক অনুভূতি যা শব্দের তীব্রতা এবং মানুষের কানের সংবেদনশীলতার উপর নির্ভর করে।",
+    "subjectId": "subj-adm-medical-physics",
+    "subjectName": "Physics",
+    "chapterId": "chap-adm-medical-physics-ch9",
+    "chapterName": "Chapter 9 - Waves"
   },
   {
     "id": "q-adm-medical-phy9-20",
     "section": "Admission",
     "category": "Medical",
-    "subject": "Physics 1st Paper - Chapter 9",
     "type": "MCQ",
     "question": "একটি সুরশলাকার কম্পাঙ্ক 256 Hz এবং বাতাসে শব্দের বেগ 332 m/s হলে উৎপন্ন তরঙ্গের তরঙ্গদৈর্ঘ্য কত?",
     "options": [
@@ -735,13 +820,16 @@
     ],
     "correctAnswer": 0,
     "marks": 1,
-    "explanation": "λ = v / f = 332 / 256 = 1.297 m।"
+    "explanation": "λ = v / f = 332 / 256 = 1.297 m।",
+    "subjectId": "subj-adm-medical-physics",
+    "subjectName": "Physics",
+    "chapterId": "chap-adm-medical-physics-ch9",
+    "chapterName": "Chapter 9 - Waves"
   },
   {
     "id": "q-adm-medical-phy9-21",
     "section": "Admission",
     "category": "Medical",
-    "subject": "Physics 1st Paper - Chapter 9",
     "type": "MCQ",
     "question": "ডপলার ক্রিয়ার ক্ষেত্রে শ্রোতা স্থির থেকে উৎসের দিকে অগ্রসর হলে আপাত কম্পাঙ্ক—",
     "options": [
@@ -752,13 +840,16 @@
     ],
     "correctAnswer": 0,
     "marks": 1,
-    "explanation": "শ্রোতা যখন উৎসের দিকে অগ্রসর হয়, তখন প্রতি সেকেন্ডে সে বেশি সংখ্যক তরঙ্গ গ্রহণ করে, ফলে আপাত কম্পাঙ্ক বৃদ্ধি পায়।"
+    "explanation": "শ্রোতা যখন উৎসের দিকে অগ্রসর হয়, তখন প্রতি সেকেন্ডে সে বেশি সংখ্যক তরঙ্গ গ্রহণ করে, ফলে আপাত কম্পাঙ্ক বৃদ্ধি পায়।",
+    "subjectId": "subj-adm-medical-physics",
+    "subjectName": "Physics",
+    "chapterId": "chap-adm-medical-physics-ch9",
+    "chapterName": "Chapter 9 - Waves"
   },
   {
     "id": "q-adm-medical-phy9-22",
     "section": "Admission",
     "category": "Medical",
-    "subject": "Physics 1st Paper - Chapter 9",
     "type": "MCQ",
     "question": "শব্দের প্রতিধ্বনি শোনার জন্য উৎস ও প্রতিফলকের মধ্যে ন্যূনতম দূরত্ব কত হওয়া প্রয়োজন?",
     "options": [
@@ -769,13 +860,16 @@
     ],
     "correctAnswer": 3,
     "marks": 1,
-    "explanation": "কানের শব্দ অনুভূতির স্থায়িত্বকাল 0.1 s এবং শব্দবেগ 340 m/s ধরলে ন্যূনতম দূরত্ব (340 × 0.1)/2 = 17m বা প্রায় 16.6 m হয়।"
+    "explanation": "কানের শব্দ অনুভূতির স্থায়িত্বকাল 0.1 s এবং শব্দবেগ 340 m/s ধরলে ন্যূনতম দূরত্ব (340 × 0.1)/2 = 17m বা প্রায় 16.6 m হয়।",
+    "subjectId": "subj-adm-medical-physics",
+    "subjectName": "Physics",
+    "chapterId": "chap-adm-medical-physics-ch9",
+    "chapterName": "Chapter 9 - Waves"
   },
   {
     "id": "q-adm-medical-phy9-23",
     "section": "Admission",
     "category": "Medical",
-    "subject": "Physics 1st Paper - Chapter 9",
     "type": "MCQ",
     "question": "কোন ধরনের তরঙ্গের ক্ষেত্রে সমাবর্তন (Polarization) ঘটে কিন্তু অনুদৈর্ঘ্য তরঙ্গের ক্ষেত্রে ঘটে না?",
     "options": [
@@ -786,13 +880,16 @@
     ],
     "correctAnswer": 1,
     "marks": 1,
-    "explanation": "শুধুমাত্র অনুপ্রস্থ তরঙ্গের কণার কম্পন তরঙ্গ সঞ্চালনের দিকের সাথে লম্বতলে বিভিন্ন দিকে হতে পারে, তাই এর সমাবর্তন সম্ভব।"
+    "explanation": "শুধুমাত্র অনুপ্রস্থ তরঙ্গের কণার কম্পন তরঙ্গ সঞ্চালনের দিকের সাথে লম্বতলে বিভিন্ন দিকে হতে পারে, তাই এর সমাবর্তন সম্ভব।",
+    "subjectId": "subj-adm-medical-physics",
+    "subjectName": "Physics",
+    "chapterId": "chap-adm-medical-physics-ch9",
+    "chapterName": "Chapter 9 - Waves"
   },
   {
     "id": "q-adm-medical-phy9-24",
     "section": "Admission",
     "category": "Medical",
-    "subject": "Physics 1st Paper - Chapter 9",
     "type": "MCQ",
     "question": "কোনো মাধ্যমে একটি তরঙ্গের শক্তি সঞ্চালিত হওয়ার হার প্রতি একক লম্ব ক্ষেত্রফলে কী নামে পরিচিত?",
     "options": [
@@ -803,13 +900,16 @@
     ],
     "correctAnswer": 0,
     "marks": 1,
-    "explanation": "একক ক্ষেত্রফলের মধ্য দিয়ে লম্বভাবে প্রতি সেকেন্ডে প্রবাহিত শক্তির পরিমাণকে তরঙ্গের তীব্রতা (Intensity) বলে।"
+    "explanation": "একক ক্ষেত্রফলের মধ্য দিয়ে লম্বভাবে প্রতি সেকেন্ডে প্রবাহিত শক্তির পরিমাণকে তরঙ্গের তীব্রতা (Intensity) বলে।",
+    "subjectId": "subj-adm-medical-physics",
+    "subjectName": "Physics",
+    "chapterId": "chap-adm-medical-physics-ch9",
+    "chapterName": "Chapter 9 - Waves"
   },
   {
     "id": "q-adm-medical-phy9-25",
     "section": "Admission",
     "category": "Medical",
-    "subject": "Physics 1st Paper - Chapter 9",
     "type": "MCQ",
     "question": "ওয়েবার-ফেচনার সূত্রানুসারে শব্দের তীব্রতা ও কানে অনুভূতির সংবেদনের মধ্যে সম্পর্কটি কেমন?",
     "options": [
@@ -820,13 +920,16 @@
     ],
     "correctAnswer": 1,
     "marks": 1,
-    "explanation": "অনুভূতির সংবেদন শব্দের তীব্রতার লগারিদমের সমানুপাতিক হয়।"
+    "explanation": "অনুভূতির সংবেদন শব্দের তীব্রতার লগারিদমের সমানুপাতিক হয়।",
+    "subjectId": "subj-adm-medical-physics",
+    "subjectName": "Physics",
+    "chapterId": "chap-adm-medical-physics-ch9",
+    "chapterName": "Chapter 9 - Waves"
   },
   {
     "id": "q-adm-medical-phy9-26",
     "section": "Admission",
     "category": "Medical",
-    "subject": "Physics 1st Paper - Chapter 9",
     "type": "MCQ",
     "question": "কোনো প্রগামী তরঙ্গের সমীকরণ y = 0.05 sin(2π(100t - x/2)) হলে, তরঙ্গটির কম্পাঙ্ক কত?",
     "options": [
@@ -837,13 +940,16 @@
     ],
     "correctAnswer": 1,
     "marks": 1,
-    "explanation": "সমীকরণটিকে y = A sin(2π(ft - x/λ)) এর সাথে তুলনা করলে কম্পাঙ্ক f = 100 Hz পাওয়া যায়।"
+    "explanation": "সমীকরণটিকে y = A sin(2π(ft - x/λ)) এর সাথে তুলনা করলে কম্পাঙ্ক f = 100 Hz পাওয়া যায়।",
+    "subjectId": "subj-adm-medical-physics",
+    "subjectName": "Physics",
+    "chapterId": "chap-adm-medical-physics-ch9",
+    "chapterName": "Chapter 9 - Waves"
   },
   {
     "id": "q-adm-medical-phy9-27",
     "section": "Admission",
     "category": "Medical",
-    "subject": "Physics 1st Paper - Chapter 9",
     "type": "MCQ",
     "question": "নিচের কোন গ্যাসে শব্দের বেগ সর্বনিম্ন হতে পারে?",
     "options": [
@@ -854,13 +960,16 @@
     ],
     "correctAnswer": 2,
     "marks": 1,
-    "explanation": "শব্দের বেগ গ্যাসের ঘনত্বের ও আণবিক ভরের বর্গমূলের ব্যস্তানুপাতিক (v ∝ 1/√M)। কার্বন ডাইঅক্সাইডের আণবিক ভর বেশি হওয়ায় এর বেগ কম হয়।"
+    "explanation": "শব্দের বেগ গ্যাসের ঘনত্বের ও আণবিক ভরের বর্গমূলের ব্যস্তানুপাতিক (v ∝ 1/√M)। কার্বন ডাইঅক্সাইডের আণবিক ভর বেশি হওয়ায় এর বেগ কম হয়।",
+    "subjectId": "subj-adm-medical-physics",
+    "subjectName": "Physics",
+    "chapterId": "chap-adm-medical-physics-ch9",
+    "chapterName": "Chapter 9 - Waves"
   },
   {
     "id": "q-adm-medical-phy9-28",
     "section": "Admission",
     "category": "Medical",
-    "subject": "Physics 1st Paper - Chapter 9",
     "type": "MCQ",
     "question": "স্থির তরঙ্গের অপর নাম কী?",
     "options": [
@@ -871,13 +980,16 @@
     ],
     "correctAnswer": 0,
     "marks": 1,
-    "explanation": "স্থির তরঙ্গ বা Standing wave কে অবরুদ্ধ তরঙ্গও বলা হয় কারণ শক্তি মাধ্যমেই আবদ্ধ থাকে।"
+    "explanation": "স্থির তরঙ্গ বা Standing wave কে অবরুদ্ধ তরঙ্গও বলা হয় কারণ শক্তি মাধ্যমেই আবদ্ধ থাকে।",
+    "subjectId": "subj-adm-medical-physics",
+    "subjectName": "Physics",
+    "chapterId": "chap-adm-medical-physics-ch9",
+    "chapterName": "Chapter 9 - Waves"
   },
   {
     "id": "q-adm-medical-phy9-29",
     "section": "Admission",
     "category": "Medical",
-    "subject": "Physics 1st Paper - Chapter 9",
     "type": "MCQ",
     "question": "সুরযুক্ত শব্দের প্রধান বৈশিষ্ট্য বা গুণ কয়টি?",
     "options": [
@@ -888,13 +1000,16 @@
     ],
     "correctAnswer": 2,
     "marks": 1,
-    "explanation": "সুরযুক্ত শব্দের প্রধান তিনটি বৈশিষ্ট্য হলো: প্রাবল্য (Loudness), তীক্ষ্ণতা (Pitch) এবং গুণ বা জাতি (Quality)।"
+    "explanation": "সুরযুক্ত শব্দের প্রধান তিনটি বৈশিষ্ট্য হলো: প্রাবল্য (Loudness), তীক্ষ্ণতা (Pitch) এবং গুণ বা জাতি (Quality)।",
+    "subjectId": "subj-adm-medical-physics",
+    "subjectName": "Physics",
+    "chapterId": "chap-adm-medical-physics-ch9",
+    "chapterName": "Chapter 9 - Waves"
   },
   {
     "id": "q-adm-medical-phy9-30",
     "section": "Admission",
     "category": "Medical",
-    "subject": "Physics 1st Paper - Chapter 9",
     "type": "MCQ",
     "question": "পানি ও বাতাসের মধ্যে শব্দ সঞ্চালিত হলে নিচের কোন রাশিটি সর্বদা অপরিবর্তিত থাকে?",
     "options": [
@@ -905,6 +1020,10 @@
     ],
     "correctAnswer": 2,
     "marks": 1,
-    "explanation": "তরঙ্গ এক মাধ্যম থেকে অন্য মাধ্যমে প্রবেশ করলে উৎসের উপর নির্ভর করায় এর কম্পাঙ্ক অপরিবর্তিত থাকে।"
+    "explanation": "তরঙ্গ এক মাধ্যম থেকে অন্য মাধ্যমে প্রবেশ করলে উৎসের উপর নির্ভর করায় এর কম্পাঙ্ক অপরিবর্তিত থাকে।",
+    "subjectId": "subj-adm-medical-physics",
+    "subjectName": "Physics",
+    "chapterId": "chap-adm-medical-physics-ch9",
+    "chapterName": "Chapter 9 - Waves"
   }
 ]

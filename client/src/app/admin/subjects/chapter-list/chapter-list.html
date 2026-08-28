@@ -1,0 +1,67 @@
+<div class="page">
+  <a routerLink="/admin/subjects" class="muted">&larr; Back to subjects</a>
+  <h2>{{ subject()?.name || 'Subject' }} &middot; Chapters</h2>
+
+  <div class="card">
+    <div class="row" style="align-items: flex-end;">
+      <div class="form-group" style="flex: 3;">
+        <label for="newChapter">New chapter name</label>
+        <input
+          id="newChapter"
+          type="text"
+          [(ngModel)]="newChapterName"
+          [ngModelOptions]="{ standalone: true }"
+          placeholder="e.g. Chapter 9 - Waves"
+          (keyup.enter)="add()"
+        />
+      </div>
+      <button class="btn" type="button" style="flex: 0 0 auto;" [disabled]="adding()" (click)="add()">
+        {{ adding() ? 'Adding...' : 'Add chapter' }}
+      </button>
+    </div>
+    @if (errorMessage()) {
+      <p class="error-text">{{ errorMessage() }}</p>
+    }
+  </div>
+
+  @if (loading()) {
+    <p class="muted">Loading chapters...</p>
+  } @else if (chapters().length === 0) {
+    <div class="empty-state">No chapters yet. Add one above, or skip this if the subject only needs full-subject exams.</div>
+  } @else {
+    <div class="card">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (c of chapters(); track c.id) {
+            <tr>
+              <td>
+                @if (editingId === c.id) {
+                  <input type="text" [(ngModel)]="editingName" [ngModelOptions]="{ standalone: true }" (keyup.enter)="saveEdit(c)" />
+                } @else {
+                  {{ c.name }}
+                }
+              </td>
+              <td>
+                @if (editingId === c.id) {
+                  <button class="link-btn" type="button" (click)="saveEdit(c)">Save</button>
+                  &nbsp;
+                  <button class="link-btn" type="button" (click)="cancelEdit()">Cancel</button>
+                } @else {
+                  <button class="link-btn" type="button" (click)="startEdit(c)">Edit</button>
+                  &nbsp;
+                  <button class="link-btn" type="button" (click)="remove(c)">Delete</button>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

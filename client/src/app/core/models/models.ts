@@ -2,6 +2,7 @@ export type Section = 'HSC' | 'SSC' | 'Admission';
 export type AdmissionCategory = 'Medical' | 'Engineering' | 'Varsity';
 export type QuestionType = 'MCQ' | 'CQ';
 export type Role = 'student' | 'admin';
+export type ExamMode = 'full' | 'chapter';
 
 export interface User {
   id: string;
@@ -13,11 +14,27 @@ export interface User {
   createdAt: string;
 }
 
+export interface Subject {
+  id: string;
+  name: string;
+  section: Section;
+  category?: AdmissionCategory;
+}
+
+export interface Chapter {
+  id: string;
+  subjectId: string;
+  name: string;
+}
+
 export interface Question {
   id: string;
   section: Section;
   category?: AdmissionCategory;
-  subject: string;
+  subjectId: string;
+  subjectName: string;
+  chapterId?: string;
+  chapterName?: string;
   type: QuestionType;
   question: string;
   marks: number;
@@ -31,7 +48,11 @@ export interface ExamSummary {
   title: string;
   section: Section;
   category?: AdmissionCategory;
-  subject: string;
+  subjectId: string;
+  subjectName: string;
+  mode: ExamMode;
+  chapterId?: string;
+  chapterName?: string;
   duration: number;
   questionCount: number;
   createdAt: string;
@@ -45,7 +66,10 @@ export interface ExamQuestion {
   id: string;
   section: Section;
   category?: AdmissionCategory;
-  subject: string;
+  subjectId: string;
+  subjectName: string;
+  chapterId?: string;
+  chapterName?: string;
   type: QuestionType;
   question: string;
   marks: number;
@@ -57,7 +81,7 @@ export interface ExamPaper {
   title: string;
   section: Section;
   category?: AdmissionCategory;
-  subject: string;
+  subjectName: string;
   duration: number;
   questions: ExamQuestion[];
 }
@@ -88,7 +112,7 @@ export interface ExamResult {
   examId: string;
   examTitle: string;
   section: Section;
-  subject: string;
+  subjectName: string;
   answers: ResultAnswer[];
   mcqScore: number;
   mcqTotal: number;

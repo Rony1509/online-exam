@@ -1,26 +1,21 @@
 <div class="page">
-  <h2>{{ category ? category + ' (Admission)' : section }} Exams</h2>
-  <p class="muted">Pick an exam to start. MCQs are graded instantly; CQ answers are graded by your teacher.</p>
+  <h2>{{ category ? category + ' (Admission)' : section }} Subjects</h2>
+  <p class="muted">Pick a subject, then choose a chapter or the full-subject exam list.</p>
 
   @if (loading()) {
-    <p class="muted">Loading exams...</p>
+    <p class="muted">Loading subjects...</p>
   } @else if (errorMessage()) {
     <p class="error-text">{{ errorMessage() }}</p>
-  } @else if (exams().length === 0) {
-    <div class="empty-state">No exams are available for {{ category || section }} yet.</div>
+  } @else if (subjects().length === 0) {
+    <div class="empty-state">No subjects are available for {{ category || section }} yet.</div>
   } @else {
-    @for (exam of exams(); track exam.id) {
-      <div class="card">
-        <div class="card-header">
-          <div>
-            <h3>{{ exam.title }}</h3>
-            <p class="muted" style="margin: 0;">
-              {{ exam.subject }} &middot; {{ exam.questionCount }} questions &middot; {{ exam.duration }} min
-            </p>
-          </div>
-          <a class="btn" [routerLink]="['/exam', exam.id]">Start exam</a>
+    <div class="row">
+      @for (subject of subjects(); track subject.id) {
+        <div class="card">
+          <h3>{{ subject.name }}</h3>
+          <a class="btn" [routerLink]="['/subject', subject.id]">View exams</a>
         </div>
-      </div>
-    }
+      }
+    </div>
   }
 </div>

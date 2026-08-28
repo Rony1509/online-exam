@@ -1,0 +1,43 @@
+<div class="page">
+  <a routerLink="/dashboard" class="muted">&larr; Back to subjects</a>
+  <h2>{{ subject()?.name || 'Subject' }}</h2>
+
+  @if (loading()) {
+    <p class="muted">Loading...</p>
+  } @else if (errorMessage()) {
+    <p class="error-text">{{ errorMessage() }}</p>
+  } @else {
+    @if (chapters().length > 0) {
+      <h3>Chapter-wise</h3>
+      <div class="row">
+        @for (chapter of chapters(); track chapter.id) {
+          <div class="card">
+            <h4 style="margin: 0 0 0.75rem;">{{ chapter.name }}</h4>
+            <a class="btn btn-secondary" [routerLink]="['/subject', subject()?.id, 'chapter', chapter.id]">
+              View exams
+            </a>
+          </div>
+        }
+      </div>
+    }
+
+    <h3>Full Subject</h3>
+    @if (fullExams().length === 0) {
+      <div class="empty-state">No full-subject exams yet{{ chapters().length > 0 ? ' — try a chapter above' : '' }}.</div>
+    } @else {
+      @for (exam of fullExams(); track exam.id) {
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3 style="margin: 0;">{{ exam.title }}</h3>
+              <p class="muted" style="margin: 0;">
+                {{ exam.questionCount }} questions &middot; {{ exam.duration }} min
+              </p>
+            </div>
+            <a class="btn" [routerLink]="['/exam', exam.id]">Start exam</a>
+          </div>
+        </div>
+      }
+    }
+  }
+</div>

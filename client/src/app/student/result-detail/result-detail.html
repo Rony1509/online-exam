@@ -7,7 +7,7 @@
     <div class="card">
       <h2>{{ r.examTitle }}</h2>
       <p class="muted">
-        {{ r.section }} &middot; {{ r.subject }} &middot; Submitted {{ r.submittedAt | date: 'medium' }}
+        {{ r.section }} &middot; {{ r.subjectName }} &middot; Submitted {{ r.submittedAt | date: 'medium' }}
       </p>
       @if (auth.isAdmin()) {
         <p class="muted">Student: {{ r.studentName }} ({{ r.studentEmail }})</p>

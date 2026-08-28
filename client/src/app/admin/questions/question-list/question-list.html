@@ -36,7 +36,12 @@
       </div>
       <div class="form-group">
         <label>Subject</label>
-        <input type="text" [(ngModel)]="subjectFilter" (ngModelChange)="load()" placeholder="e.g. Physics" />
+        <select [(ngModel)]="subjectFilter" (ngModelChange)="load()">
+          <option value="">All</option>
+          @for (s of filteredSubjects; track s.id) {
+            <option [value]="s.id">{{ s.name }}</option>
+          }
+        </select>
       </div>
     </div>
   </div>
@@ -63,7 +68,7 @@
             <tr>
               <td>{{ q.question }}</td>
               <td>{{ q.section }}{{ q.category ? ' · ' + q.category : '' }}</td>
-              <td>{{ q.subject }}</td>
+              <td>{{ q.subjectName }}{{ q.chapterName ? ' · ' + q.chapterName : '' }}</td>
               <td><span class="badge">{{ q.type }}</span></td>
               <td>{{ q.marks }}</td>
               <td>

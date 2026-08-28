@@ -32,8 +32,13 @@
             </div>
           }
           <div class="form-group">
-            <label for="subject">Subject</label>
-            <input id="subject" type="text" formControlName="subject" placeholder="e.g. Physics" />
+            <label for="subjectId">Subject</label>
+            <select id="subjectId" formControlName="subjectId">
+              <option value="">Select...</option>
+              @for (s of filteredSubjects; track s.id) {
+                <option [value]="s.id">{{ s.name }}</option>
+              }
+            </select>
           </div>
           <div class="form-group">
             <label for="duration">Duration (minutes)</label>
@@ -41,22 +46,44 @@
           </div>
         </div>
 
+        <div class="row">
+          <div class="form-group">
+            <label for="mode">Exam type</label>
+            <select id="mode" formControlName="mode">
+              <option value="full">Full subject</option>
+              <option value="chapter">Chapter-wise</option>
+            </select>
+          </div>
+          @if (isChapterMode) {
+            <div class="form-group">
+              <label for="chapterId">Chapter</label>
+              <select id="chapterId" formControlName="chapterId">
+                <option value="">Select...</option>
+                @for (c of chapters(); track c.id) {
+                  <option [value]="c.id">{{ c.name }}</option>
+                }
+              </select>
+              @if (form.controls.subjectId.value && chapters().length === 0) {
+                <span class="muted" style="font-size: 0.8rem;">
+                  This subject has no chapters yet —
+                  <a [routerLink]="['/admin/subjects', form.controls.subjectId.value, 'chapters']">add one</a>.
+                </span>
+              }
+            </div>
+          }
+        </div>
+
         <div class="form-group">
           <label>Questions ({{ selectedCount }} selected)</label>
-          <input
-            type="text"
-            [(ngModel)]="subjectFilter"
-            [ngModelOptions]="{ standalone: true }"
-            placeholder="Filter question bank by subject..."
-          />
         </div>
 
         <div class="card" style="max-height: 360px; overflow-y: auto;">
-          @if (filteredQuestions.length === 0) {
-            <p class="muted">
-              No matching questions{{ isAdmission && !form.controls.category.value ? ' — pick a category first' : '' }}.
-              Add some in the question bank first.
-            </p>
+          @if (!form.controls.subjectId.value) {
+            <p class="muted">Pick a subject above to see matching questions.</p>
+          } @else if (isChapterMode && !form.controls.chapterId.value) {
+            <p class="muted">Pick a chapter above to see matching questions.</p>
+          } @else if (filteredQuestions.length === 0) {
+            <p class="muted">No matching questions yet. Add some in the question bank first.</p>
           } @else {
             @for (q of filteredQuestions; track q.id) {
               <label style="display: flex; align-items: flex-start; gap: 0.6rem; font-weight: 400; margin-bottom: 0.6rem;">
@@ -65,7 +92,7 @@
                   {{ q.question }}
                   <br />
                   <span class="muted" style="font-size: 0.8rem;">
-                    {{ q.subject }} &middot; {{ q.type }} &middot; {{ q.marks }} marks
+                    {{ q.subjectName }}{{ q.chapterName ? ' · ' + q.chapterName : '' }} &middot; {{ q.type }} &middot; {{ q.marks }} marks
                   </span>
                 </span>
               </label>

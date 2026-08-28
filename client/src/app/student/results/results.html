@@ -22,7 +22,7 @@
           @for (r of results(); track r.id) {
             <tr>
               <td>{{ r.examTitle }}</td>
-              <td>{{ r.section }} &middot; {{ r.subject }}</td>
+              <td>{{ r.section }} &middot; {{ r.subjectName }}</td>
               <td>{{ r.submittedAt | date: 'medium' }}</td>
               <td>
                 @if (r.cqGraded) {

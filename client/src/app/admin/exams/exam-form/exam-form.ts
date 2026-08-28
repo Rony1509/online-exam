@@ -4,7 +4,9 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ExamService } from '../../../core/services/exam.service';
 import { QuestionService } from '../../../core/services/question.service';
-import { AdmissionCategory, Question, Section } from '../../../core/models/models';
+import { SubjectService } from '../../../core/services/subject.service';
+import { ChapterService } from '../../../core/services/chapter.service';
+import { AdmissionCategory, Chapter, ExamMode, Question, Section, Subject } from '../../../core/models/models';
 
 const ADMISSION_CATEGORIES: AdmissionCategory[] = ['Medical', 'Engineering', 'Varsity'];
 
@@ -20,6 +22,8 @@ export class ExamForm {
   private router = inject(Router);
   private examService = inject(ExamService);
   private questionService = inject(QuestionService);
+  private subjectService = inject(SubjectService);
+  private chapterService = inject(ChapterService);
 
   editingId: string | null = null;
   loading = signal(false);
@@ -27,15 +31,18 @@ export class ExamForm {
   errorMessage = signal<string | null>(null);
 
   allQuestions = signal<Question[]>([]);
+  allSubjects = signal<Subject[]>([]);
+  chapters = signal<Chapter[]>([]);
   selectedIds = signal<Set<string>>(new Set());
-  subjectFilter = '';
   readonly admissionCategories = ADMISSION_CATEGORIES;
 
   form = this.fb.nonNullable.group({
     title: ['', [Validators.required]],
     section: ['SSC', [Validators.required]],
     category: [''],
-    subject: ['', [Validators.required]],
+    subjectId: ['', [Validators.required]],
+    mode: ['full' as ExamMode, [Validators.required]],
+    chapterId: [''],
     duration: [30, [Validators.required, Validators.min(1)]],
   });
 
@@ -43,15 +50,26 @@ export class ExamForm {
     return this.form.controls.section.value === 'Admission';
   }
 
-  get filteredQuestions(): Question[] {
+  get isChapterMode(): boolean {
+    return this.form.controls.mode.value === 'chapter';
+  }
+
+  get filteredSubjects(): Subject[] {
     const section = this.form.controls.section.value;
     const category = this.form.controls.category.value;
-    return this.allQuestions().filter(
-      (q) =>
-        q.section === section &&
-        (!this.isAdmission || q.category === category) &&
-        (!this.subjectFilter || q.subject.toLowerCase().includes(this.subjectFilter.toLowerCase())),
+    return this.allSubjects().filter(
+      (s) => s.section === section && (!this.isAdmission || s.category === category),
     );
+  }
+
+  get filteredQuestions(): Question[] {
+    const subjectId = this.form.controls.subjectId.value;
+    if (!subjectId) return [];
+    return this.allQuestions().filter((q) => {
+      if (q.subjectId !== subjectId) return false;
+      if (this.isChapterMode) return q.chapterId === this.form.controls.chapterId.value;
+      return true;
+    });
   }
 
   get selectedCount(): number {
@@ -60,6 +78,13 @@ export class ExamForm {
 
   ngOnInit(): void {
     this.questionService.list().subscribe((questions) => this.allQuestions.set(questions));
+    this.subjectService.list().subscribe((subjects) => this.allSubjects.set(subjects));
+
+    this.form.controls.subjectId.valueChanges.subscribe((subjectId) => {
+      this.form.controls.chapterId.setValue('');
+      this.chapters.set([]);
+      if (subjectId) this.loadChapters(subjectId);
+    });
 
     const id = this.route.snapshot.paramMap.get('id');
     if (id && id !== 'new') {
@@ -71,15 +96,22 @@ export class ExamForm {
             title: exam.title,
             section: exam.section,
             category: exam.category ?? '',
-            subject: exam.subject,
-            duration: exam.duration,
+            subjectId: exam.subjectId,
+            mode: exam.mode,
           });
+          if (exam.subjectId) this.loadChapters(exam.subjectId);
+          this.form.controls.chapterId.setValue(exam.chapterId ?? '');
+          this.form.patchValue({ duration: exam.duration });
           this.selectedIds.set(new Set(exam.questionIds));
           this.loading.set(false);
         },
         error: () => this.loading.set(false),
       });
     }
+  }
+
+  private loadChapters(subjectId: string): void {
+    this.chapterService.list({ subjectId }).subscribe((chapters) => this.chapters.set(chapters));
   }
 
   toggle(questionId: string): void {
@@ -107,15 +139,29 @@ export class ExamForm {
       this.errorMessage.set('Select a category for an Admission exam.');
       return;
     }
+    if (this.isChapterMode && !this.form.controls.chapterId.value) {
+      this.errorMessage.set('Select a chapter for a chapter-wise exam.');
+      return;
+    }
 
     const raw = this.form.getRawValue();
+    const subject = this.allSubjects().find((s) => s.id === raw.subjectId);
+    if (!subject) {
+      this.errorMessage.set('Select a subject.');
+      return;
+    }
+    const chapter = this.isChapterMode ? this.chapters().find((c) => c.id === raw.chapterId) : undefined;
+
     const payload = {
       title: raw.title,
       section: raw.section as Section,
-      subject: raw.subject,
+      subjectId: subject.id,
+      subjectName: subject.name,
+      mode: raw.mode,
       duration: Number(raw.duration),
       questionIds: Array.from(this.selectedIds()),
       ...(this.isAdmission ? { category: raw.category as AdmissionCategory } : {}),
+      ...(chapter ? { chapterId: chapter.id, chapterName: chapter.name } : {}),
     };
 
     this.saving.set(true);
