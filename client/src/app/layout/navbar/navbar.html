@@ -1,5 +1,8 @@
 <nav class="navbar">
-  <a class="brand" [routerLink]="auth.isAdmin() ? '/admin' : '/dashboard'">Exam Portal</a>
+  <a class="brand" [routerLink]="auth.isAdmin() ? '/admin' : '/dashboard'">
+    <img src="favicon.png" alt="" width="28" height="28" />
+    Questify
+  </a>
 
   <div class="links">
     @if (auth.isLoggedIn()) {

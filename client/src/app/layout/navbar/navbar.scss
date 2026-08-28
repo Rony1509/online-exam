@@ -10,9 +10,16 @@
 }
 
 .brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   font-weight: 700;
   font-size: 1.1rem;
   color: var(--color-text);
+}
+
+.brand img {
+  border-radius: 6px;
 }
 
 .links {
