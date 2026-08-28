@@ -35,6 +35,15 @@
       <h2>Log in</h2>
       <p class="muted">Use your student account, or the admin account to manage exams.</p>
 
+      @if (auth.justVerified()) {
+        <p class="muted" style="color: var(--color-success); font-weight: 500;">
+          ✓ Your email has been verified — log in below.
+        </p>
+      }
+      @if (auth.verificationLinkError()) {
+        <p class="error-text">{{ auth.verificationLinkError() }}</p>
+      }
+
       <form [formGroup]="form" (ngSubmit)="submit()">
         <div class="form-group">
           <label for="email">Email</label>

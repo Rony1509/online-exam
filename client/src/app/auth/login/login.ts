@@ -15,7 +15,7 @@ import {
 })
 export class Login {
   private fb = inject(FormBuilder);
-  private auth = inject(AuthService);
+  auth = inject(AuthService);
   private router = inject(Router);
 
   loading = signal(false);
