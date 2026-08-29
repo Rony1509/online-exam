@@ -48,4 +48,12 @@ export class ResultsList {
   scoreLabel(r: ExamResult): string {
     return r.cqGraded ? `${r.finalScore} / ${r.totalMarks}` : `${r.mcqScore} / ${r.mcqTotal} (MCQ only)`;
   }
+
+  remove(r: ExamResult): void {
+    if (!confirm(`Remove ${r.studentName}'s attempt at "${r.examTitle}"? This cannot be undone.`)) return;
+    this.resultService.remove(r.id).subscribe({
+      next: () => this.results.update((list) => list.filter((item) => item.id !== r.id)),
+      error: (err) => alert(err.message || 'Could not remove this result.'),
+    });
+  }
 }

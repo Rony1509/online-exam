@@ -52,7 +52,11 @@
                 }
               </td>
               <td>{{ scoreLabel(r) }}</td>
-              <td><a [routerLink]="['/results', r.id]">View</a></td>
+              <td>
+                <a [routerLink]="['/results', r.id]">View</a>
+                &nbsp;
+                <button class="link-btn" type="button" (click)="remove(r)">Delete</button>
+              </td>
             </tr>
           }
         </tbody>

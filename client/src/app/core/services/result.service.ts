@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { collection, doc, getDoc, getDocs, query, QueryConstraint, updateDoc, where } from 'firebase/firestore';
+import { collection, deleteDoc, doc, getDoc, getDocs, query, QueryConstraint, updateDoc, where } from 'firebase/firestore';
 import { Observable, from } from 'rxjs';
 import { db } from '../firebase';
 import { AuthService } from './auth.service';
@@ -18,7 +18,7 @@ export class ResultService {
     if (!user) throw new Error('Not signed in');
 
     const constraints: QueryConstraint[] = [];
-    if (user.role === 'admin') {
+    if (this.auth.isAdmin()) {
       if (filters.userId) constraints.push(where('userId', '==', filters.userId));
       if (filters.examId) constraints.push(where('examId', '==', filters.examId));
     } else {
@@ -40,10 +40,14 @@ export class ResultService {
     const result = { id: snap.id, ...(snap.data() as Omit<ExamResult, 'id'>) };
 
     const user = this.auth.currentUser();
-    if (user?.role !== 'admin' && result.userId !== user?.id) {
+    if (!this.auth.isAdmin() && result.userId !== user?.id) {
       throw new Error('Not your result');
     }
     return result;
+  }
+
+  remove(id: string): Observable<void> {
+    return from(deleteDoc(doc(db, 'results', id)));
   }
 
   grade(id: string, grades: { questionId: string; marksAwarded: number }[]): Observable<ExamResult> {

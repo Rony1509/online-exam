@@ -88,7 +88,8 @@ service cloud.firestore {
         request.resource.data.userId == request.auth.uid &&
         request.resource.data.studentEmail == request.auth.token.email;
       allow update: if isAdmin() || (isVerified() && resource.data.userId == request.auth.uid);
-      allow delete: if false;
+      // Admins/teachers can remove a result that doesn't need to be kept (e.g. a test attempt).
+      allow delete: if isAdmin();
     }
   }
 }
