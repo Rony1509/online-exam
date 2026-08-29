@@ -3,7 +3,7 @@ import { DatePipe } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ResultService } from '../../core/services/result.service';
 import { AuthService } from '../../core/services/auth.service';
-import { ExamResult } from '../../core/models/models';
+import { ExamResult, ResultAnswer } from '../../core/models/models';
 
 @Component({
   selector: 'app-result-detail',
@@ -40,5 +40,14 @@ export class ResultDetail {
         this.loading.set(false);
       },
     });
+  }
+
+  isCorrectOption(a: ResultAnswer, optionIndex: number): boolean {
+    if (a.correctAnswers) return a.correctAnswers.includes(optionIndex);
+    return a.correctAnswer === optionIndex;
+  }
+
+  isSelectedOption(a: ResultAnswer, optionIndex: number): boolean {
+    return Array.isArray(a.response) ? a.response.includes(optionIndex) : a.response === optionIndex;
   }
 }

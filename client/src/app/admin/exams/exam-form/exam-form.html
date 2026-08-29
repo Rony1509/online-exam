@@ -54,11 +54,11 @@
               <option value="chapter">Chapter-wise</option>
             </select>
           </div>
-          @if (isChapterMode) {
+          @if (isChapterMode || isModelTest) {
             <div class="form-group">
-              <label for="chapterId">Chapter</label>
+              <label for="chapterId">Chapter {{ isModelTest ? '(optional)' : '' }}</label>
               <select id="chapterId" formControlName="chapterId">
-                <option value="">Select...</option>
+                <option value="">{{ isModelTest ? 'Whole subject' : 'Select...' }}</option>
                 @for (c of chapters(); track c.id) {
                   <option [value]="c.id">{{ c.name }}</option>
                 }
@@ -73,10 +73,10 @@
           }
         </div>
 
-        @if (isChapterMode) {
+        @if (isChapterMode || isModelTest) {
           <div class="row">
             <div class="form-group">
-              <label for="topicName">Topic / Unit</label>
+              <label for="topicName">Topic / Unit {{ isModelTest ? '(optional)' : '' }}</label>
               <input
                 id="topicName"
                 type="text"
@@ -104,7 +104,9 @@
 
         @if (isModelTest) {
           <p class="muted" style="margin-top: -0.4rem; font-size: 0.8rem;">
-            Model tests can combine questions from multiple subjects, chapters, and topics as needed.
+            Pick a subject above, and optionally a chapter or topic, then enter a random question
+            count to auto-generate the test — or leave the count blank and select questions
+            manually below to mix subjects, chapters, and topics freely.
           </p>
         }
 

@@ -15,10 +15,11 @@ service cloud.firestore {
       return isSignedIn() && request.auth.token.email_verified == true;
     }
 
+    // Teachers have the exact same permissions as admins throughout this app.
     function isAdmin() {
       return isSignedIn() &&
         exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['admin', 'teacher'];
     }
 
     function isStudent() {
@@ -36,12 +37,17 @@ service cloud.firestore {
     // needs to read/create its own profile before it has verified anything.
     match /users/{uid} {
       allow read: if isOwner(uid) || isAdmin();
-      // Public registration creates the user's profile for the signed-in uid.
-      // Student and admin accounts must both be able to fetch their own profile on login.
-      allow create: if isOwner(uid) &&
-        (request.resource.data.role == 'student' || request.resource.data.role == 'admin');
-      allow update: if isOwner(uid) || isAdmin();
-      allow delete: if false;
+      // Public registration always creates a student profile for the signed-in uid.
+      // Admin/teacher accounts are granted by an existing admin via an update, never self-assigned.
+      allow create: if isOwner(uid) && request.resource.data.role == 'student';
+      // Admins/teachers can change anything, including role, on any account.
+      // Owners can update their own profile but never change their own role.
+      allow update: if isAdmin() ||
+        (isOwner(uid) && request.resource.data.role == resource.data.role);
+      // Admins/teachers can remove a user's profile, cutting off their app access.
+      // Note: this only deletes the Firestore profile, not the underlying Firebase Auth
+      // account (that requires the Admin SDK, which this no-backend app doesn't have).
+      allow delete: if isAdmin();
     }
 
     // Subject/chapter/topic catalog that questions and exams are organized under.

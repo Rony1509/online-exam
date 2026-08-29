@@ -24,8 +24,6 @@
             "browser": "src/main.ts",
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
-            "externalDependencies": ["node:fs", "node:path"],
-            "allowedCommonJsDependencies": ["standardwebhooks"],
             "assets": [
               {
                 "glob": "**/*",

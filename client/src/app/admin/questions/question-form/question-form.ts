@@ -62,6 +62,8 @@ export class QuestionForm {
       question: ['', [Validators.required]],
       marks: [1, [Validators.required, Validators.min(1)]],
       correctAnswer: [0],
+      multiSelect: [false],
+      correctAnswers: [[] as number[]],
       explanation: [''],
       chapters: [[] as Chapter[]],
       topicOptions: [[] as string[]],
@@ -176,6 +178,27 @@ export class QuestionForm {
     return card.get('type')?.value === 'MCQ';
   }
 
+  isMultiSelect(card: FormGroup): boolean {
+    return Boolean(card.get('multiSelect')?.value);
+  }
+
+  toggleMultiSelect(card: FormGroup, checked: boolean): void {
+    card.get('multiSelect')?.setValue(checked);
+    card.get('correctAnswers')?.setValue([]);
+  }
+
+  isCorrectAnswerChecked(card: FormGroup, index: number): boolean {
+    const current = (card.get('correctAnswers')?.value as number[]) ?? [];
+    return current.includes(index);
+  }
+
+  toggleCorrectAnswer(card: FormGroup, index: number): void {
+    const control = card.get('correctAnswers');
+    const current = (control?.value as number[]) ?? [];
+    const next = current.includes(index) ? current.filter((i) => i !== index) : [...current, index];
+    control?.setValue(next);
+  }
+
   addQuestionCard(): void {
     this.questionCards.push(this.createQuestionGroup());
   }
@@ -228,6 +251,8 @@ export class QuestionForm {
       question: q.question,
       marks: q.marks,
       correctAnswer: q.correctAnswer ?? 0,
+      multiSelect: !!q.multiSelect,
+      correctAnswers: q.correctAnswers ?? [],
       explanation: q.explanation ?? '',
     });
 
@@ -266,6 +291,8 @@ export class QuestionForm {
       question: string;
       marks: number;
       correctAnswer: number;
+      multiSelect: boolean;
+      correctAnswers: number[];
       explanation: string;
       options: string[];
     };
@@ -281,7 +308,12 @@ export class QuestionForm {
       ...(isAdmission ? { category: typedValues.category as Question['category'] } : {}),
       ...(chapter ? { chapterId: chapter.id, chapterName: chapter.name } : {}),
       ...(typedValues.type === 'MCQ'
-        ? { options: typedValues.options, correctAnswer: Number(typedValues.correctAnswer) }
+        ? {
+            options: typedValues.options,
+            ...(typedValues.multiSelect
+              ? { multiSelect: true, correctAnswers: typedValues.correctAnswers }
+              : { correctAnswer: Number(typedValues.correctAnswer) }),
+          }
         : {}),
       ...(typedValues.explanation?.trim() ? { explanation: typedValues.explanation.trim() } : {}),
     };
@@ -312,6 +344,14 @@ export class QuestionForm {
       const isAdmission = this.isAdmissionForCard(card);
       if (isAdmission && !card.get('category')?.value) {
         this.errorMessage.set('Select a category for each Admission question.');
+        return;
+      }
+      if (
+        this.getQuestionCardIsMcq(card) &&
+        this.isMultiSelect(card) &&
+        ((card.get('correctAnswers')?.value as number[]) ?? []).length === 0
+      ) {
+        this.errorMessage.set('Check at least one correct option for each multiple-answer question.');
         return;
       }
     }

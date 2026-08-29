@@ -50,7 +50,11 @@ function verificationActionCodeSettings(): ActionCodeSettings {
 export class AuthService {
   readonly currentUser = signal<User | null>(null);
   readonly isLoggedIn = computed(() => this.currentUser() !== null);
-  readonly isAdmin = computed(() => this.currentUser()?.role === 'admin');
+  /** Teachers have the exact same app permissions as admins. */
+  readonly isAdmin = computed(() => {
+    const role = this.currentUser()?.role;
+    return role === 'admin' || role === 'teacher';
+  });
 
   /** Set whenever a signed-in Firebase account's email isn't verified yet — lets the login/register UI show a "check your email" prompt. */
   readonly pendingVerificationEmail = signal<string | null>(null);

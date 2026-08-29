@@ -240,12 +240,14 @@ export class ExamForm {
       this.errorMessage.set('Select a subject.');
       return;
     }
-    const chapter = this.isChapterMode ? this.chapters().find((c) => c.id === raw.chapterId) : undefined;
+    const chapter = (this.isChapterMode || this.isModelTest)
+      ? this.chapters().find((c) => c.id === raw.chapterId)
+      : undefined;
 
     let questionIds = Array.from(this.selectedIds());
-    if (this.isChapterMode && questionIds.length === 0 && (raw.questionCount ?? 0) > 0) {
+    if ((this.isChapterMode || this.isModelTest) && questionIds.length === 0 && (raw.questionCount ?? 0) > 0) {
       if (!subject) {
-        this.errorMessage.set('Select a subject before generating random chapter questions.');
+        this.errorMessage.set('Select a subject before generating random questions.');
         return;
       }
       questionIds = this.buildRandomQuestionIds(subject, chapter, raw);

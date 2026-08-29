@@ -150,6 +150,11 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./admin/grading/grading-detail/grading-detail').then((m) => m.GradingDetail),
   },
+  {
+    path: 'admin/users',
+    canActivate: [authGuard, adminGuard],
+    loadComponent: () => import('./admin/users/user-list/user-list').then((m) => m.UserList),
+  },
 
   { path: '**', redirectTo: '' },
 ];

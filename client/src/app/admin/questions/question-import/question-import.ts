@@ -2,7 +2,11 @@ import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { forkJoin } from 'rxjs';
-import { QuestionImportService, ExtractedQuestion } from '../../../core/services/question-import.service';
+import {
+  QuestionImportService,
+  ExtractedQuestion,
+  GenerateQuestionType,
+} from '../../../core/services/question-import.service';
 import { QuestionService } from '../../../core/services/question.service';
 import { SubjectService } from '../../../core/services/subject.service';
 import { ChapterService } from '../../../core/services/chapter.service';
@@ -11,6 +15,15 @@ import { Chapter, Question, Subject, Topic } from '../../../core/models/models';
 
 interface DraftQuestion extends ExtractedQuestion {
   optionsText: string;
+  correctAnswersText: string;
+}
+
+function toDraft(q: ExtractedQuestion): DraftQuestion {
+  return {
+    ...q,
+    optionsText: (q.options ?? []).join('\n'),
+    correctAnswersText: (q.correctAnswers ?? []).join(', '),
+  };
 }
 
 @Component({
@@ -37,8 +50,14 @@ export class QuestionImport {
   chapterId = '';
   topicId = '';
 
+  mode: 'file' | 'text' = 'file';
+
   selectedFile: File | null = null;
   selectedFileName = signal<string | null>(null);
+
+  sourceText = '';
+  generateCount = 1;
+  generateType: GenerateQuestionType = 'AUTO';
 
   extracting = signal(false);
   extractError = signal<string | null>(null);
@@ -106,17 +125,35 @@ export class QuestionImport {
     this.importService
       .extractQuestions(this.selectedFile)
       .then((questions) => {
-        this.drafts.set(
-          questions.map((q) => ({
-            ...q,
-            optionsText: (q.options ?? []).join('\n'),
-          })),
-        );
+        this.drafts.set(questions.map(toDraft));
         this.extracting.set(false);
       })
       .catch((err) => {
         this.extracting.set(false);
         this.extractError.set(err?.message || 'Could not extract questions from this file.');
+      });
+  }
+
+  generate(): void {
+    const text = this.sourceText.trim();
+    if (!text || !this.subjectId) {
+      this.extractError.set('Choose a subject and enter some text first.');
+      return;
+    }
+
+    this.extracting.set(true);
+    this.extractError.set(null);
+    this.savedCount.set(0);
+
+    this.importService
+      .generateFromText(text, Math.max(1, Number(this.generateCount) || 1), this.generateType)
+      .then((questions) => {
+        this.drafts.set(questions.map(toDraft));
+        this.extracting.set(false);
+      })
+      .catch((err) => {
+        this.extracting.set(false);
+        this.extractError.set(err?.message || 'Could not generate questions from this text.');
       });
   }
 
@@ -141,6 +178,11 @@ export class QuestionImport {
         .map((o) => o.trim())
         .filter((o) => o.length > 0);
 
+      const correctAnswers = d.correctAnswersText
+        .split(',')
+        .map((v) => Number(v.trim()))
+        .filter((v) => Number.isInteger(v) && v >= 0);
+
       return {
         section: subject.section,
         subjectId: subject.id,
@@ -153,7 +195,14 @@ export class QuestionImport {
         ...(chapter ? { chapterId: chapter.id, chapterName: chapter.name } : {}),
         ...(topic ? { topicId: topic.id, topicName: topic.name } : {}),
         ...(d.type === 'MCQ'
-          ? { options, ...(d.correctAnswer !== undefined ? { correctAnswer: d.correctAnswer } : {}) }
+          ? {
+              options,
+              ...(d.multiSelect && correctAnswers.length > 0
+                ? { multiSelect: true, correctAnswers }
+                : d.correctAnswer !== undefined
+                  ? { correctAnswer: d.correctAnswer }
+                  : {}),
+            }
           : {}),
         ...(d.explanation ? { explanation: d.explanation } : {}),
       };
@@ -166,6 +215,7 @@ export class QuestionImport {
         this.drafts.set([]);
         this.selectedFile = null;
         this.selectedFileName.set(null);
+        this.sourceText = '';
       },
       error: (err) => {
         this.saving.set(false);

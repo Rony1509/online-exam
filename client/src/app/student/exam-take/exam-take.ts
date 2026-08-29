@@ -16,7 +16,7 @@ export class ExamTake implements OnInit, OnDestroy {
   private examService = inject(ExamService);
 
   exam = signal<ExamPaper | null>(null);
-  answers = signal<Record<string, number | string>>({});
+  answers = signal<Record<string, number | number[] | string>>({});
   remainingSeconds = signal(0);
   loading = signal(true);
   submitting = signal(false);
@@ -88,16 +88,33 @@ export class ExamTake implements OnInit, OnDestroy {
     this.answers.update((current) => ({ ...current, [questionId]: optionIndex }));
   }
 
+  toggleMcqOption(questionId: string, optionIndex: number): void {
+    this.answers.update((current) => {
+      const existing = current[questionId];
+      const selected = Array.isArray(existing) ? existing : [];
+      const next = selected.includes(optionIndex)
+        ? selected.filter((i) => i !== optionIndex)
+        : [...selected, optionIndex];
+      return { ...current, [questionId]: next };
+    });
+  }
+
   updateCq(questionId: string, value: string): void {
     this.answers.update((current) => ({ ...current, [questionId]: value }));
   }
 
   isSelected(questionId: string, optionIndex: number): boolean {
-    return this.answers()[questionId] === optionIndex;
+    const value = this.answers()[questionId];
+    return Array.isArray(value) ? value.includes(optionIndex) : value === optionIndex;
+  }
+
+  isAnswered(questionId: string): boolean {
+    const value = this.answers()[questionId];
+    return value !== undefined && (!Array.isArray(value) || value.length > 0);
   }
 
   answeredCount(): number {
-    return Object.keys(this.answers()).length;
+    return Object.values(this.answers()).filter((v) => !Array.isArray(v) || v.length > 0).length;
   }
 
   submit(): void {

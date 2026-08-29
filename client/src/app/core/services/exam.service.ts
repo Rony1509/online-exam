@@ -28,6 +28,24 @@ import {
   Section,
 } from '../models/models';
 
+/** All correct option indices for a question, whichever field they're stored in. */
+function correctIndices(q: Pick<Question, 'correctAnswer' | 'correctAnswers'>): number[] {
+  if (q.correctAnswers && q.correctAnswers.length > 0) return [...q.correctAnswers].sort((a, b) => a - b);
+  if (q.correctAnswer !== undefined) return [q.correctAnswer];
+  return [];
+}
+
+/** Normalizes a submitted MCQ response (single index or array) into a sorted index array. */
+function responseIndices(response: number | number[] | string | null): number[] {
+  if (Array.isArray(response)) return [...response].sort((a, b) => a - b);
+  if (typeof response === 'number') return [response];
+  return [];
+}
+
+function sameIndices(a: number[], b: number[]): boolean {
+  return a.length === b.length && a.every((v, i) => v === b[i]);
+}
+
 function toSummary(id: string, data: Omit<Exam, 'id' | 'questionCount'>): ExamSummary {
   return {
     id,
@@ -140,7 +158,7 @@ export class ExamService {
 
     const questions = await this.loadQuestions(exam.questionIds);
     const shuffled = [...questions].sort(() => Math.random() - 0.5);
-    const sanitized: ExamQuestion[] = shuffled.map(({ correctAnswer, ...rest }) => rest);
+    const sanitized: ExamQuestion[] = shuffled.map(({ correctAnswer, correctAnswers, ...rest }) => rest);
 
     return {
       id: examSnap.id,
@@ -192,14 +210,15 @@ export class ExamService {
 
       if (q.type === 'MCQ') {
         mcqTotal += q.marks;
-        const isCorrect = response === q.correctAnswer;
+        const correct = correctIndices(q);
+        const isCorrect = correct.length > 0 && sameIndices(correct, responseIndices(response));
         if (isCorrect) mcqScore += q.marks;
         return {
           questionId: q.id,
           type: 'MCQ',
           question: q.question,
           options: q.options,
-          correctAnswer: q.correctAnswer,
+          ...(q.multiSelect ? { correctAnswers: correct } : { correctAnswer: q.correctAnswer }),
           ...(q.explanation ? { explanation: q.explanation } : {}),
           response,
           isCorrect,

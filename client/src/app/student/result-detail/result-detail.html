@@ -56,15 +56,15 @@
             @for (option of a.options; track $index; let oi = $index) {
               <div
                 class="choice"
-                [class.choice-correct]="oi === a.correctAnswer"
-                [class.choice-incorrect]="oi === a.response && !a.isCorrect"
+                [class.choice-correct]="isCorrectOption(a, oi)"
+                [class.choice-incorrect]="isSelectedOption(a, oi) && !a.isCorrect"
                 style="cursor: default;"
               >
                 {{ option }}
-                @if (oi === a.response) {
+                @if (isSelectedOption(a, oi)) {
                   <span class="muted">(your answer)</span>
                 }
-                @if (oi === a.correctAnswer) {
+                @if (isCorrectOption(a, oi)) {
                   <span class="muted">(correct)</span>
                 }
               </div>

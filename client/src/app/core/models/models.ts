@@ -1,7 +1,7 @@
 export type Section = 'HSC' | 'SSC' | 'Admission';
 export type AdmissionCategory = 'Medical' | 'Engineering' | 'Varsity';
 export type QuestionType = 'MCQ' | 'CQ';
-export type Role = 'student' | 'admin';
+export type Role = 'student' | 'admin' | 'teacher';
 export type ExamMode = 'full' | 'chapter';
 
 export interface User {
@@ -51,7 +51,11 @@ export interface Question {
   question: string;
   marks: number;
   options?: string[];
+  // Single-answer MCQs use correctAnswer (legacy, still the default). Set
+  // multiSelect + correctAnswers for a "select all that apply" MCQ instead.
   correctAnswer?: number;
+  multiSelect?: boolean;
+  correctAnswers?: number[];
   explanation?: string;
   isPublished?: boolean;
 }
@@ -90,6 +94,10 @@ export interface ExamQuestion {
   question: string;
   marks: number;
   options?: string[];
+  // Safe to expose before submission: tells the exam-take UI whether to
+  // render checkboxes (multiple correct answers) or radios (single answer),
+  // without revealing which option(s) are actually correct.
+  multiSelect?: boolean;
 }
 
 export interface ExamPaper {
@@ -104,7 +112,7 @@ export interface ExamPaper {
 
 export interface AnswerSubmission {
   questionId: string;
-  response: number | string | null;
+  response: number | number[] | string | null;
 }
 
 export interface ResultAnswer {
@@ -113,8 +121,9 @@ export interface ResultAnswer {
   question: string;
   options?: string[];
   correctAnswer?: number;
+  correctAnswers?: number[];
   explanation?: string;
-  response: number | string | null;
+  response: number | number[] | string | null;
   isCorrect?: boolean;
   marksAwarded: number | null;
   maxMarks: number;

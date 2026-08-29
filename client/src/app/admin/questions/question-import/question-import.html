@@ -4,27 +4,27 @@
     <a class="btn btn-secondary" routerLink="/admin/questions">Back to question bank</a>
   </div>
   <p class="muted">
-    Upload a question paper (PDF or image) and Claude will extract the questions for you to review
+    Upload a question paper (PDF or image) and Gemini will extract the questions for you to review
     before saving. Imported questions are saved as <strong>Unpublished</strong> so you can check
     them before students see them.
   </p>
 
   <div class="card">
-    <h3 style="margin-top: 0;">Anthropic API key</h3>
+    <h3 style="margin-top: 0;">Gemini API key</h3>
     @if (apiKeySaved()) {
       <p class="muted">An API key is saved in this browser.</p>
       <button class="link-btn" type="button" (click)="forgetApiKey()">Forget key</button>
     } @else {
       <p class="muted">
-        This calls the Claude API directly from your browser using your own API key — it's stored
-        only in this browser's local storage and is never sent anywhere except Anthropic. Get a key
-        at
-        <a href="https://console.anthropic.com/" target="_blank" rel="noopener">console.anthropic.com</a>.
+        This calls the Google Gemini API directly from your browser using your own free API key —
+        it's stored only in this browser's local storage and is never sent anywhere except Google.
+        Get a free key at
+        <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a>.
       </p>
       <div class="row" style="align-items: flex-end;">
         <div class="form-group" style="flex: 1;">
           <label for="apiKey">API key</label>
-          <input id="apiKey" type="password" [(ngModel)]="apiKeyInput" [ngModelOptions]="{ standalone: true }" placeholder="sk-ant-..." />
+          <input id="apiKey" type="password" [(ngModel)]="apiKeyInput" [ngModelOptions]="{ standalone: true }" placeholder="AIza..." />
         </div>
         <button class="btn" type="button" style="flex: 0 0 auto;" (click)="saveApiKey()">Save key</button>
       </div>
@@ -68,21 +68,81 @@
         }
       </div>
 
-      <h3>2. Upload the question paper</h3>
-      <input type="file" accept="application/pdf,image/png,image/jpeg,image/webp" (change)="onFileSelected($event)" />
-      @if (selectedFileName()) {
-        <p class="muted" style="margin-top: 0.5rem;">Selected: {{ selectedFileName() }}</p>
-      }
-
-      @if (extractError()) {
-        <p class="error-text">{{ extractError() }}</p>
-      }
-
-      <div class="row" style="margin-top: 1rem;">
-        <button class="btn" type="button" [disabled]="extracting() || !selectedFile || !subjectId" (click)="extract()">
-          {{ extracting() ? 'Extracting...' : 'Extract questions' }}
+      <h3>2. Choose a source</h3>
+      <div class="row" style="margin-bottom: 0.75rem;">
+        <button
+          class="btn"
+          [class.btn-secondary]="mode !== 'file'"
+          type="button"
+          (click)="mode = 'file'"
+        >
+          From PDF / image
+        </button>
+        <button
+          class="btn"
+          [class.btn-secondary]="mode !== 'text'"
+          type="button"
+          (click)="mode = 'text'"
+        >
+          From text
         </button>
       </div>
+
+      @if (mode === 'file') {
+        <input type="file" accept="application/pdf,image/png,image/jpeg,image/webp" (change)="onFileSelected($event)" />
+        @if (selectedFileName()) {
+          <p class="muted" style="margin-top: 0.5rem;">Selected: {{ selectedFileName() }}</p>
+        }
+
+        @if (extractError()) {
+          <p class="error-text">{{ extractError() }}</p>
+        }
+
+        <div class="row" style="margin-top: 1rem;">
+          <button class="btn" type="button" [disabled]="extracting() || !selectedFile || !subjectId" (click)="extract()">
+            {{ extracting() ? 'Extracting...' : 'Extract questions' }}
+          </button>
+        </div>
+      } @else {
+        <p class="muted">
+          Paste or type any notes — English, Bengali, or Banglish. Gemini will turn it into exam
+          question(s) with an answer and explanation.
+        </p>
+        <div class="form-group">
+          <label for="sourceText">Source text</label>
+          <textarea
+            id="sourceText"
+            rows="6"
+            [(ngModel)]="sourceText"
+            [ngModelOptions]="{ standalone: true }"
+            placeholder="e.g. Newton's second law bole force = mass x acceleration..."
+          ></textarea>
+        </div>
+        <div class="row">
+          <div class="form-group" style="flex: 0 0 auto;">
+            <label for="generateType">Question type</label>
+            <select id="generateType" [(ngModel)]="generateType" [ngModelOptions]="{ standalone: true }">
+              <option value="AUTO">Auto (let AI decide)</option>
+              <option value="MCQ">MCQ</option>
+              <option value="CQ">CQ</option>
+            </select>
+          </div>
+          <div class="form-group" style="flex: 0 0 auto;">
+            <label for="generateCount">Number of questions</label>
+            <input id="generateCount" type="number" min="1" max="10" [(ngModel)]="generateCount" [ngModelOptions]="{ standalone: true }" style="width: 100px;" />
+          </div>
+        </div>
+
+        @if (extractError()) {
+          <p class="error-text">{{ extractError() }}</p>
+        }
+
+        <div class="row" style="margin-top: 1rem;">
+          <button class="btn" type="button" [disabled]="extracting() || !sourceText.trim() || !subjectId" (click)="generate()">
+            {{ extracting() ? 'Generating...' : 'Generate questions' }}
+          </button>
+        </div>
+      }
     </div>
   }
 
@@ -93,7 +153,7 @@
   @if (drafts().length > 0) {
     <div class="card">
       <div class="card-header">
-        <h3 style="margin: 0;">3. Review extracted questions ({{ drafts().length }})</h3>
+        <h3 style="margin: 0;">3. Review questions ({{ drafts().length }})</h3>
       </div>
 
       @for (d of drafts(); track $index) {
@@ -123,10 +183,21 @@
               <label>Options (one per line)</label>
               <textarea rows="4" [(ngModel)]="d.optionsText" [ngModelOptions]="{ standalone: true }"></textarea>
             </div>
-            <div class="form-group">
-              <label>Correct answer (option index, starting at 0)</label>
-              <input type="number" min="0" [(ngModel)]="d.correctAnswer" [ngModelOptions]="{ standalone: true }" style="width: 80px;" />
+            <div class="form-group" style="display: flex; align-items: center; gap: 0.5rem;">
+              <input type="checkbox" [(ngModel)]="d.multiSelect" [ngModelOptions]="{ standalone: true }" />
+              <label style="margin: 0;">Multiple correct answers</label>
             </div>
+            @if (d.multiSelect) {
+              <div class="form-group">
+                <label>Correct answers (comma-separated option indices, starting at 0)</label>
+                <input type="text" [(ngModel)]="d.correctAnswersText" [ngModelOptions]="{ standalone: true }" placeholder="e.g. 0, 2" style="width: 160px;" />
+              </div>
+            } @else {
+              <div class="form-group">
+                <label>Correct answer (option index, starting at 0)</label>
+                <input type="number" min="0" [(ngModel)]="d.correctAnswer" [ngModelOptions]="{ standalone: true }" style="width: 80px;" />
+              </div>
+            }
           }
 
           <div class="form-group">

@@ -125,17 +125,35 @@
           </div>
 
           @if (getQuestionCardIsMcq(asQuestionGroup(card))) {
+            <div class="form-group" style="display: flex; align-items: center; gap: 0.5rem;">
+              <input
+                id="multiSelect-{{ i }}"
+                type="checkbox"
+                [checked]="isMultiSelect(asQuestionGroup(card))"
+                (change)="toggleMultiSelect(asQuestionGroup(card), $any($event.target).checked)"
+              />
+              <label for="multiSelect-{{ i }}" style="margin: 0;">Multiple correct answers</label>
+            </div>
+
             <div class="form-group">
-              <label>Options (select the correct one)</label>
+              <label>Options ({{ isMultiSelect(asQuestionGroup(card)) ? 'check all correct ones' : 'select the correct one' }})</label>
               <div [formArrayName]="'options'">
                 @for (option of getQuestionCardOptions(asQuestionGroup(card)).controls; track $index; let j = $index) {
                   <div class="option-row">
-                    <input
-                      type="radio"
-                      [name]="'correct-answer-' + i"
-                      [value]="j"
-                      [formControl]="getQuestionCardControl(asQuestionGroup(card), 'correctAnswer')"
-                    />
+                    @if (isMultiSelect(asQuestionGroup(card))) {
+                      <input
+                        type="checkbox"
+                        [checked]="isCorrectAnswerChecked(asQuestionGroup(card), j)"
+                        (change)="toggleCorrectAnswer(asQuestionGroup(card), j)"
+                      />
+                    } @else {
+                      <input
+                        type="radio"
+                        [name]="'correct-answer-' + i"
+                        [value]="j"
+                        [formControl]="getQuestionCardControl(asQuestionGroup(card), 'correctAnswer')"
+                      />
+                    }
                     <input type="text" [formControl]="getQuestionOptionControl(asQuestionGroup(card), j)" [placeholder]="'Option ' + (j + 1)" />
                     @if (getQuestionCardOptions(asQuestionGroup(card)).length > 2) {
                       <button class="btn btn-secondary btn-sm" type="button" (click)="removeOption(asQuestionGroup(card), j)">Remove</button>
