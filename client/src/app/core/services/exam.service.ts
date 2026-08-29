@@ -39,9 +39,11 @@ function toSummary(id: string, data: Omit<Exam, 'id' | 'questionCount'>): ExamSu
     mode: data.mode,
     chapterId: data.chapterId,
     chapterName: data.chapterName,
+    topicName: data.topicName,
     duration: data.duration,
     createdAt: data.createdAt,
     questionCount: (data.questionIds || []).length,
+    isModelTest: !!data.isModelTest,
   };
 }
 
@@ -137,7 +139,8 @@ export class ExamService {
     const exam = examSnap.data() as Omit<Exam, 'id' | 'questionCount'>;
 
     const questions = await this.loadQuestions(exam.questionIds);
-    const sanitized: ExamQuestion[] = questions.map(({ correctAnswer, ...rest }) => rest);
+    const shuffled = [...questions].sort(() => Math.random() - 0.5);
+    const sanitized: ExamQuestion[] = shuffled.map(({ correctAnswer, ...rest }) => rest);
 
     return {
       id: examSnap.id,
@@ -145,7 +148,7 @@ export class ExamService {
       section: exam.section,
       category: exam.category,
       subjectName: exam.subjectName,
-      duration: exam.duration,
+      duration: this.resolveDuration(exam, questions),
       questions: sanitized,
     };
   }
@@ -159,6 +162,14 @@ export class ExamService {
     return snaps
       .filter((s) => s.exists())
       .map((s) => ({ id: s.id, ...(s.data() as Omit<Question, 'id'>) }));
+  }
+
+  private resolveDuration(exam: Omit<Exam, 'id' | 'questionCount'>, questions: Question[]): number {
+    if (exam.duration && exam.duration > 0) return exam.duration;
+
+    const mcq = questions.filter((q) => q.type === 'MCQ').length;
+    const cq = questions.filter((q) => q.type === 'CQ').length;
+    return mcq + cq * 10;
   }
 
   private async submitAsync(id: string, answers: AnswerSubmission[]): Promise<ExamResult> {

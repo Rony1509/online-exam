@@ -1,29 +1,72 @@
-<div class="page">
-  <h2>{{ category ? category + ' (Admission)' : section }} Subjects</h2>
-  <p class="muted">Pick a subject, then choose a chapter or the full-subject exam list.</p>
+<div class="page dashboard-page">
+  <div class="dashboard-hero">
+    <div class="dashboard-hero__content">
+      <span class="badge badge-primary">Student portal</span>
+      <h1>Welcome back, {{ auth.currentUser()?.name || 'Student' }}</h1>
+      <p>Choose your subject and jump into chapter-based practice, complete mock exams, and track your results.</p>
 
-  @if (loading()) {
-    <div class="row">
-      @for (s of skeletons; track s) {
-        <div class="skeleton skeleton-card"></div>
-      }
+      <div class="hero-stats">
+        <div class="mini-stat">
+          <strong>{{ subjects().length }}</strong>
+          <span>Subjects</span>
+        </div>
+        <div class="mini-stat">
+          <strong>{{ category ? category : (section || 'General') }}</strong>
+          <span>Track</span>
+        </div>
+      </div>
     </div>
-  } @else if (errorMessage()) {
-    <p class="error-text">{{ errorMessage() }}</p>
-    <button class="btn btn-secondary" type="button" (click)="load()">Retry</button>
-  } @else if (subjects().length === 0) {
-    <div class="empty-state">No subjects are available for {{ category || section }} yet.</div>
-  } @else {
-    <div class="row">
-      @for (subject of subjects(); track subject.id) {
-        <a class="card card-interactive tile" [routerLink]="['/subject', subject.id]">
-          <span class="icon-avatar" [style.background]="colorFor(subject.name).bg" [style.color]="colorFor(subject.name).fg">
-            {{ initialsFor(subject.name) }}
-          </span>
-          <h3 style="margin: 0;">{{ subject.name }}</h3>
-          <span class="tile-arrow" aria-hidden="true">&rarr;</span>
-        </a>
-      }
+
+    <div class="dashboard-hero__panel">
+      <div class="panel-item">
+        <span>Section</span>
+        <strong>{{ section || 'General' }}</strong>
+      </div>
+      <div class="panel-item">
+        <span>Category</span>
+        <strong>{{ category || 'All' }}</strong>
+      </div>
+      <div class="panel-item">
+        <span>Status</span>
+        <strong>Ready</strong>
+      </div>
     </div>
-  }
+  </div>
+
+  <div class="card dashboard-card">
+    <div class="card-header">
+      <div>
+        <h2 style="margin: 0;">Available subjects</h2>
+      </div>
+      <span class="badge badge-primary">{{ subjects().length }} total</span>
+    </div>
+
+    @if (loading()) {
+      <div class="row">
+        @for (s of skeletons; track s) {
+          <div class="skeleton skeleton-card"></div>
+        }
+      </div>
+    } @else if (errorMessage()) {
+      <p class="error-text">{{ errorMessage() }}</p>
+      <button class="btn btn-secondary" type="button" (click)="load()">Retry</button>
+    } @else if (subjects().length === 0) {
+      <div class="empty-state">No subjects are available for {{ category || section || 'your selected track' }} yet.</div>
+    } @else {
+      <div class="row">
+        @for (subject of subjects(); track subject.id) {
+          <a class="card card-interactive tile" [routerLink]="['/subject', subject.id]">
+            <span class="icon-avatar" [style.background]="colorFor(subject.name).bg" [style.color]="colorFor(subject.name).fg">
+              {{ initialsFor(subject.name) }}
+            </span>
+            <div class="tile-copy">
+              <h3>{{ subject.name }}</h3>
+              <span class="tile-meta">Open subject</span>
+            </div>
+            <span class="tile-arrow" aria-hidden="true">&rarr;</span>
+          </a>
+        }
+      </div>
+    }
+  </div>
 </div>

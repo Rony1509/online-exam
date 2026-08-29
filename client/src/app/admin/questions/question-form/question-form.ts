@@ -1,9 +1,19 @@
 import { Component, inject, signal } from '@angular/core';
-import { FormArray, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormArray,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { forkJoin } from 'rxjs';
 import { QuestionService } from '../../../core/services/question.service';
 import { SubjectService } from '../../../core/services/subject.service';
 import { ChapterService } from '../../../core/services/chapter.service';
+import { TopicService } from '../../../core/services/topic.service';
 import { Chapter, Question, Subject } from '../../../core/models/models';
 
 const ADMISSION_CATEGORIES = ['Medical', 'Engineering', 'Varsity'] as const;
@@ -13,6 +23,7 @@ const ADMISSION_CATEGORIES = ['Medical', 'Engineering', 'Varsity'] as const;
   standalone: true,
   imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './question-form.html',
+  styleUrl: './question-form.scss',
 })
 export class QuestionForm {
   private fb = inject(FormBuilder);
@@ -21,6 +32,7 @@ export class QuestionForm {
   private questionService = inject(QuestionService);
   private subjectService = inject(SubjectService);
   private chapterService = inject(ChapterService);
+  private topicService = inject(TopicService);
 
   editingId: string | null = null;
   loading = signal(false);
@@ -28,51 +40,164 @@ export class QuestionForm {
   errorMessage = signal<string | null>(null);
 
   allSubjects = signal<Subject[]>([]);
-  chapters = signal<Chapter[]>([]);
 
   form = this.fb.nonNullable.group({
-    section: ['SSC', [Validators.required]],
-    category: [''],
-    subjectId: ['', [Validators.required]],
-    chapterId: [''],
-    type: ['MCQ', [Validators.required]],
-    question: ['', [Validators.required]],
-    marks: [1, [Validators.required, Validators.min(1)]],
-    correctAnswer: [0],
-    explanation: [''],
-    options: this.fb.array([this.fb.nonNullable.control('', Validators.required), this.fb.nonNullable.control('', Validators.required)]),
+    questionCards: this.fb.array<FormGroup>([this.createQuestionGroup()]),
   });
 
   readonly admissionCategories = ADMISSION_CATEGORIES;
 
-  get options(): FormArray {
-    return this.form.get('options') as FormArray;
+  get questionCards(): FormArray {
+    return this.form.get('questionCards') as FormArray;
   }
 
-  get isMcq(): boolean {
-    return this.form.controls.type.value === 'MCQ';
+  private createQuestionGroup(initial?: Partial<Record<string, unknown>>): FormGroup {
+    const group = this.fb.nonNullable.group({
+      section: ['SSC', [Validators.required]],
+      category: [''],
+      subjectId: ['', [Validators.required]],
+      chapterId: [''],
+      topicName: [''],
+      type: ['MCQ', [Validators.required]],
+      question: ['', [Validators.required]],
+      marks: [1, [Validators.required, Validators.min(1)]],
+      correctAnswer: [0],
+      explanation: [''],
+      chapters: [[] as Chapter[]],
+      topicOptions: [[] as string[]],
+      options: this.fb.array([
+        this.fb.nonNullable.control('', Validators.required),
+        this.fb.nonNullable.control('', Validators.required),
+      ]),
+    });
+
+    this.bindCardListeners(group);
+
+    if (initial) {
+      group.patchValue(initial as Record<string, unknown>);
+    }
+
+    return group;
   }
 
-  get isAdmission(): boolean {
-    return this.form.controls.section.value === 'Admission';
+  private bindCardListeners(group: FormGroup): void {
+    const subjectIdControl = group.get('subjectId');
+    const chapterIdControl = group.get('chapterId');
+    const chaptersControl = group.get('chapters');
+    const topicOptionsControl = group.get('topicOptions');
+
+    if (!subjectIdControl || !chapterIdControl || !chaptersControl || !topicOptionsControl) {
+      return;
+    }
+
+    subjectIdControl.valueChanges.subscribe((subjectId) => {
+      chapterIdControl.setValue('', { emitEvent: false });
+      group.get('topicName')?.setValue('', { emitEvent: false });
+      chaptersControl.setValue([]);
+      topicOptionsControl.setValue([]);
+      if (subjectId) {
+        this.chapterService.list({ subjectId }).subscribe((chapters) => {
+          chaptersControl.setValue(chapters);
+          const activeChapterId = chapterIdControl.value;
+          if (activeChapterId) {
+            this.loadTopicsForCard(group);
+          }
+        });
+      }
+    });
+
+    chapterIdControl.valueChanges.subscribe((chapterId) => {
+      group.get('topicName')?.setValue('', { emitEvent: false });
+      topicOptionsControl.setValue([]);
+      if (!chapterId) return;
+      this.loadTopicsForCard(group);
+    });
   }
 
-  get filteredSubjects(): Subject[] {
-    const section = this.form.controls.section.value;
-    const category = this.form.controls.category.value;
+  private loadTopicsForCard(group: FormGroup): void {
+    const subjectId = group.get('subjectId')?.value;
+    const chapterId = group.get('chapterId')?.value;
+    const topicOptionsControl = group.get('topicOptions');
+
+    if (!subjectId || !chapterId || !topicOptionsControl) {
+      topicOptionsControl?.setValue([]);
+      return;
+    }
+
+    this.topicService.list({ subjectId, chapterId }).subscribe((topics) => {
+      const topicNames = [...new Set(
+        topics
+          .map((topic) => topic.name ?? '')
+          .filter((name): name is string => !!name && name.trim().length > 0)
+          .map((name) => name.trim()),
+      )].sort((a, b) => a.localeCompare(b));
+
+      topicOptionsControl.setValue(topicNames);
+      const currentTopicName = (group.get('topicName')?.value ?? '').trim();
+      if (!currentTopicName && topicNames.length === 1) {
+        group.get('topicName')?.setValue(topicNames[0]);
+      }
+    });
+  }
+
+  filteredSubjects(card: FormGroup): Subject[] {
+    const section = card.get('section')?.value ?? 'SSC';
+    const category = card.get('category')?.value ?? '';
     return this.allSubjects().filter(
-      (s) => s.section === section && (!this.isAdmission || s.category === category),
+      (subject) => subject.section === section && (!this.isAdmissionForCard(card) || subject.category === category),
     );
+  }
+
+  asQuestionGroup(control: AbstractControl): FormGroup {
+    return control as FormGroup;
+  }
+
+  isAdmissionForCard(card: FormGroup): boolean {
+    return card.get('section')?.value === 'Admission';
+  }
+
+  getQuestionCardOptions(card: FormGroup): FormArray {
+    return card.get('options') as FormArray;
+  }
+
+  getQuestionCardControl(card: FormGroup, name: string): FormControl {
+    return card.get(name) as FormControl;
+  }
+
+  getQuestionOptionControl(card: FormGroup, index: number): FormControl {
+    return this.getQuestionCardOptions(card).at(index) as FormControl;
+  }
+
+  getTopicOptions(card: FormGroup): string[] {
+    return card.get('topicOptions')?.value ?? [];
+  }
+
+  getQuestionCardIsMcq(card: FormGroup): boolean {
+    return card.get('type')?.value === 'MCQ';
+  }
+
+  addQuestionCard(): void {
+    this.questionCards.push(this.createQuestionGroup());
+  }
+
+  removeQuestionCard(index: number): void {
+    if (this.questionCards.length <= 1) return;
+    this.questionCards.removeAt(index);
+  }
+
+  addOption(card: FormGroup): void {
+    const options = this.getQuestionCardOptions(card);
+    options.push(this.fb.nonNullable.control('', Validators.required));
+  }
+
+  removeOption(card: FormGroup, index: number): void {
+    const options = this.getQuestionCardOptions(card);
+    if (options.length <= 2) return;
+    options.removeAt(index);
   }
 
   ngOnInit(): void {
     this.subjectService.list().subscribe((subjects) => this.allSubjects.set(subjects));
-
-    this.form.controls.subjectId.valueChanges.subscribe((subjectId) => {
-      this.form.controls.chapterId.setValue('');
-      this.chapters.set([]);
-      if (subjectId) this.loadChapters(subjectId);
-    });
 
     const id = this.route.snapshot.paramMap.get('id');
     if (id && id !== 'new') {
@@ -81,7 +206,10 @@ export class QuestionForm {
       this.questionService.list().subscribe({
         next: (questions) => {
           const q = questions.find((item) => item.id === id);
-          if (q) this.populate(q);
+          if (q) {
+            const card = this.questionCards.at(0) as FormGroup;
+            this.populateCard(card, q);
+          }
           this.loading.set(false);
         },
         error: () => this.loading.set(false),
@@ -89,95 +217,134 @@ export class QuestionForm {
     }
   }
 
-  private loadChapters(subjectId: string): void {
-    this.chapterService.list({ subjectId }).subscribe((chapters) => this.chapters.set(chapters));
-  }
-
-  private populate(q: Question): void {
-    this.form.patchValue({
+  private populateCard(card: FormGroup, q: Question): void {
+    card.patchValue({
       section: q.section,
       category: q.category ?? '',
       subjectId: q.subjectId,
+      chapterId: q.chapterId ?? '',
+      topicName: q.topicName ?? '',
       type: q.type,
       question: q.question,
       marks: q.marks,
       correctAnswer: q.correctAnswer ?? 0,
       explanation: q.explanation ?? '',
     });
-    if (q.subjectId) this.loadChapters(q.subjectId);
-    // chapterId is set after chapters load resolves; patch it directly too so the select shows the right value once options render.
-    this.form.controls.chapterId.setValue(q.chapterId ?? '');
-    if (q.options?.length) {
-      this.options.clear();
-      for (const opt of q.options) {
-        this.options.push(this.fb.nonNullable.control(opt, Validators.required));
-      }
+
+    const options = this.getQuestionCardOptions(card);
+    options.clear();
+    const fallbackOptions = q.options && q.options.length > 0 ? q.options : ['', ''];
+    for (const option of fallbackOptions) {
+      options.push(this.fb.nonNullable.control(option || '', Validators.required));
+    }
+
+    if (q.subjectId) {
+      this.chapterService.list({ subjectId: q.subjectId }).subscribe((chapters) => {
+        card.get('chapters')?.setValue(chapters);
+        if (q.chapterId) {
+          card.get('chapterId')?.setValue(q.chapterId, { emitEvent: false });
+          this.loadTopicsForCard(card);
+        }
+      });
     }
   }
 
-  addOption(): void {
-    this.options.push(this.fb.nonNullable.control('', Validators.required));
-  }
+  private buildPayload(card: FormGroup): Omit<Question, 'id'> | null {
+    const raw = card.getRawValue();
+    const subject = this.allSubjects().find((item) => item.id === raw.subjectId);
+    if (!subject) return null;
 
-  removeOption(index: number): void {
-    if (this.options.length <= 2) return;
-    this.options.removeAt(index);
+    const chapter = (card.get('chapters')?.value as Chapter[] | undefined)?.find((item) => item.id === raw.chapterId);
+    const isAdmission = this.isAdmissionForCard(card);
+    const typedValues = raw as {
+      section: Question['section'];
+      category: string;
+      subjectId: string;
+      chapterId: string;
+      topicName: string;
+      type: Question['type'];
+      question: string;
+      marks: number;
+      correctAnswer: number;
+      explanation: string;
+      options: string[];
+    };
+
+    return {
+      section: typedValues.section,
+      subjectId: subject.id,
+      subjectName: subject.name,
+      type: typedValues.type,
+      question: typedValues.question,
+      marks: Number(typedValues.marks),
+      ...(typedValues.topicName?.trim() ? { topicName: typedValues.topicName.trim() } : {}),
+      ...(isAdmission ? { category: typedValues.category as Question['category'] } : {}),
+      ...(chapter ? { chapterId: chapter.id, chapterName: chapter.name } : {}),
+      ...(typedValues.type === 'MCQ'
+        ? { options: typedValues.options, correctAnswer: Number(typedValues.correctAnswer) }
+        : {}),
+      ...(typedValues.explanation?.trim() ? { explanation: typedValues.explanation.trim() } : {}),
+    };
   }
 
   submit(): void {
-    if (this.isMcq) {
-      if (this.form.invalid || this.options.invalid) {
-        this.form.markAllAsTouched();
+    const cards = this.questionCards.controls as FormGroup[];
+    const invalidCards = cards.filter((card) => {
+      const isMcq = this.getQuestionCardIsMcq(card);
+      if (isMcq) {
+        return card.invalid || this.getQuestionCardOptions(card).invalid;
+      }
+      return (
+        card.get('section')?.invalid ||
+        card.get('subjectId')?.invalid ||
+        card.get('question')?.invalid ||
+        card.get('marks')?.invalid
+      );
+    });
+
+    if (invalidCards.length > 0) {
+      invalidCards.forEach((card) => card.markAllAsTouched());
+      this.errorMessage.set('Please complete all required fields before saving.');
+      return;
+    }
+
+    for (const card of cards) {
+      const isAdmission = this.isAdmissionForCard(card);
+      if (isAdmission && !card.get('category')?.value) {
+        this.errorMessage.set('Select a category for each Admission question.');
         return;
       }
-    } else if (
-      this.form.controls.section.invalid ||
-      this.form.controls.subjectId.invalid ||
-      this.form.controls.question.invalid ||
-      this.form.controls.marks.invalid
-    ) {
-      this.form.markAllAsTouched();
-      return;
     }
 
-    if (this.isAdmission && !this.form.controls.category.value) {
-      this.errorMessage.set('Select a category for an Admission question.');
+    const payloads = cards
+      .map((card) => this.buildPayload(card))
+      .filter((value): value is Omit<Question, 'id'> => !!value);
+
+    if (payloads.length === 0) {
+      this.errorMessage.set('Select a subject for each question.');
       return;
     }
-
-    const raw = this.form.getRawValue();
-    const subject = this.allSubjects().find((s) => s.id === raw.subjectId);
-    if (!subject) {
-      this.errorMessage.set('Select a subject.');
-      return;
-    }
-    const chapter = this.chapters().find((c) => c.id === raw.chapterId);
-
-    const payload: Omit<Question, 'id'> = {
-      section: raw.section as Question['section'],
-      subjectId: subject.id,
-      subjectName: subject.name,
-      type: raw.type as Question['type'],
-      question: raw.question,
-      marks: Number(raw.marks),
-      ...(this.isAdmission ? { category: raw.category as Question['category'] } : {}),
-      ...(chapter ? { chapterId: chapter.id, chapterName: chapter.name } : {}),
-      ...(this.isMcq ? { options: raw.options, correctAnswer: Number(raw.correctAnswer) } : {}),
-      ...(raw.explanation.trim() ? { explanation: raw.explanation.trim() } : {}),
-    };
 
     this.saving.set(true);
     this.errorMessage.set(null);
 
-    const request = this.editingId
-      ? this.questionService.update(this.editingId, payload)
-      : this.questionService.create(payload);
+    if (this.editingId) {
+      const payload = payloads[0];
+      this.questionService.update(this.editingId, payload).subscribe({
+        next: () => this.router.navigate(['/admin/questions']),
+        error: (err) => {
+          this.saving.set(false);
+          this.errorMessage.set(err.message || 'Could not save question.');
+        },
+      });
+      return;
+    }
 
-    request.subscribe({
+    forkJoin(payloads.map((payload) => this.questionService.create(payload))).subscribe({
       next: () => this.router.navigate(['/admin/questions']),
       error: (err) => {
         this.saving.set(false);
-        this.errorMessage.set(err.message || 'Could not save question.');
+        this.errorMessage.set(err.message || 'Could not save questions.');
       },
     });
   }

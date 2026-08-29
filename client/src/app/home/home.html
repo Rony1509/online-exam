@@ -1,0 +1,81 @@
+<div class="home-page">
+  <section class="hero-section" aria-labelledby="home-title">
+    <div class="hero-copy">
+      <span class="badge badge-primary">Online exam platform</span>
+      <h1 id="home-title">Questify: SSC, HSC, and Admission Exam Preparation Platform</h1>
+      <p>
+        Questify is an online exam and practice platform for students preparing for SSC, HSC,
+        and Admission tests. Practice chapter-wise, take timed model tests, and review your results
+        with a clear learning workflow built for exam success.
+      </p>
+
+      <div class="hero-actions">
+        @if (auth.isLoggedIn()) {
+          <a class="btn" [routerLink]="auth.isAdmin() ? '/admin' : '/dashboard'">Go to dashboard</a>
+        } @else {
+          <a class="btn" routerLink="/register">Create account</a>
+          <a class="btn btn-secondary" routerLink="/login">Log in</a>
+        }
+      </div>
+
+      <ul class="feature-list" aria-label="Platform features">
+        @for (item of highlights; track item) {
+          <li>{{ item }}</li>
+        }
+      </ul>
+    </div>
+
+    <div class="hero-panel" aria-label="Feature summary panel">
+      <div class="panel-card">
+        <span class="panel-label">Top features</span>
+        <div class="panel-metric">
+          <strong>3x</strong>
+          <span>Faster revision flow</span>
+        </div>
+        <div class="panel-row">
+          <span>Randomized tests</span>
+          <strong>MCQ + CQ</strong>
+        </div>
+        <div class="panel-row">
+          <span>Progress tracking</span>
+          <strong>Results</strong>
+        </div>
+        <div class="panel-row">
+          <span>Student tracks</span>
+          <strong>SSC / HSC / Admission</strong>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="info-grid" aria-label="Key benefits">
+    <article class="info-card">
+      <h3>Chapter-wise practice</h3>
+      <p>
+        Learn by topic and improve steadily with subject-based and chapter-based exam preparation.
+      </p>
+    </article>
+    <article class="info-card">
+      <h3>Model and mock exams</h3>
+      <p>
+        Take timed mock tests, randomize questions, and simulate the pressure of real evaluation.
+      </p>
+    </article>
+    <article class="info-card">
+      <h3>Result monitoring</h3>
+      <p>
+        Track performance, revise weak areas, and focus your preparation on the topics that matter.
+      </p>
+    </article>
+  </section>
+
+  <section class="seo-copy" aria-labelledby="why-questify-title">
+    <h2 id="why-questify-title">Why students use Questify for online exam preparation</h2>
+    <p>
+      Questify helps students prepare for major academic milestones by combining chapter practice,
+      full-subject assessments, and timed model tests in one simple platform. It is designed for
+      SSC, HSC, and Admission candidates who want a structured and efficient way to study and test
+      themselves before real exams.
+    </p>
+  </section>
+</div>

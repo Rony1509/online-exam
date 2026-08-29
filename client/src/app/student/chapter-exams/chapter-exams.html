@@ -8,20 +8,39 @@
   } @else if (errorMessage()) {
     <p class="error-text">{{ errorMessage() }}</p>
     <button class="btn btn-secondary" type="button" (click)="load()">Retry</button>
-  } @else if (exams().length === 0) {
-    <div class="empty-state">No exams for this chapter yet.</div>
   } @else {
-    @for (exam of exams(); track exam.id) {
-      <div class="card">
-        <div class="card-header">
-          <div>
-            <h3 style="margin: 0 0 0.35rem;">{{ exam.title }}</h3>
-            <span class="badge">{{ exam.questionCount }} questions</span>
-            <span class="badge">{{ exam.duration }} min</span>
+    @if (modelTests().length > 0) {
+      <p class="section-label">Model Tests</p>
+      @for (exam of modelTests(); track exam.id) {
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3 style="margin: 0 0 0.35rem;">{{ exam.title }}</h3>
+              <span class="badge">{{ exam.questionCount }} questions</span>
+              <span class="badge">{{ exam.duration }} min</span>
+            </div>
+            <a class="btn" [routerLink]="['/exam', exam.id]">Start exam</a>
           </div>
-          <a class="btn" [routerLink]="['/exam', exam.id]">Start exam</a>
         </div>
-      </div>
+      }
+    }
+
+    @if (exams().length === 0) {
+      <div class="empty-state">No chapter exams yet.</div>
+    } @else {
+      <p class="section-label">Chapter Exams</p>
+      @for (exam of exams(); track exam.id) {
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3 style="margin: 0 0 0.35rem;">{{ exam.title }}</h3>
+              <span class="badge">{{ exam.questionCount }} questions</span>
+              <span class="badge">{{ exam.duration }} min</span>
+            </div>
+            <a class="btn" [routerLink]="['/exam', exam.id]">Start exam</a>
+          </div>
+        </div>
+      }
     }
   }
 </div>

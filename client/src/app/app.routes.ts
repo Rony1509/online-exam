@@ -2,12 +2,25 @@ import { Routes } from '@angular/router';
 import { authGuard, adminGuard, guestGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
-  { path: '', pathMatch: 'full', redirectTo: 'login' },
+  {
+    path: '',
+    loadComponent: () => import('./home/home').then((m) => m.Home),
+  },
+  {
+    path: 'home',
+    loadComponent: () => import('./home/home').then((m) => m.Home),
+  },
 
   {
     path: 'login',
     canActivate: [guestGuard],
     loadComponent: () => import('./auth/login/login').then((m) => m.Login),
+  },
+  {
+    path: 'forgot-password',
+    canActivate: [guestGuard],
+    loadComponent: () =>
+      import('./auth/forgot-password/forgot-password').then((m) => m.ForgotPassword),
   },
   {
     path: 'register',
@@ -74,6 +87,12 @@ export const routes: Routes = [
       import('./admin/subjects/chapter-list/chapter-list').then((m) => m.ChapterList),
   },
   {
+    path: 'admin/subjects/:subjectId/chapters/:chapterId/topics',
+    canActivate: [authGuard, adminGuard],
+    loadComponent: () =>
+      import('./admin/subjects/topic-list/topic-list').then((m) => m.TopicList),
+  },
+  {
     path: 'admin/subjects/:id',
     canActivate: [authGuard, adminGuard],
     loadComponent: () =>
@@ -120,5 +139,5 @@ export const routes: Routes = [
       import('./admin/grading/grading-detail/grading-detail').then((m) => m.GradingDetail),
   },
 
-  { path: '**', redirectTo: 'login' },
+  { path: '**', redirectTo: '' },
 ];

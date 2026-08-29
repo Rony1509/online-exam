@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://rony1509.github.io/online-exam/sitemap.xml

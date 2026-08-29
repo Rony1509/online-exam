@@ -17,7 +17,9 @@ export class Navbar {
 
   constructor() {
     this.router.events.subscribe((e) => {
-      if (e instanceof NavigationStart) this.menuOpen.set(false);
+      if (e instanceof NavigationStart) {
+        this.menuOpen.set(false);
+      }
     });
   }
 

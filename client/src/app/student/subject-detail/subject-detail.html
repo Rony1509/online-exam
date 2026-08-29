@@ -24,6 +24,22 @@
       </div>
     }
 
+    @if (modelTests().length > 0) {
+      <p class="section-label">Model Tests</p>
+      @for (exam of modelTests(); track exam.id) {
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3 style="margin: 0 0 0.35rem;">{{ exam.title }}</h3>
+              <span class="badge">{{ exam.questionCount }} questions</span>
+              <span class="badge">{{ exam.duration }} min</span>
+            </div>
+            <a class="btn" [routerLink]="['/exam', exam.id]">Start exam</a>
+          </div>
+        </div>
+      }
+    }
+
     <p class="section-label">Full Subject</p>
     @if (fullExams().length === 0) {
       <div class="empty-state">No full-subject exams yet{{ chapters().length > 0 ? ' — try a chapter above' : '' }}.</div>

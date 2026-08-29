@@ -1,0 +1,67 @@
+<div class="page">
+  <a [routerLink]="['/admin/subjects', subjectId, 'chapters']" class="muted">&larr; Back to chapters</a>
+  <h2>{{ subject()?.name || 'Subject' }} &middot; {{ chapter()?.name || 'Chapter' }} &middot; Topics</h2>
+
+  <div class="card">
+    <div class="row" style="align-items: flex-end;">
+      <div class="form-group" style="flex: 3;">
+        <label for="newTopic">New topic name</label>
+        <input
+          id="newTopic"
+          type="text"
+          [(ngModel)]="newTopicName"
+          [ngModelOptions]="{ standalone: true }"
+          placeholder="e.g. Algebra, Tenses, Cell Biology"
+          (keyup.enter)="add()"
+        />
+      </div>
+      <button class="btn" type="button" style="flex: 0 0 auto;" [disabled]="adding()" (click)="add()">
+        {{ adding() ? 'Adding...' : 'Add topic' }}
+      </button>
+    </div>
+    @if (errorMessage()) {
+      <p class="error-text">{{ errorMessage() }}</p>
+    }
+  </div>
+
+  @if (loading()) {
+    <p class="muted">Loading topics...</p>
+  } @else if (topics().length === 0) {
+    <div class="empty-state">No topics yet. Add one above to organize this chapter more deeply.</div>
+  } @else {
+    <div class="card">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (t of topics(); track t.id) {
+            <tr>
+              <td>
+                @if (editingId === t.id) {
+                  <input type="text" [(ngModel)]="editingName" [ngModelOptions]="{ standalone: true }" (keyup.enter)="saveEdit(t)" />
+                } @else {
+                  {{ t.name }}
+                }
+              </td>
+              <td>
+                @if (editingId === t.id) {
+                  <button class="link-btn" type="button" (click)="saveEdit(t)">Save</button>
+                  &nbsp;
+                  <button class="link-btn" type="button" (click)="cancelEdit()">Cancel</button>
+                } @else {
+                  <button class="link-btn" type="button" (click)="startEdit(t)">Edit</button>
+                  &nbsp;
+                  <button class="link-btn" type="button" (click)="remove(t)">Delete</button>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

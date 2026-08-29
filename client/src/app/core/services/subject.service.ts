@@ -52,14 +52,15 @@ export class SubjectService {
   }
 
   private async deleteAsync(id: string): Promise<void> {
-    const [chaptersSnap, questionsSnap, examsSnap] = await Promise.all([
+    const [chaptersSnap, questionsSnap, examsSnap, topicsSnap] = await Promise.all([
       getDocs(query(collection(db, 'chapters'), where('subjectId', '==', id))),
       getDocs(query(collection(db, 'questions'), where('subjectId', '==', id))),
       getDocs(query(collection(db, 'exams'), where('subjectId', '==', id))),
+      getDocs(query(collection(db, 'topics'), where('subjectId', '==', id))),
     ]);
-    if (!chaptersSnap.empty || !questionsSnap.empty || !examsSnap.empty) {
+    if (!chaptersSnap.empty || !questionsSnap.empty || !examsSnap.empty || !topicsSnap.empty) {
       throw new Error(
-        'This subject still has chapters, questions, or exams attached — remove those first.',
+        'This subject still has chapters, topics, questions, or exams attached — remove those first.',
       );
     }
     await deleteDoc(doc(db, 'subjects', id));

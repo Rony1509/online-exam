@@ -19,6 +19,7 @@ export class ChapterExams {
   chapterId = '';
   chapter = signal<Chapter | null>(null);
   exams = signal<ExamSummary[]>([]);
+  modelTests = signal<ExamSummary[]>([]);
   loading = signal(true);
   errorMessage = signal<string | null>(null);
 
@@ -39,7 +40,8 @@ export class ChapterExams {
 
     this.examService.listByChapter(this.chapterId).subscribe({
       next: (exams) => {
-        this.exams.set(exams);
+        this.exams.set(exams.filter((exam) => !exam.isModelTest));
+        this.modelTests.set(exams.filter((exam) => exam.isModelTest));
         this.loading.set(false);
       },
       error: () => {

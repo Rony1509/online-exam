@@ -5,6 +5,7 @@ import {
   createUserWithEmailAndPassword,
   onAuthStateChanged,
   sendEmailVerification,
+  sendPasswordResetEmail,
   signInWithEmailAndPassword,
   signOut,
 } from 'firebase/auth';
@@ -174,6 +175,11 @@ export class AuthService {
     });
     await sendEmailVerification(cred.user, verificationActionCodeSettings());
     throw new EmailNotVerifiedError(email);
+  }
+
+  /** Sends a password-reset email to the given address. */
+  async sendPasswordResetEmail(email: string): Promise<void> {
+    await sendPasswordResetEmail(auth, email.trim());
   }
 
   /** Resends the verification email to whichever Firebase account is currently signed in (verified or not). */

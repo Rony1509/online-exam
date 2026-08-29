@@ -1,9 +1,12 @@
 <div class="auth-shell">
   <div class="auth-card" style="max-width: 460px;">
-    <div class="auth-brand">
+    <a routerLink="/" style="display:inline-flex; align-items:center; gap:0.45rem; margin-bottom: 1rem; color:#93c5fd; font-weight:700; text-decoration:none;">
+      ← Back to Home
+    </a>
+    <a routerLink="/" class="auth-brand" style="display:inline-flex; align-items:center; gap:0.6rem; color:#f8fafc; text-decoration:none; margin-bottom: 1rem;">
       <img src="favicon.png" alt="" width="36" height="36" />
       <span>Questify</span>
-    </div>
+    </a>
 
     @if (registeredEmail()) {
       <h2>Check your email</h2>

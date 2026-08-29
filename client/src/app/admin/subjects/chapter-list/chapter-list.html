@@ -55,6 +55,8 @@
                 } @else {
                   <button class="link-btn" type="button" (click)="startEdit(c)">Edit</button>
                   &nbsp;
+                  <a class="link-btn" [routerLink]="['/admin/subjects', subjectId, 'chapters', c.id, 'topics']">Topics</a>
+                  &nbsp;
                   <button class="link-btn" type="button" (click)="remove(c)">Delete</button>
                 }
               </td>

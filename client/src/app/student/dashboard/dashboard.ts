@@ -12,7 +12,7 @@ import { colorFor, initialsFor } from '../../core/utils/avatar-color';
   templateUrl: './dashboard.html',
 })
 export class Dashboard {
-  private auth = inject(AuthService);
+  readonly auth = inject(AuthService);
   private subjectService = inject(SubjectService);
 
   subjects = signal<Subject[]>([]);

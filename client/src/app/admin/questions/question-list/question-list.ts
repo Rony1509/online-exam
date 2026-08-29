@@ -26,6 +26,7 @@ export class QuestionList {
   categoryFilter = '';
   subjectFilter = '';
   typeFilter = '';
+  topicFilter = '';
 
   get filteredSubjects(): Subject[] {
     return this.allSubjects().filter(
@@ -33,6 +34,14 @@ export class QuestionList {
         (!this.sectionFilter || s.section === this.sectionFilter) &&
         (this.sectionFilter !== 'Admission' || !this.categoryFilter || s.category === this.categoryFilter),
     );
+  }
+
+  get topicOptions(): string[] {
+    const topics = new Set<string>();
+    this.questions().forEach((q) => {
+      if (q.topicName?.trim()) topics.add(q.topicName.trim());
+    });
+    return [...topics].sort((a, b) => a.localeCompare(b));
   }
 
   ngOnInit(): void {
@@ -47,6 +56,7 @@ export class QuestionList {
         section: this.sectionFilter || undefined,
         category: this.sectionFilter === 'Admission' ? this.categoryFilter || undefined : undefined,
         subjectId: this.subjectFilter || undefined,
+        topicId: this.topicFilter || undefined,
         type: this.typeFilter || undefined,
       })
       .subscribe({

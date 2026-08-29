@@ -73,14 +73,53 @@
           }
         </div>
 
-        <div class="form-group">
-          <label>Questions ({{ selectedCount }} selected)</label>
+        @if (isChapterMode) {
+          <div class="row">
+            <div class="form-group">
+              <label for="topicName">Topic / Unit</label>
+              <input
+                id="topicName"
+                type="text"
+                list="exam-topic-options"
+                formControlName="topicName"
+                placeholder="Choose or type a topic"
+              />
+              <datalist id="exam-topic-options">
+                @for (topic of topicOptions(); track topic) {
+                  <option [value]="topic"></option>
+                }
+              </datalist>
+            </div>
+            <div class="form-group">
+              <label for="questionCount">Random question count</label>
+              <input id="questionCount" type="number" min="1" formControlName="questionCount" placeholder="e.g. 15" />
+            </div>
+          </div>
+        }
+
+        <div class="form-group" style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.5rem;">
+          <input id="isModelTest" type="checkbox" formControlName="isModelTest" />
+          <label for="isModelTest" style="margin: 0;">Mark as model test</label>
         </div>
 
+        @if (isModelTest) {
+          <p class="muted" style="margin-top: -0.4rem; font-size: 0.8rem;">
+            Model tests can combine questions from multiple subjects, chapters, and topics as needed.
+          </p>
+        }
+
+        <div class="form-group">
+          <label>Questions ({{ selectedCount }} selected of {{ availableQuestionCount }} available)</label>
+        </div>
+
+        @if (selectionWarning()) {
+          <p class="error-text">{{ selectionWarning() }}</p>
+        }
+
         <div class="card" style="max-height: 360px; overflow-y: auto;">
-          @if (!form.controls.subjectId.value) {
+          @if (!isModelTest && !form.controls.subjectId.value) {
             <p class="muted">Pick a subject above to see matching questions.</p>
-          } @else if (isChapterMode && !form.controls.chapterId.value) {
+          } @else if (!isModelTest && isChapterMode && !form.controls.chapterId.value) {
             <p class="muted">Pick a chapter above to see matching questions.</p>
           } @else if (filteredQuestions.length === 0) {
             <p class="muted">No matching questions yet. Add some in the question bank first.</p>
@@ -92,7 +131,7 @@
                   {{ q.question }}
                   <br />
                   <span class="muted" style="font-size: 0.8rem;">
-                    {{ q.subjectName }}{{ q.chapterName ? ' · ' + q.chapterName : '' }} &middot; {{ q.type }} &middot; {{ q.marks }} marks
+                    {{ q.subjectName }}{{ q.chapterName ? ' · ' + q.chapterName : '' }}{{ q.topicName ? ' · ' + q.topicName : '' }} &middot; {{ q.type }} &middot; {{ q.marks }} marks
                   </span>
                 </span>
               </label>

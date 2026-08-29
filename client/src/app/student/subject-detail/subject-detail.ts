@@ -22,6 +22,7 @@ export class SubjectDetail {
   subject = signal<Subject | null>(null);
   chapters = signal<Chapter[]>([]);
   fullExams = signal<ExamSummary[]>([]);
+  modelTests = signal<ExamSummary[]>([]);
   loading = signal(true);
   errorMessage = signal<string | null>(null);
 
@@ -51,7 +52,8 @@ export class SubjectDetail {
 
     this.examService.listBySubject(this.subjectId).subscribe({
       next: (exams) => {
-        this.fullExams.set(exams);
+        this.fullExams.set(exams.filter((exam) => !exam.isModelTest));
+        this.modelTests.set(exams.filter((exam) => exam.isModelTest));
         this.loading.set(false);
       },
       error: () => {

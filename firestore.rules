@@ -34,12 +34,16 @@ service cloud.firestore {
       allow update, delete: if false;
     }
 
-    // Subject/chapter catalog that questions and exams are organized under.
+    // Subject/chapter/topic catalog that questions and exams are organized under.
     match /subjects/{id} {
       allow read: if isVerified();
       allow write: if isAdmin();
     }
     match /chapters/{id} {
+      allow read: if isVerified();
+      allow write: if isAdmin();
+    }
+    match /topics/{id} {
       allow read: if isVerified();
       allow write: if isAdmin();
     }

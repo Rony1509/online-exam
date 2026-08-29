@@ -51,12 +51,13 @@ export class ChapterService {
   }
 
   private async deleteAsync(id: string): Promise<void> {
-    const [questionsSnap, examsSnap] = await Promise.all([
+    const [questionsSnap, examsSnap, topicsSnap] = await Promise.all([
       getDocs(query(collection(db, 'questions'), where('chapterId', '==', id))),
       getDocs(query(collection(db, 'exams'), where('chapterId', '==', id))),
+      getDocs(query(collection(db, 'topics'), where('chapterId', '==', id))),
     ]);
-    if (!questionsSnap.empty || !examsSnap.empty) {
-      throw new Error('This chapter still has questions or exams attached — remove those first.');
+    if (!questionsSnap.empty || !examsSnap.empty || !topicsSnap.empty) {
+      throw new Error('This chapter still has questions, exams, or topics attached — remove those first.');
     }
     await deleteDoc(doc(db, 'chapters', id));
   }

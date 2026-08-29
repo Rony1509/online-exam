@@ -22,6 +22,7 @@ export class QuestionService {
       category?: string;
       subjectId?: string;
       chapterId?: string;
+      topicId?: string;
       type?: string;
     } = {},
   ): Observable<Question[]> {
@@ -33,6 +34,7 @@ export class QuestionService {
     category?: string;
     subjectId?: string;
     chapterId?: string;
+    topicId?: string;
     type?: string;
   }): Promise<Question[]> {
     const constraints: QueryConstraint[] = [];
@@ -40,6 +42,7 @@ export class QuestionService {
     if (filters.category) constraints.push(where('category', '==', filters.category));
     if (filters.subjectId) constraints.push(where('subjectId', '==', filters.subjectId));
     if (filters.chapterId) constraints.push(where('chapterId', '==', filters.chapterId));
+    if (filters.topicId) constraints.push(where('topicId', '==', filters.topicId));
     if (filters.type) constraints.push(where('type', '==', filters.type));
 
     const snap = await getDocs(query(collection(db, 'questions'), ...constraints));

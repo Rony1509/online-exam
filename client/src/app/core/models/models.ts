@@ -27,6 +27,13 @@ export interface Chapter {
   name: string;
 }
 
+export interface Topic {
+  id: string;
+  subjectId: string;
+  chapterId?: string;
+  name: string;
+}
+
 export interface Question {
   id: string;
   section: Section;
@@ -35,6 +42,8 @@ export interface Question {
   subjectName: string;
   chapterId?: string;
   chapterName?: string;
+  topicId?: string;
+  topicName?: string;
   type: QuestionType;
   question: string;
   marks: number;
@@ -53,8 +62,11 @@ export interface ExamSummary {
   mode: ExamMode;
   chapterId?: string;
   chapterName?: string;
+  topicId?: string;
+  topicName?: string;
   duration: number;
   questionCount: number;
+  isModelTest?: boolean;
   createdAt: string;
 }
 

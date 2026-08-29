@@ -1,116 +1,174 @@
-<div class="page" style="max-width: 640px;">
-  <h2>{{ editingId ? 'Edit question' : 'Add question' }}</h2>
+<div class="page question-form-page">
+  <div class="page-header">
+    <div>
+      <p class="eyebrow">{{ editingId ? 'Edit question bank item' : 'Question builder' }}</p>
+      <h2>{{ editingId ? 'Edit question' : 'Add questions' }}</h2>
+    </div>
+    @if (!editingId) {
+      <button class="btn btn-secondary btn-sm" type="button" (click)="addQuestionCard()">
+        + Add another question
+      </button>
+    }
+  </div>
 
   @if (loading()) {
     <p class="muted">Loading question...</p>
   } @else {
-    <div class="card">
-      <form [formGroup]="form" (ngSubmit)="submit()">
-        <div class="row">
-          <div class="form-group">
-            <label for="section">Section</label>
-            <select id="section" formControlName="section">
-              <option value="SSC">SSC</option>
-              <option value="HSC">HSC</option>
-              <option value="Admission">Admission</option>
-            </select>
-          </div>
-          @if (isAdmission) {
-            <div class="form-group">
-              <label for="category">Category</label>
-              <select id="category" formControlName="category">
-                <option value="">Select...</option>
-                @for (cat of admissionCategories; track cat) {
-                  <option [value]="cat">{{ cat }}</option>
-                }
-              </select>
-            </div>
-          }
-          <div class="form-group">
-            <label for="type">Type</label>
-            <select id="type" formControlName="type">
-              <option value="MCQ">MCQ</option>
-              <option value="CQ">CQ</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="marks">Marks</label>
-            <input id="marks" type="number" min="1" formControlName="marks" />
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="form-group">
-            <label for="subjectId">Subject</label>
-            <select id="subjectId" formControlName="subjectId">
-              <option value="">Select...</option>
-              @for (s of filteredSubjects; track s.id) {
-                <option [value]="s.id">{{ s.name }}</option>
-              }
-            </select>
-            @if (filteredSubjects.length === 0) {
-              <span class="muted" style="font-size: 0.8rem;">
-                No subjects for this section yet — <a routerLink="/admin/subjects/new">add one</a>.
-              </span>
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      @for (card of questionCards.controls; track $index; let i = $index) {
+        <div class="card question-card" [formGroup]="asQuestionGroup(card)">
+          <div class="card-header question-card-header">
+            <h3>Question {{ i + 1 }}</h3>
+            @if (questionCards.length > 1 && !editingId) {
+              <button class="btn btn-secondary btn-sm" type="button" (click)="removeQuestionCard(i)">Remove</button>
             }
           </div>
-          @if (form.controls.subjectId.value) {
+
+          <div class="row">
             <div class="form-group">
-              <label for="chapterId">Chapter (optional)</label>
-              <select id="chapterId" formControlName="chapterId">
-                <option value="">None (subject-level)</option>
-                @for (c of chapters(); track c.id) {
-                  <option [value]="c.id">{{ c.name }}</option>
-                }
+              <label for="section-{{ i }}">Section</label>
+              <select id="section-{{ i }}" [formControl]="getQuestionCardControl(asQuestionGroup(card), 'section')">
+                <option value="SSC">SSC</option>
+                <option value="HSC">HSC</option>
+                <option value="Admission">Admission</option>
               </select>
             </div>
-          }
-        </div>
 
-        <div class="form-group">
-          <label for="question">Question text</label>
-          <textarea id="question" rows="3" formControlName="question"></textarea>
-        </div>
-
-        @if (isMcq) {
-          <div class="form-group">
-            <label>Options (select the correct one)</label>
-            <div formArrayName="options">
-              @for (opt of options.controls; track $index; let i = $index) {
-                <div class="row" style="align-items: center; margin-bottom: 0.5rem;">
-                  <input type="radio" name="correctAnswer" [value]="i" [formControl]="form.controls.correctAnswer" style="flex: 0 0 auto;" />
-                  <input type="text" [formControlName]="i" [placeholder]="'Option ' + (i + 1)" />
-                  @if (options.length > 2) {
-                    <button class="btn btn-secondary btn-sm" type="button" style="flex: 0 0 auto;" (click)="removeOption(i)">Remove</button>
+            @if (isAdmissionForCard(asQuestionGroup(card))) {
+              <div class="form-group">
+                <label for="category-{{ i }}">Category</label>
+                <select id="category-{{ i }}" [formControl]="getQuestionCardControl(asQuestionGroup(card), 'category')">
+                  <option value="">Select...</option>
+                  @for (cat of admissionCategories; track cat) {
+                    <option [value]="cat">{{ cat }}</option>
                   }
-                </div>
+                </select>
+              </div>
+            }
+
+            <div class="form-group">
+              <label for="type-{{ i }}">Type</label>
+              <select id="type-{{ i }}" [formControl]="getQuestionCardControl(asQuestionGroup(card), 'type')">
+                <option value="MCQ">MCQ</option>
+                <option value="CQ">CQ</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="marks-{{ i }}">Marks</label>
+              <input id="marks-{{ i }}" type="number" min="1" [formControl]="getQuestionCardControl(asQuestionGroup(card), 'marks')" />
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="form-group">
+              <label for="subjectId-{{ i }}">Subject</label>
+              <select id="subjectId-{{ i }}" [formControl]="getQuestionCardControl(asQuestionGroup(card), 'subjectId')">
+                <option value="">Select...</option>
+                @for (subject of filteredSubjects(asQuestionGroup(card)); track subject.id) {
+                  <option [value]="subject.id">{{ subject.name }}</option>
+                }
+              </select>
+              @if (filteredSubjects(asQuestionGroup(card)).length === 0) {
+                <span class="muted tiny-copy">
+                  No subjects for this section yet — <a routerLink="/admin/subjects/new">add one</a>.
+                </span>
               }
             </div>
-            <button class="btn btn-secondary btn-sm" type="button" (click)="addOption()">Add option</button>
+
+            @if (asQuestionGroup(card).get('subjectId')?.value) {
+              <div class="form-group">
+                <label for="chapterId-{{ i }}">Chapter (optional)</label>
+                <select id="chapterId-{{ i }}" [formControl]="getQuestionCardControl(asQuestionGroup(card), 'chapterId')">
+                  <option value="">None (subject-level)</option>
+                  @for (chapter of asQuestionGroup(card).get('chapters')?.value ?? []; track chapter.id) {
+                    <option [value]="chapter.id">{{ chapter.name }}</option>
+                  }
+                </select>
+              </div>
+            }
           </div>
-        }
 
-        <div class="form-group">
-          <label for="explanation">Explanation (optional)</label>
-          <textarea
-            id="explanation"
-            rows="3"
-            formControlName="explanation"
-            placeholder="Shown to students on their result page after they submit, if filled in"
-          ></textarea>
+          @if (asQuestionGroup(card).get('chapterId')?.value) {
+            <div class="form-group">
+              <label for="topicName-{{ i }}">Topic / Unit</label>
+
+              @if (getTopicOptions(asQuestionGroup(card)).length > 0) {
+                <select id="topicName-{{ i }}" [formControl]="getQuestionCardControl(asQuestionGroup(card), 'topicName')">
+                  <option value="">Select a topic</option>
+                  @for (topic of getTopicOptions(asQuestionGroup(card)); track topic) {
+                    <option [value]="topic">{{ topic }}</option>
+                  }
+                </select>
+              } @else {
+                <input
+                  id="topicName-{{ i }}"
+                  type="text"
+                  [attr.list]="'question-topic-options-' + i"
+                  [formControl]="getQuestionCardControl(asQuestionGroup(card), 'topicName')"
+                  placeholder="Choose or type a topic"
+                />
+                <datalist [id]="'question-topic-options-' + i">
+                  @for (topic of getTopicOptions(asQuestionGroup(card)); track topic) {
+                    <option [value]="topic"></option>
+                  }
+                </datalist>
+              }
+
+              <small class="muted tiny-copy">This improves topic-based practice and smarter exam generation.</small>
+            </div>
+          }
+
+          <div class="form-group">
+            <label for="question-{{ i }}">Question text</label>
+            <textarea id="question-{{ i }}" rows="3" [formControl]="getQuestionCardControl(asQuestionGroup(card), 'question')"></textarea>
+          </div>
+
+          @if (getQuestionCardIsMcq(asQuestionGroup(card))) {
+            <div class="form-group">
+              <label>Options (select the correct one)</label>
+              <div [formArrayName]="'options'">
+                @for (option of getQuestionCardOptions(asQuestionGroup(card)).controls; track $index; let j = $index) {
+                  <div class="option-row">
+                    <input
+                      type="radio"
+                      [name]="'correct-answer-' + i"
+                      [value]="j"
+                      [formControl]="getQuestionCardControl(asQuestionGroup(card), 'correctAnswer')"
+                    />
+                    <input type="text" [formControl]="getQuestionOptionControl(asQuestionGroup(card), j)" [placeholder]="'Option ' + (j + 1)" />
+                    @if (getQuestionCardOptions(asQuestionGroup(card)).length > 2) {
+                      <button class="btn btn-secondary btn-sm" type="button" (click)="removeOption(asQuestionGroup(card), j)">Remove</button>
+                    }
+                  </div>
+                }
+              </div>
+              <button class="btn btn-secondary btn-sm" type="button" (click)="addOption(asQuestionGroup(card))">Add option</button>
+            </div>
+          }
+
+          <div class="form-group">
+            <label for="explanation-{{ i }}">Explanation (optional)</label>
+            <textarea
+              id="explanation-{{ i }}"
+              rows="3"
+              [formControl]="getQuestionCardControl(asQuestionGroup(card), 'explanation')"
+              placeholder="Shown after result submission if filled in"
+            ></textarea>
+          </div>
         </div>
+      }
 
-        @if (errorMessage()) {
-          <p class="error-text">{{ errorMessage() }}</p>
-        }
+      @if (errorMessage()) {
+        <p class="error-text">{{ errorMessage() }}</p>
+      }
 
-        <div class="row" style="margin-top: 1rem;">
-          <button class="btn" type="submit" [disabled]="saving()">
-            {{ saving() ? 'Saving...' : 'Save question' }}
-          </button>
-          <a class="btn btn-secondary" routerLink="/admin/questions">Cancel</a>
-        </div>
-      </form>
-    </div>
+      <div class="submit-row">
+        <button class="btn" type="submit" [disabled]="saving()">
+          {{ saving() ? 'Saving...' : editingId ? 'Save question' : 'Save questions' }}
+        </button>
+        <a class="btn btn-secondary" routerLink="/admin/questions">Cancel</a>
+      </div>
+    </form>
   }
 </div>

@@ -1,7 +1,9 @@
 <nav class="navbar">
-  <a class="brand" [routerLink]="auth.isAdmin() ? '/admin' : '/dashboard'">
-    <img src="favicon.png" alt="" width="28" height="28" />
-    Questify
+  <a class="brand" routerLink="/">
+    <span class="brand-mark">
+      <img src="favicon.png" alt="" width="28" height="28" />
+    </span>
+    <span class="brand-text">Questify</span>
   </a>
 
   <button class="menu-toggle" type="button" [class.is-open]="menuOpen()" (click)="toggleMenu()" aria-label="Toggle menu">
@@ -18,13 +20,14 @@
         <a routerLink="/admin/grading" routerLinkActive="active">Grading</a>
       } @else {
         <a routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Exams</a>
-        <a routerLink="/results" routerLinkActive="active">My Results</a>
+        <a routerLink="/results" routerLinkActive="active">Results</a>
       }
-      <span class="user">
+
+      <div class="user-meta">
         <span class="avatar">{{ (auth.currentUser()?.name || '?').charAt(0).toUpperCase() }}</span>
-        {{ auth.currentUser()?.name }}
-      </span>
-      <button class="link-btn logout-btn" type="button" (click)="logout()">Logout</button>
+        <span class="user-name">{{ auth.currentUser()?.name }}</span>
+      </div>
+      <button class="logout-btn" type="button" (click)="logout()">Logout</button>
     } @else {
       <a routerLink="/login" routerLinkActive="active">Login</a>
       <a routerLink="/register" routerLinkActive="active" class="btn btn-sm">Register</a>
