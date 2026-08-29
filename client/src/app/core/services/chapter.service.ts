@@ -8,6 +8,7 @@ import {
   query,
   QueryConstraint,
   setDoc,
+  updateDoc,
   where,
 } from 'firebase/firestore';
 import { Observable, from } from 'rxjs';
@@ -44,6 +45,10 @@ export class ChapterService {
   private async updateAsync(id: string, chapter: Omit<Chapter, 'id'>): Promise<Chapter> {
     await setDoc(doc(db, 'chapters', id), chapter);
     return { id, ...chapter };
+  }
+
+  setPublished(id: string, isPublished: boolean): Observable<void> {
+    return from(updateDoc(doc(db, 'chapters', id), { isPublished }));
   }
 
   delete(id: string): Observable<void> {

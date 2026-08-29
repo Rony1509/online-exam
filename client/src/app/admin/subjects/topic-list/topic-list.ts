@@ -100,4 +100,16 @@ export class TopicList {
       error: (err) => alert(err.message || 'Could not delete topic.'),
     });
   }
+
+  isPublished(topic: Topic): boolean {
+    return topic.isPublished !== false;
+  }
+
+  togglePublish(topic: Topic): void {
+    const next = !this.isPublished(topic);
+    this.topicService.setPublished(topic.id, next).subscribe({
+      next: () => this.topics.update((list) => list.map((t) => (t.id === topic.id ? { ...t, isPublished: next } : t))),
+      error: (err) => alert(err.message || 'Could not update publish status.'),
+    });
+  }
 }

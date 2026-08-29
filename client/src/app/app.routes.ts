@@ -29,6 +29,12 @@ export const routes: Routes = [
   },
 
   {
+    path: 'profile',
+    canActivate: [authGuard],
+    loadComponent: () => import('./profile/profile').then((m) => m.Profile),
+  },
+
+  {
     path: 'dashboard',
     canActivate: [authGuard],
     loadComponent: () => import('./student/dashboard/dashboard').then((m) => m.Dashboard),
@@ -103,6 +109,12 @@ export const routes: Routes = [
     canActivate: [authGuard, adminGuard],
     loadComponent: () =>
       import('./admin/questions/question-list/question-list').then((m) => m.QuestionList),
+  },
+  {
+    path: 'admin/questions/import',
+    canActivate: [authGuard, adminGuard],
+    loadComponent: () =>
+      import('./admin/questions/question-import/question-import').then((m) => m.QuestionImport),
   },
   {
     path: 'admin/questions/:id',

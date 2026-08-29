@@ -1,0 +1,148 @@
+<div class="page">
+  <div class="card-header">
+    <h2 style="margin: 0;">Import questions from PDF / image</h2>
+    <a class="btn btn-secondary" routerLink="/admin/questions">Back to question bank</a>
+  </div>
+  <p class="muted">
+    Upload a question paper (PDF or image) and Claude will extract the questions for you to review
+    before saving. Imported questions are saved as <strong>Unpublished</strong> so you can check
+    them before students see them.
+  </p>
+
+  <div class="card">
+    <h3 style="margin-top: 0;">Anthropic API key</h3>
+    @if (apiKeySaved()) {
+      <p class="muted">An API key is saved in this browser.</p>
+      <button class="link-btn" type="button" (click)="forgetApiKey()">Forget key</button>
+    } @else {
+      <p class="muted">
+        This calls the Claude API directly from your browser using your own API key — it's stored
+        only in this browser's local storage and is never sent anywhere except Anthropic. Get a key
+        at
+        <a href="https://console.anthropic.com/" target="_blank" rel="noopener">console.anthropic.com</a>.
+      </p>
+      <div class="row" style="align-items: flex-end;">
+        <div class="form-group" style="flex: 1;">
+          <label for="apiKey">API key</label>
+          <input id="apiKey" type="password" [(ngModel)]="apiKeyInput" [ngModelOptions]="{ standalone: true }" placeholder="sk-ant-..." />
+        </div>
+        <button class="btn" type="button" style="flex: 0 0 auto;" (click)="saveApiKey()">Save key</button>
+      </div>
+    }
+  </div>
+
+  @if (apiKeySaved()) {
+    <div class="card">
+      <h3 style="margin-top: 0;">1. Tag these questions</h3>
+      <div class="row">
+        <div class="form-group">
+          <label for="subject">Subject</label>
+          <select id="subject" [(ngModel)]="subjectId" [ngModelOptions]="{ standalone: true }" (ngModelChange)="onSubjectChange()">
+            <option value="">Select...</option>
+            @for (s of allSubjects(); track s.id) {
+              <option [value]="s.id">{{ s.name }}</option>
+            }
+          </select>
+        </div>
+        @if (chapters().length > 0) {
+          <div class="form-group">
+            <label for="chapter">Chapter (optional)</label>
+            <select id="chapter" [(ngModel)]="chapterId" [ngModelOptions]="{ standalone: true }" (ngModelChange)="onChapterChange()">
+              <option value="">None</option>
+              @for (c of chapters(); track c.id) {
+                <option [value]="c.id">{{ c.name }}</option>
+              }
+            </select>
+          </div>
+        }
+        @if (topics().length > 0) {
+          <div class="form-group">
+            <label for="topic">Topic (optional)</label>
+            <select id="topic" [(ngModel)]="topicId" [ngModelOptions]="{ standalone: true }">
+              <option value="">None</option>
+              @for (t of topics(); track t.id) {
+                <option [value]="t.id">{{ t.name }}</option>
+              }
+            </select>
+          </div>
+        }
+      </div>
+
+      <h3>2. Upload the question paper</h3>
+      <input type="file" accept="application/pdf,image/png,image/jpeg,image/webp" (change)="onFileSelected($event)" />
+      @if (selectedFileName()) {
+        <p class="muted" style="margin-top: 0.5rem;">Selected: {{ selectedFileName() }}</p>
+      }
+
+      @if (extractError()) {
+        <p class="error-text">{{ extractError() }}</p>
+      }
+
+      <div class="row" style="margin-top: 1rem;">
+        <button class="btn" type="button" [disabled]="extracting() || !selectedFile || !subjectId" (click)="extract()">
+          {{ extracting() ? 'Extracting...' : 'Extract questions' }}
+        </button>
+      </div>
+    </div>
+  }
+
+  @if (savedCount() > 0) {
+    <p class="success-banner">Saved {{ savedCount() }} question(s) as unpublished. Review and publish them from the question bank.</p>
+  }
+
+  @if (drafts().length > 0) {
+    <div class="card">
+      <div class="card-header">
+        <h3 style="margin: 0;">3. Review extracted questions ({{ drafts().length }})</h3>
+      </div>
+
+      @for (d of drafts(); track $index) {
+        <div class="card" style="margin-bottom: 1rem;">
+          <div class="row" style="align-items: flex-end;">
+            <div class="form-group" style="flex: 0 0 auto;">
+              <label>Type</label>
+              <select [(ngModel)]="d.type" [ngModelOptions]="{ standalone: true }">
+                <option value="MCQ">MCQ</option>
+                <option value="CQ">CQ</option>
+              </select>
+            </div>
+            <div class="form-group" style="flex: 0 0 auto;">
+              <label>Marks</label>
+              <input type="number" min="1" [(ngModel)]="d.marks" [ngModelOptions]="{ standalone: true }" style="width: 80px;" />
+            </div>
+            <button class="link-btn" type="button" style="margin-left: auto;" (click)="removeDraft($index)">Remove</button>
+          </div>
+
+          <div class="form-group">
+            <label>Question</label>
+            <textarea rows="3" [(ngModel)]="d.question" [ngModelOptions]="{ standalone: true }"></textarea>
+          </div>
+
+          @if (d.type === 'MCQ') {
+            <div class="form-group">
+              <label>Options (one per line)</label>
+              <textarea rows="4" [(ngModel)]="d.optionsText" [ngModelOptions]="{ standalone: true }"></textarea>
+            </div>
+            <div class="form-group">
+              <label>Correct answer (option index, starting at 0)</label>
+              <input type="number" min="0" [(ngModel)]="d.correctAnswer" [ngModelOptions]="{ standalone: true }" style="width: 80px;" />
+            </div>
+          }
+
+          <div class="form-group">
+            <label>Explanation (optional)</label>
+            <textarea rows="2" [(ngModel)]="d.explanation" [ngModelOptions]="{ standalone: true }"></textarea>
+          </div>
+        </div>
+      }
+
+      @if (saveError()) {
+        <p class="error-text">{{ saveError() }}</p>
+      }
+
+      <button class="btn" type="button" [disabled]="saving()" (click)="saveAll()">
+        {{ saving() ? 'Saving...' : 'Save all as unpublished' }}
+      </button>
+    </div>
+  }
+</div>

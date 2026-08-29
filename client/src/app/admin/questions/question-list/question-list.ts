@@ -75,4 +75,19 @@ export class QuestionList {
       error: (err) => alert(err.message || 'Could not delete question.'),
     });
   }
+
+  isPublished(question: Question): boolean {
+    return question.isPublished !== false;
+  }
+
+  togglePublish(question: Question): void {
+    const next = !this.isPublished(question);
+    this.questionService.setPublished(question.id, next).subscribe({
+      next: () =>
+        this.questions.update((list) =>
+          list.map((q) => (q.id === question.id ? { ...q, isPublished: next } : q)),
+        ),
+      error: (err) => alert(err.message || 'Could not update publish status.'),
+    });
+  }
 }

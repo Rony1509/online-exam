@@ -91,4 +91,16 @@ export class ChapterList {
       error: (err) => alert(err.message || 'Could not delete chapter.'),
     });
   }
+
+  isPublished(chapter: Chapter): boolean {
+    return chapter.isPublished !== false;
+  }
+
+  togglePublish(chapter: Chapter): void {
+    const next = !this.isPublished(chapter);
+    this.chapterService.setPublished(chapter.id, next).subscribe({
+      next: () => this.chapters.update((list) => list.map((c) => (c.id === chapter.id ? { ...c, isPublished: next } : c))),
+      error: (err) => alert(err.message || 'Could not update publish status.'),
+    });
+  }
 }

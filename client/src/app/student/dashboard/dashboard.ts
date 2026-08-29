@@ -35,7 +35,7 @@ export class Dashboard {
     this.errorMessage.set(null);
     this.subjectService.list({ section: this.section, category: this.category }).subscribe({
       next: (subjects) => {
-        this.subjects.set(subjects);
+        this.subjects.set(subjects.filter((s) => s.isPublished !== false));
         this.loading.set(false);
       },
       error: () => {

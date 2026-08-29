@@ -37,4 +37,16 @@ export class SubjectList {
       error: (err) => alert(err.message || 'Could not delete subject.'),
     });
   }
+
+  isPublished(subject: Subject): boolean {
+    return subject.isPublished !== false;
+  }
+
+  togglePublish(subject: Subject): void {
+    const next = !this.isPublished(subject);
+    this.subjectService.setPublished(subject.id, next).subscribe({
+      next: () => this.subjects.update((list) => list.map((s) => (s.id === subject.id ? { ...s, isPublished: next } : s))),
+      error: (err) => alert(err.message || 'Could not update publish status.'),
+    });
+  }
 }

@@ -19,6 +19,7 @@
           <tr>
             <th>Name</th>
             <th>Section</th>
+            <th>Status</th>
             <th></th>
           </tr>
         </thead>
@@ -28,9 +29,18 @@
               <td>{{ s.name }}</td>
               <td>{{ s.section }}{{ s.category ? ' · ' + s.category : '' }}</td>
               <td>
+                <span class="badge" [class.badge-success]="isPublished(s)">
+                  {{ isPublished(s) ? 'Published' : 'Unpublished' }}
+                </span>
+              </td>
+              <td>
                 <a [routerLink]="['/admin/subjects', s.id, 'chapters']">Chapters</a>
                 &nbsp;
                 <a [routerLink]="['/admin/subjects', s.id]">Edit</a>
+                &nbsp;
+                <button class="link-btn" type="button" (click)="togglePublish(s)">
+                  {{ isPublished(s) ? 'Unpublish' : 'Publish' }}
+                </button>
                 &nbsp;
                 <button class="link-btn" type="button" (click)="remove(s)">Delete</button>
               </td>

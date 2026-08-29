@@ -112,6 +112,14 @@
   background: rgba(148, 163, 184, 0.08);
   border: 1px solid rgba(148, 163, 184, 0.14);
   color: rgba(241, 245, 249, 0.92);
+  text-decoration: none;
+  transition: background var(--transition), border-color var(--transition);
+}
+
+.user-meta:hover,
+.user-meta.active {
+  background: rgba(148, 163, 184, 0.16);
+  border-color: rgba(148, 163, 184, 0.24);
 }
 
 .avatar {

@@ -9,7 +9,7 @@ import {
   signInWithEmailAndPassword,
   signOut,
 } from 'firebase/auth';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
 import { Observable, from } from 'rxjs';
 import { auth, db } from '../firebase';
 import { AdmissionCategory, Section, User } from '../models/models';
@@ -198,6 +198,20 @@ export class AuthService {
     this.pendingVerificationEmail.set(null);
     this.justVerified.set(false);
     return true;
+  }
+
+  /** Updates the signed-in user's own display name (owner-only write, per firestore.rules). */
+  updateProfile(updates: { name: string }): Observable<void> {
+    return from(this.updateProfileAsync(updates));
+  }
+
+  private async updateProfileAsync(updates: { name: string }): Promise<void> {
+    const user = this.currentUser();
+    if (!user) throw new Error('Not signed in.');
+    const name = updates.name.trim();
+    if (!name) throw new Error('Name cannot be empty.');
+    await updateDoc(doc(db, 'users', user.id), { name });
+    this.currentUser.set({ ...user, name });
   }
 
   logout(): void {

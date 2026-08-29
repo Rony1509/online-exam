@@ -1,0 +1,85 @@
+<div class="page" style="max-width: 640px;">
+  <h2>My profile</h2>
+
+  <div class="card">
+    <div class="row" style="align-items: center; gap: 1rem;">
+      <span
+        class="icon-avatar"
+        style="width: 64px; height: 64px; font-size: 1.5rem; border-radius: 50%;"
+        [style.background]="colorFor(auth.currentUser()?.name || '?').bg"
+        [style.color]="colorFor(auth.currentUser()?.name || '?').fg"
+      >
+        {{ initialsFor(auth.currentUser()?.name || '?') }}
+      </span>
+
+      <div style="flex: 1;">
+        @if (editing()) {
+          <div class="form-group" style="margin-bottom: 0.5rem;">
+            <input type="text" [(ngModel)]="editedName" [ngModelOptions]="{ standalone: true }" (keyup.enter)="saveEdit()" />
+          </div>
+          <div class="row">
+            <button class="btn" type="button" [disabled]="saving()" (click)="saveEdit()">
+              {{ saving() ? 'Saving...' : 'Save' }}
+            </button>
+            <button class="btn btn-secondary" type="button" [disabled]="saving()" (click)="cancelEdit()">Cancel</button>
+          </div>
+        } @else {
+          <h3 style="margin: 0 0 0.2rem;">{{ auth.currentUser()?.name }}</h3>
+          <button class="link-btn" type="button" (click)="startEdit()">Edit name</button>
+        }
+      </div>
+
+      <span class="badge badge-primary">{{ auth.currentUser()?.role }}</span>
+    </div>
+
+    @if (errorMessage()) {
+      <p class="error-text" style="margin-top: 1rem;">{{ errorMessage() }}</p>
+    }
+    @if (successMessage()) {
+      <p class="success-banner" style="margin-top: 1rem;">{{ successMessage() }}</p>
+    }
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top: 0;">Account details</h3>
+
+    <div class="form-group">
+      <label>Email</label>
+      <p style="margin: 0;">{{ auth.currentUser()?.email }}</p>
+    </div>
+
+    <div class="row">
+      <div class="form-group">
+        <label>Section</label>
+        <p style="margin: 0;">{{ auth.currentUser()?.section || '—' }}</p>
+      </div>
+      @if (auth.currentUser()?.category) {
+        <div class="form-group">
+          <label>Category</label>
+          <p style="margin: 0;">{{ auth.currentUser()?.category }}</p>
+        </div>
+      }
+    </div>
+
+    <div class="form-group">
+      <label>Member since</label>
+      <p style="margin: 0;">{{ joinedOn }}</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top: 0;">Password</h3>
+    <p class="muted">Send a password reset link to your email address.</p>
+
+    @if (resetSent()) {
+      <p class="success-banner">Password reset email sent. Check your inbox.</p>
+    }
+    @if (resetError()) {
+      <p class="error-text">{{ resetError() }}</p>
+    }
+
+    <button class="btn btn-secondary" type="button" [disabled]="resetSending()" (click)="sendPasswordReset()">
+      {{ resetSending() ? 'Sending...' : 'Send password reset email' }}
+    </button>
+  </div>
+</div>

@@ -46,7 +46,7 @@ export class SubjectDetail {
     });
 
     this.chapterService.list({ subjectId: this.subjectId }).subscribe({
-      next: (chapters) => this.chapters.set(chapters),
+      next: (chapters) => this.chapters.set(chapters.filter((c) => c.isPublished !== false)),
       error: () => this.errorMessage.set('Could not load chapters — check your connection and try again.'),
     });
 

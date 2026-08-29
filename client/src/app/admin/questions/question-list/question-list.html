@@ -1,7 +1,10 @@
 <div class="page">
   <div class="card-header">
     <h2 style="margin: 0;">Question bank</h2>
-    <a class="btn" routerLink="/admin/questions/new">Add question</a>
+    <div class="row" style="gap: 0.5rem;">
+      <a class="btn btn-secondary" routerLink="/admin/questions/import">Import from PDF/Image</a>
+      <a class="btn" routerLink="/admin/questions/new">Add question</a>
+    </div>
   </div>
 
   <div class="card">
@@ -69,6 +72,7 @@
             <th>Subject</th>
             <th>Type</th>
             <th>Marks</th>
+            <th>Status</th>
             <th></th>
           </tr>
         </thead>
@@ -81,7 +85,16 @@
               <td><span class="badge">{{ q.type }}</span></td>
               <td>{{ q.marks }}</td>
               <td>
+                <span class="badge" [class.badge-success]="isPublished(q)">
+                  {{ isPublished(q) ? 'Published' : 'Unpublished' }}
+                </span>
+              </td>
+              <td>
                 <a [routerLink]="['/admin/questions', q.id]">Edit</a>
+                &nbsp;
+                <button class="link-btn" type="button" (click)="togglePublish(q)">
+                  {{ isPublished(q) ? 'Unpublish' : 'Publish' }}
+                </button>
                 &nbsp;
                 <button class="link-btn" type="button" (click)="remove(q)">Delete</button>
               </td>

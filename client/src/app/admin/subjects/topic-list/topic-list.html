@@ -34,6 +34,7 @@
         <thead>
           <tr>
             <th>Name</th>
+            <th>Status</th>
             <th></th>
           </tr>
         </thead>
@@ -48,12 +49,21 @@
                 }
               </td>
               <td>
+                <span class="badge" [class.badge-success]="isPublished(t)">
+                  {{ isPublished(t) ? 'Published' : 'Unpublished' }}
+                </span>
+              </td>
+              <td>
                 @if (editingId === t.id) {
                   <button class="link-btn" type="button" (click)="saveEdit(t)">Save</button>
                   &nbsp;
                   <button class="link-btn" type="button" (click)="cancelEdit()">Cancel</button>
                 } @else {
                   <button class="link-btn" type="button" (click)="startEdit(t)">Edit</button>
+                  &nbsp;
+                  <button class="link-btn" type="button" (click)="togglePublish(t)">
+                    {{ isPublished(t) ? 'Unpublish' : 'Publish' }}
+                  </button>
                   &nbsp;
                   <button class="link-btn" type="button" (click)="remove(t)">Delete</button>
                 }

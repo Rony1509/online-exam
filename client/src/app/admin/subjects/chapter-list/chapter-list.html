@@ -34,6 +34,7 @@
         <thead>
           <tr>
             <th>Name</th>
+            <th>Status</th>
             <th></th>
           </tr>
         </thead>
@@ -48,6 +49,11 @@
                 }
               </td>
               <td>
+                <span class="badge" [class.badge-success]="isPublished(c)">
+                  {{ isPublished(c) ? 'Published' : 'Unpublished' }}
+                </span>
+              </td>
+              <td>
                 @if (editingId === c.id) {
                   <button class="link-btn" type="button" (click)="saveEdit(c)">Save</button>
                   &nbsp;
@@ -56,6 +62,10 @@
                   <button class="link-btn" type="button" (click)="startEdit(c)">Edit</button>
                   &nbsp;
                   <a class="link-btn" [routerLink]="['/admin/subjects', subjectId, 'chapters', c.id, 'topics']">Topics</a>
+                  &nbsp;
+                  <button class="link-btn" type="button" (click)="togglePublish(c)">
+                    {{ isPublished(c) ? 'Unpublish' : 'Publish' }}
+                  </button>
                   &nbsp;
                   <button class="link-btn" type="button" (click)="remove(c)">Delete</button>
                 }

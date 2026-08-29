@@ -19,12 +19,14 @@ export interface Subject {
   name: string;
   section: Section;
   category?: AdmissionCategory;
+  isPublished?: boolean;
 }
 
 export interface Chapter {
   id: string;
   subjectId: string;
   name: string;
+  isPublished?: boolean;
 }
 
 export interface Topic {
@@ -32,6 +34,7 @@ export interface Topic {
   subjectId: string;
   chapterId?: string;
   name: string;
+  isPublished?: boolean;
 }
 
 export interface Question {
@@ -50,6 +53,7 @@ export interface Question {
   options?: string[];
   correctAnswer?: number;
   explanation?: string;
+  isPublished?: boolean;
 }
 
 export interface ExamSummary {

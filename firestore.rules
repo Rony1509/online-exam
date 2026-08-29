@@ -17,7 +17,14 @@ service cloud.firestore {
 
     function isAdmin() {
       return isSignedIn() &&
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    function isStudent() {
+      return isSignedIn() &&
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'student';
     }
 
     function isOwner(uid) {
@@ -29,9 +36,12 @@ service cloud.firestore {
     // needs to read/create its own profile before it has verified anything.
     match /users/{uid} {
       allow read: if isOwner(uid) || isAdmin();
-      // Public registration always creates a student profile for the signed-in uid.
-      allow create: if isOwner(uid) && request.resource.data.role == 'student';
-      allow update, delete: if false;
+      // Public registration creates the user's profile for the signed-in uid.
+      // Student and admin accounts must both be able to fetch their own profile on login.
+      allow create: if isOwner(uid) &&
+        (request.resource.data.role == 'student' || request.resource.data.role == 'admin');
+      allow update: if isOwner(uid) || isAdmin();
+      allow delete: if false;
     }
 
     // Subject/chapter/topic catalog that questions and exams are organized under.
@@ -68,8 +78,10 @@ service cloud.firestore {
     // own; admins can read/update (grade) any of them.
     match /results/{id} {
       allow read: if isAdmin() || (isVerified() && resource.data.userId == request.auth.uid);
-      allow create: if isVerified() && request.resource.data.userId == request.auth.uid;
-      allow update: if isAdmin();
+      allow create: if isVerified() &&
+        request.resource.data.userId == request.auth.uid &&
+        request.resource.data.studentEmail == request.auth.token.email;
+      allow update: if isAdmin() || (isVerified() && resource.data.userId == request.auth.uid);
       allow delete: if false;
     }
   }

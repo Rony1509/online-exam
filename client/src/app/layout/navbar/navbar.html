@@ -23,12 +23,13 @@
         <a routerLink="/results" routerLinkActive="active">Results</a>
       }
 
-      <div class="user-meta">
+      <a class="user-meta" routerLink="/profile" routerLinkActive="active">
         <span class="avatar">{{ (auth.currentUser()?.name || '?').charAt(0).toUpperCase() }}</span>
-        <span class="user-name">{{ auth.currentUser()?.name }}</span>
-      </div>
+        <span class="user-name">Profile</span>
+      </a>
       <button class="logout-btn" type="button" (click)="logout()">Logout</button>
     } @else {
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Home</a>
       <a routerLink="/login" routerLinkActive="active">Login</a>
       <a routerLink="/register" routerLinkActive="active" class="btn btn-sm">Register</a>
     }
