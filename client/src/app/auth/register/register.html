@@ -50,9 +50,10 @@
           <div class="form-group">
             <label for="section">Section</label>
             <select id="section" formControlName="section">
-              <option value="SSC">SSC</option>
-              <option value="HSC">HSC</option>
-              <option value="Admission">Admission</option>
+              <option value="" disabled>Select...</option>
+              @for (s of allSections(); track s.id) {
+                <option [value]="s.name">{{ s.name }}</option>
+              }
             </select>
           </div>
 

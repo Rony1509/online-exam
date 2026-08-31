@@ -8,8 +8,9 @@
         <label>Section</label>
         <select [(ngModel)]="sectionFilter">
           <option value="">All</option>
-          <option value="SSC">SSC</option>
-          <option value="HSC">HSC</option>
+          @for (s of allSections(); track s.id) {
+            <option [value]="s.name">{{ s.name }}</option>
+          }
         </select>
       </div>
       <div class="form-group">

@@ -1,4 +1,6 @@
-export type Section = 'HSC' | 'SSC' | 'Admission';
+// Section used to be a fixed 'HSC' | 'SSC' | 'Admission' union. It's now an admin-managed
+// list (see SectionItem / SectionService) so any string the admin has defined is valid here.
+export type Section = string;
 export type AdmissionCategory = 'Medical' | 'Engineering' | 'Varsity';
 export type QuestionType = 'MCQ' | 'CQ';
 export type Role = 'student' | 'admin' | 'teacher';
@@ -14,17 +16,29 @@ export interface User {
   createdAt: string;
 }
 
+/** An admin-managed section/stream, e.g. SSC, HSC, Admission, BCS. */
+export interface SectionItem {
+  id: string;
+  name: string;
+  order: number;
+}
+
 export interface Subject {
   id: string;
   name: string;
-  section: Section;
-  category?: AdmissionCategory;
   isPublished?: boolean;
+  /** @deprecated legacy field from before subjects were section-agnostic; kept only for the one-time admin migration tool. */
+  section?: Section;
+  /** @deprecated legacy field, see `section` above. */
+  category?: AdmissionCategory;
 }
 
 export interface Chapter {
   id: string;
   subjectId: string;
+  /** Which section/stream (SSC, HSC, Admission, BCS, ...) this chapter belongs to. */
+  section: Section;
+  category?: AdmissionCategory;
   name: string;
   isPublished?: boolean;
 }
@@ -58,6 +72,8 @@ export interface Question {
   correctAnswers?: number[];
   explanation?: string;
   isPublished?: boolean;
+  /** Which real-world exam/year this question is from (e.g. "Primary Assistant Teacher: 19"), if known. */
+  source?: string;
 }
 
 export interface ExamSummary {
@@ -74,6 +90,9 @@ export interface ExamSummary {
   topicName?: string;
   duration: number;
   questionCount: number;
+  totalMarks?: number;
+  /** Minimum total marks a student needs to pass, shown on the exam details page. Optional — omit if the exam has no pass/fail threshold. */
+  passMark?: number;
   isModelTest?: boolean;
   createdAt: string;
 }

@@ -20,11 +20,11 @@ export class ResultService {
     const constraints: QueryConstraint[] = [];
     if (this.auth.isAdmin()) {
       if (filters.userId) constraints.push(where('userId', '==', filters.userId));
-      if (filters.examId) constraints.push(where('examId', '==', filters.examId));
     } else {
-      // Non-admins only ever see their own results, regardless of requested filters.
+      // Non-admins only ever see their own results, regardless of a requested userId filter.
       constraints.push(where('userId', '==', user.id));
     }
+    if (filters.examId) constraints.push(where('examId', '==', filters.examId));
 
     const snap = await getDocs(query(collection(db, 'results'), ...constraints));
     return snap.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<ExamResult, 'id'>) }));

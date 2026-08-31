@@ -1,0 +1,104 @@
+<div class="page" style="max-width: 760px;">
+  <a routerLink="/dashboard" class="back-link">&larr; Back to subjects</a>
+
+  @if (loading()) {
+    <div class="skeleton skeleton-card"></div>
+  } @else if (errorMessage()) {
+    <p class="error-text">{{ errorMessage() }}</p>
+    <button class="btn btn-secondary" type="button" (click)="load()">Retry</button>
+  } @else if (exam(); as e) {
+    <div class="card exam-summary-card">
+      <div class="exam-summary-header">
+        <h2>{{ e.title }}</h2>
+        <div class="exam-summary-actions">
+          <button
+            class="icon-btn"
+            type="button"
+            [class.icon-btn-active]="saved()"
+            [attr.aria-label]="saved() ? 'Remove from saved' : 'Save exam'"
+            (click)="toggleSaved()"
+          >
+            {{ saved() ? '★' : '☆' }}
+          </button>
+          <button class="icon-btn" type="button" aria-label="Share exam" (click)="share()">
+            {{ shareStatus() === 'copied' ? '✓' : '⇪' }}
+          </button>
+        </div>
+      </div>
+
+      <div class="exam-summary-grid">
+        <table class="exam-summary-table">
+          <tbody>
+            <tr>
+              <td class="muted">Subject</td>
+              <td class="exam-summary-value">{{ e.subjectName }}</td>
+            </tr>
+            <tr>
+              <td class="muted">Class / Section</td>
+              <td class="exam-summary-value">{{ e.section }}{{ e.category ? ' · ' + e.category : '' }}</td>
+            </tr>
+            <tr>
+              <td class="muted">Participated</td>
+              <td class="exam-summary-value">{{ attempts().length }}</td>
+            </tr>
+            <tr>
+              <td class="muted">Exam Status</td>
+              <td class="exam-summary-value"><span class="badge badge-success">Available</span></td>
+            </tr>
+            <tr>
+              <td class="muted">Starting Time</td>
+              <td class="exam-summary-value">{{ startingTime }}</td>
+            </tr>
+            <tr>
+              <td class="muted">Exam Result</td>
+              <td class="exam-summary-value">
+                @if (latestAttempt; as r) {
+                  <a [routerLink]="['/results', r.id]">
+                    {{ r.cqGraded ? r.finalScore + ' / ' + r.totalMarks : r.mcqScore + ' / ' + r.mcqTotal + ' (MCQ)' }}
+                  </a>
+                } @else {
+                  <span class="muted">Not attempted</span>
+                }
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <table class="exam-summary-table">
+          <tbody>
+            <tr>
+              <td class="muted">Total Question</td>
+              <td class="exam-summary-value">{{ e.questionCount }}</td>
+            </tr>
+            <tr>
+              <td class="muted">Total Mark</td>
+              <td class="exam-summary-value">{{ e.totalMarks ?? '—' }}</td>
+            </tr>
+            <tr>
+              <td class="muted">Pass Mark</td>
+              <td class="exam-summary-value">{{ e.passMark ?? '—' }}</td>
+            </tr>
+            <tr>
+              <td class="muted">Mark Per Qtn.</td>
+              <td class="exam-summary-value">{{ markPerQuestion }}</td>
+            </tr>
+            <tr>
+              <td class="muted">Negative Mark</td>
+              <td class="exam-summary-value">-{{ negativeMark }}</td>
+            </tr>
+            <tr>
+              <td class="muted">Duration</td>
+              <td class="exam-summary-value">{{ e.duration }} Minutes</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="exam-summary-footer">
+        <a class="btn" style="width: 100%; text-align: center; display: block;" [routerLink]="['/exam', e.id]">
+          {{ attempts().length > 0 ? 'Retake Exam' : 'Take Exam' }}
+        </a>
+      </div>
+    </div>
+  }
+</div>

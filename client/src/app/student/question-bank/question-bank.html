@@ -1,0 +1,121 @@
+<div class="page">
+  <h2>Question Bank</h2>
+  <p class="muted">Browse previous year and practice questions, then build your own timed practice test — mix any section, subject, chapter, or topic you like.</p>
+
+  <div class="card">
+    <div class="row">
+      <div class="form-group">
+        <label for="sectionName">Section</label>
+        <select id="sectionName" [(ngModel)]="sectionName" [ngModelOptions]="{ standalone: true }" (ngModelChange)="onSectionChange()">
+          <option value="">Any section</option>
+          @for (s of allSections(); track s.id) {
+            <option [value]="s.name">{{ s.name }}</option>
+          }
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="subjectId">Subject</label>
+        <select id="subjectId" [(ngModel)]="subjectId" [ngModelOptions]="{ standalone: true }" (ngModelChange)="onSubjectChange()">
+          <option value="">Any subject</option>
+          @for (s of allSubjects(); track s.id) {
+            <option [value]="s.id">{{ s.name }}</option>
+          }
+        </select>
+      </div>
+      @if (chapters().length > 0) {
+        <div class="form-group">
+          <label for="chapterId">Chapter (optional)</label>
+          <select id="chapterId" [(ngModel)]="chapterId" [ngModelOptions]="{ standalone: true }" (ngModelChange)="onChapterChange()">
+            <option value="">Any chapter</option>
+            @for (c of chapters(); track c.id) {
+              <option [value]="c.id">{{ c.name }}</option>
+            }
+          </select>
+        </div>
+      }
+      @if (topicOptions.length > 0) {
+        <div class="form-group">
+          <label for="topicName">Topic (optional)</label>
+          <select id="topicName" [(ngModel)]="topicName" [ngModelOptions]="{ standalone: true }">
+            <option value="">All topics</option>
+            @for (t of topicOptions; track t) {
+              <option [value]="t">{{ t }}</option>
+            }
+          </select>
+        </div>
+      }
+      <div class="form-group">
+        <label for="searchTerm">Search</label>
+        <input id="searchTerm" type="text" [(ngModel)]="searchTerm" [ngModelOptions]="{ standalone: true }" placeholder="Search question text..." />
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top: 0;">Build a practice test</h3>
+    <p class="muted">
+      {{ practicePool.length }} published question{{ practicePool.length === 1 ? '' : 's' }} match this filter.
+    </p>
+    <div class="row" style="align-items: flex-end;">
+      <div class="form-group" style="flex: 0 0 auto;">
+        <label for="practiceCount">Number of questions</label>
+        <input id="practiceCount" type="number" min="1" [(ngModel)]="practiceCount" [ngModelOptions]="{ standalone: true }" style="width: 110px;" />
+      </div>
+      <div class="form-group" style="flex: 0 0 auto;">
+        <label for="practiceDuration">Duration (minutes)</label>
+        <input id="practiceDuration" type="number" min="1" [(ngModel)]="practiceDuration" [ngModelOptions]="{ standalone: true }" style="width: 110px;" />
+      </div>
+      <button class="btn" type="button" style="flex: 0 0 auto;" [disabled]="starting() || practicePool.length === 0" (click)="startPractice()">
+        {{ starting() ? 'Starting...' : 'Start Practice Test' }}
+      </button>
+    </div>
+    @if (startError()) {
+      <p class="error-text">{{ startError() }}</p>
+    }
+  </div>
+
+  @if (loading()) {
+    <p class="muted">Loading questions...</p>
+  } @else if (filteredQuestions.length === 0) {
+    <div class="empty-state">No published questions match this filter yet.</div>
+  } @else {
+    @for (q of filteredQuestions; track q.id) {
+      <div class="card">
+        <p class="muted" style="margin-bottom: 0.35rem; display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+          <span class="badge">{{ q.section }}</span>
+          <span class="badge">{{ q.subjectName }}</span>
+          <span class="badge">{{ q.type }}</span>
+          <span class="badge">{{ q.marks }} mark{{ q.marks > 1 ? 's' : '' }}</span>
+          @if (q.chapterName) { <span class="badge">{{ q.chapterName }}</span> }
+          @if (q.topicName) { <span class="badge">{{ q.topicName }}</span> }
+          @if (q.source) { <span class="badge badge-primary">{{ q.source }}</span> }
+        </p>
+        <h3 style="margin: 0 0 0.5rem;">{{ q.question }}</h3>
+
+        @if (isExpanded(q.id)) {
+          @if (q.type === 'MCQ') {
+            <div>
+              @for (option of q.options; track $index; let oi = $index) {
+                <div class="choice" [class.choice-correct]="q.multiSelect ? (q.correctAnswers ?? []).includes(oi) : oi === q.correctAnswer" style="cursor: default;">
+                  {{ option }}
+                  @if (q.multiSelect ? (q.correctAnswers ?? []).includes(oi) : oi === q.correctAnswer) {
+                    <span class="muted">(correct)</span>
+                  }
+                </div>
+              }
+            </div>
+          }
+          @if (q.explanation) {
+            <div class="card" style="background: var(--color-surface-alt); margin-top: 0.75rem; margin-bottom: 0; box-shadow: none;">
+              <p class="muted" style="margin-bottom: 0.25rem; font-weight: 600;">💡 Explanation</p>
+              <p style="white-space: pre-wrap; margin: 0;">{{ q.explanation }}</p>
+            </div>
+          }
+          <button class="link-btn" type="button" style="margin-top: 0.75rem;" (click)="toggleExpand(q.id)">Hide answer</button>
+        } @else {
+          <button class="link-btn" type="button" (click)="toggleExpand(q.id)">Show answer &amp; explanation</button>
+        }
+      </div>
+    }
+  }
+</div>

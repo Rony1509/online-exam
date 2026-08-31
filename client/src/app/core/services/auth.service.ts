@@ -9,7 +9,7 @@ import {
   signInWithEmailAndPassword,
   signOut,
 } from 'firebase/auth';
-import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
+import { deleteField, doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
 import { Observable, from } from 'rxjs';
 import { auth, db } from '../firebase';
 import { AdmissionCategory, Section, User } from '../models/models';
@@ -204,18 +204,35 @@ export class AuthService {
     return true;
   }
 
-  /** Updates the signed-in user's own display name (owner-only write, per firestore.rules). */
-  updateProfile(updates: { name: string }): Observable<void> {
+  /** Updates the signed-in user's own name and/or section/category (owner-only write, per firestore.rules). */
+  updateProfile(updates: { name?: string; section?: Section; category?: AdmissionCategory }): Observable<void> {
     return from(this.updateProfileAsync(updates));
   }
 
-  private async updateProfileAsync(updates: { name: string }): Promise<void> {
+  private async updateProfileAsync(updates: { name?: string; section?: Section; category?: AdmissionCategory }): Promise<void> {
     const user = this.currentUser();
     if (!user) throw new Error('Not signed in.');
-    const name = updates.name.trim();
-    if (!name) throw new Error('Name cannot be empty.');
-    await updateDoc(doc(db, 'users', user.id), { name });
-    this.currentUser.set({ ...user, name });
+
+    const payload: Record<string, unknown> = {};
+    let name = user.name;
+    if (updates.name !== undefined) {
+      name = updates.name.trim();
+      if (!name) throw new Error('Name cannot be empty.');
+      payload['name'] = name;
+    }
+
+    let section = user.section;
+    let category = user.category;
+    if (updates.section !== undefined) {
+      section = updates.section;
+      payload['section'] = section;
+      category = updates.section === 'Admission' ? updates.category : undefined;
+      if (category) payload['category'] = category;
+      else payload['category'] = deleteField();
+    }
+
+    await updateDoc(doc(db, 'users', user.id), payload);
+    this.currentUser.set({ ...user, name, section, category });
   }
 
   logout(): void {

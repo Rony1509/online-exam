@@ -1,0 +1,83 @@
+<div class="page">
+  <h2>Sections</h2>
+  <p class="muted">
+    Sections are the streams students study under (SSC, HSC, Admission, BCS, ...). Chapters and
+    questions are tagged with one, and students pick which one they're studying from their profile.
+  </p>
+
+  <div class="card">
+    <div class="row" style="align-items: flex-end;">
+      <div class="form-group" style="flex: 1;">
+        <label for="newName">New section name</label>
+        <input
+          id="newName"
+          type="text"
+          [(ngModel)]="newName"
+          [ngModelOptions]="{ standalone: true }"
+          placeholder="e.g. BCS"
+          (keyup.enter)="add()"
+        />
+      </div>
+      <button class="btn" type="button" style="flex: 0 0 auto;" [disabled]="adding()" (click)="add()">
+        {{ adding() ? 'Adding...' : 'Add section' }}
+      </button>
+    </div>
+    @if (errorMessage()) {
+      <p class="error-text">{{ errorMessage() }}</p>
+    }
+  </div>
+
+  @if (loading()) {
+    <p class="muted">Loading sections...</p>
+  } @else if (sections().length === 0) {
+    <div class="empty-state">
+      <p>No sections yet.</p>
+      <button class="btn" type="button" [disabled]="seeding()" (click)="seedDefaults()">
+        {{ seeding() ? 'Adding...' : 'Add SSC, HSC & Admission' }}
+      </button>
+    </div>
+  } @else {
+    <div class="card">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Order</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (s of sections(); track s.id) {
+            <tr>
+              <td>
+                @if (editingId === s.id) {
+                  <input type="text" [(ngModel)]="editingName" [ngModelOptions]="{ standalone: true }" (keyup.enter)="saveEdit(s)" />
+                } @else {
+                  {{ s.name }}
+                }
+              </td>
+              <td>
+                @if (editingId === s.id) {
+                  <input type="number" min="1" [(ngModel)]="editingOrder" [ngModelOptions]="{ standalone: true }" style="width: 70px;" />
+                } @else {
+                  {{ s.order }}
+                }
+              </td>
+              <td>
+                @if (editingId === s.id) {
+                  <button class="link-btn" type="button" (click)="saveEdit(s)">Save</button>
+                  &nbsp;
+                  <button class="link-btn" type="button" (click)="cancelEdit()">Cancel</button>
+                } @else {
+                  <button class="link-btn" type="button" (click)="startEdit(s)">Edit</button>
+                  &nbsp;
+                  <button class="link-btn" type="button" (click)="remove(s)">Delete</button>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

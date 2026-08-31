@@ -48,18 +48,42 @@
       <p style="margin: 0;">{{ auth.currentUser()?.email }}</p>
     </div>
 
-    <div class="row">
-      <div class="form-group">
-        <label>Section</label>
-        <p style="margin: 0;">{{ auth.currentUser()?.section || '—' }}</p>
-      </div>
-      @if (auth.currentUser()?.category) {
+    @if (editingSection()) {
+      <div class="row" style="align-items: flex-end;">
         <div class="form-group">
-          <label>Category</label>
-          <p style="margin: 0;">{{ auth.currentUser()?.category }}</p>
+          <label for="editedSection">Section</label>
+          <select id="editedSection" [(ngModel)]="editedSection" [ngModelOptions]="{ standalone: true }">
+            <option value="" disabled>Select...</option>
+            @for (s of allSections(); track s.id) {
+              <option [value]="s.name">{{ s.name }}</option>
+            }
+          </select>
         </div>
-      }
-    </div>
+        @if (isEditedAdmission) {
+          <div class="form-group">
+            <label for="editedCategory">Category</label>
+            <select id="editedCategory" [(ngModel)]="editedCategory" [ngModelOptions]="{ standalone: true }">
+              <option value="">Select...</option>
+              @for (cat of admissionCategories; track cat) {
+                <option [value]="cat">{{ cat }}</option>
+              }
+            </select>
+          </div>
+        }
+        <button class="btn" type="button" [disabled]="sectionSaving()" (click)="saveSection()">
+          {{ sectionSaving() ? 'Saving...' : 'Save' }}
+        </button>
+        <button class="btn btn-secondary" type="button" [disabled]="sectionSaving()" (click)="cancelEditSection()">Cancel</button>
+      </div>
+    } @else {
+      <div class="row" style="align-items: center;">
+        <div class="form-group">
+          <label>Section</label>
+          <p style="margin: 0;">{{ auth.currentUser()?.section || '—' }}{{ auth.currentUser()?.category ? ' · ' + auth.currentUser()?.category : '' }}</p>
+        </div>
+        <button class="link-btn" type="button" (click)="startEditSection()">Switch section</button>
+      </div>
+    }
 
     <div class="form-group">
       <label>Member since</label>

@@ -46,6 +46,65 @@ function sameIndices(a: number[], b: number[]): boolean {
   return a.length === b.length && a.every((v, i) => v === b[i]);
 }
 
+/** Deducted from an MCQ's score for each wrong *attempted* answer — skipped questions aren't penalized. */
+export const NEGATIVE_MARK = 0.25;
+
+/** Grades a set of questions against submitted answers. Shared by real exams and self-service practice tests. */
+export function gradeQuestions(
+  questions: Question[],
+  answers: AnswerSubmission[],
+): { gradedAnswers: ResultAnswer[]; mcqScore: number; mcqTotal: number; cqTotal: number; hasCq: boolean } {
+  let mcqScore = 0;
+  let mcqTotal = 0;
+  let cqTotal = 0;
+  let hasCq = false;
+
+  const gradedAnswers: ResultAnswer[] = questions.map((q) => {
+    const submitted = answers.find((a) => a.questionId === q.id);
+    const response = submitted ? submitted.response : null;
+
+    if (q.type === 'MCQ') {
+      mcqTotal += q.marks;
+      const correct = correctIndices(q);
+      const attempted = responseIndices(response).length > 0;
+      const isCorrect = correct.length > 0 && sameIndices(correct, responseIndices(response));
+      const marksAwarded = isCorrect ? q.marks : attempted ? -NEGATIVE_MARK : 0;
+      mcqScore += marksAwarded;
+      return {
+        questionId: q.id,
+        type: 'MCQ',
+        question: q.question,
+        options: q.options,
+        ...(q.multiSelect ? { correctAnswers: correct } : { correctAnswer: q.correctAnswer }),
+        ...(q.explanation ? { explanation: q.explanation } : {}),
+        response,
+        isCorrect,
+        marksAwarded,
+        maxMarks: q.marks,
+      };
+    }
+
+    hasCq = true;
+    cqTotal += q.marks;
+    return {
+      questionId: q.id,
+      type: 'CQ',
+      question: q.question,
+      ...(q.explanation ? { explanation: q.explanation } : {}),
+      response: typeof response === 'string' ? response : '',
+      marksAwarded: null,
+      maxMarks: q.marks,
+    };
+  });
+
+  return { gradedAnswers, mcqScore, mcqTotal, cqTotal, hasCq };
+}
+
+/** Strips answer-key fields from questions before sending them to a student taking an exam. */
+export function sanitizeQuestions(questions: Question[]): ExamQuestion[] {
+  return questions.map(({ correctAnswer, correctAnswers, ...rest }) => rest);
+}
+
 function toSummary(id: string, data: Omit<Exam, 'id' | 'questionCount'>): ExamSummary {
   return {
     id,
@@ -61,6 +120,8 @@ function toSummary(id: string, data: Omit<Exam, 'id' | 'questionCount'>): ExamSu
     duration: data.duration,
     createdAt: data.createdAt,
     questionCount: (data.questionIds || []).length,
+    totalMarks: data.totalMarks,
+    passMark: data.passMark,
     isModelTest: !!data.isModelTest,
   };
 }
@@ -158,7 +219,7 @@ export class ExamService {
 
     const questions = await this.loadQuestions(exam.questionIds);
     const shuffled = [...questions].sort(() => Math.random() - 0.5);
-    const sanitized: ExamQuestion[] = shuffled.map(({ correctAnswer, correctAnswers, ...rest }) => rest);
+    const sanitized = sanitizeQuestions(shuffled);
 
     return {
       id: examSnap.id,
@@ -199,46 +260,7 @@ export class ExamService {
     const user = this.auth.currentUser();
     if (!user) throw new Error('Not signed in');
 
-    let mcqScore = 0;
-    let mcqTotal = 0;
-    let cqTotal = 0;
-    let hasCq = false;
-
-    const gradedAnswers: ResultAnswer[] = questions.map((q) => {
-      const submitted = answers.find((a) => a.questionId === q.id);
-      const response = submitted ? submitted.response : null;
-
-      if (q.type === 'MCQ') {
-        mcqTotal += q.marks;
-        const correct = correctIndices(q);
-        const isCorrect = correct.length > 0 && sameIndices(correct, responseIndices(response));
-        if (isCorrect) mcqScore += q.marks;
-        return {
-          questionId: q.id,
-          type: 'MCQ',
-          question: q.question,
-          options: q.options,
-          ...(q.multiSelect ? { correctAnswers: correct } : { correctAnswer: q.correctAnswer }),
-          ...(q.explanation ? { explanation: q.explanation } : {}),
-          response,
-          isCorrect,
-          marksAwarded: isCorrect ? q.marks : 0,
-          maxMarks: q.marks,
-        };
-      }
-
-      hasCq = true;
-      cqTotal += q.marks;
-      return {
-        questionId: q.id,
-        type: 'CQ',
-        question: q.question,
-        ...(q.explanation ? { explanation: q.explanation } : {}),
-        response: typeof response === 'string' ? response : '',
-        marksAwarded: null,
-        maxMarks: q.marks,
-      };
-    });
+    const { gradedAnswers, mcqScore, mcqTotal, cqTotal, hasCq } = gradeQuestions(questions, answers);
 
     const result: Omit<ExamResult, 'id'> = {
       userId: user.id,

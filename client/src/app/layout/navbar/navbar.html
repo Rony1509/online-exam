@@ -13,6 +13,7 @@
   <div class="links" [class.is-open]="menuOpen()">
     @if (auth.isLoggedIn()) {
       @if (auth.isAdmin()) {
+        <a routerLink="/admin/sections" routerLinkActive="active">Sections</a>
         <a routerLink="/admin/subjects" routerLinkActive="active">Subjects</a>
         <a routerLink="/admin/questions" routerLinkActive="active">Questions</a>
         <a routerLink="/admin/exams" routerLinkActive="active">Exams</a>
@@ -21,6 +22,7 @@
         <a routerLink="/admin/users" routerLinkActive="active">Users</a>
       } @else {
         <a routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Exams</a>
+        <a routerLink="/question-bank" routerLinkActive="active">Question Bank</a>
         <a routerLink="/results" routerLinkActive="active">Results</a>
       }
 

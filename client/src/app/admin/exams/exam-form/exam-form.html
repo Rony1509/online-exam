@@ -11,13 +11,36 @@
           <input id="title" type="text" formControlName="title" placeholder="e.g. SSC English Test 1" />
         </div>
 
+        <div class="form-group">
+          <label>Exam category</label>
+          <div class="row">
+            <button
+              class="btn"
+              type="button"
+              [class.btn-secondary]="isModelTest"
+              (click)="form.controls.examKind.setValue('subject')"
+            >
+              Subject
+            </button>
+            <button
+              class="btn"
+              type="button"
+              [class.btn-secondary]="!isModelTest"
+              (click)="form.controls.examKind.setValue('modelTest')"
+            >
+              Model Test
+            </button>
+          </div>
+        </div>
+
         <div class="row">
           <div class="form-group">
-            <label for="section">Section</label>
+            <label for="section">Section{{ isModelTest ? ' (optional)' : '' }}</label>
             <select id="section" formControlName="section">
-              <option value="SSC">SSC</option>
-              <option value="HSC">HSC</option>
-              <option value="Admission">Admission</option>
+              <option value="">{{ isModelTest ? 'Any section' : 'Select...' }}</option>
+              @for (s of allSections(); track s.id) {
+                <option [value]="s.name">{{ s.name }}</option>
+              }
             </select>
           </div>
           @if (isAdmission) {
@@ -32,10 +55,10 @@
             </div>
           }
           <div class="form-group">
-            <label for="subjectId">Subject</label>
+            <label for="subjectId">Subject{{ isModelTest ? ' (optional)' : '' }}</label>
             <select id="subjectId" formControlName="subjectId">
-              <option value="">Select...</option>
-              @for (s of filteredSubjects; track s.id) {
+              <option value="">{{ isModelTest ? 'Any subject' : 'Select...' }}</option>
+              @for (s of allSubjects(); track s.id) {
                 <option [value]="s.id">{{ s.name }}</option>
               }
             </select>
@@ -44,69 +67,59 @@
             <label for="duration">Duration (minutes)</label>
             <input id="duration" type="number" min="1" formControlName="duration" />
           </div>
+          <div class="form-group">
+            <label for="passMark">Pass mark (optional)</label>
+            <input id="passMark" type="number" min="0" formControlName="passMark" placeholder="e.g. 18" />
+          </div>
         </div>
 
         <div class="row">
           <div class="form-group">
-            <label for="mode">Exam type</label>
-            <select id="mode" formControlName="mode">
-              <option value="full">Full subject</option>
-              <option value="chapter">Chapter-wise</option>
-            </select>
-          </div>
-          @if (isChapterMode || isModelTest) {
-            <div class="form-group">
-              <label for="chapterId">Chapter {{ isModelTest ? '(optional)' : '' }}</label>
-              <select id="chapterId" formControlName="chapterId">
-                <option value="">{{ isModelTest ? 'Whole subject' : 'Select...' }}</option>
-                @for (c of chapters(); track c.id) {
-                  <option [value]="c.id">{{ c.name }}</option>
-                }
-              </select>
-              @if (form.controls.subjectId.value && chapters().length === 0) {
-                <span class="muted" style="font-size: 0.8rem;">
-                  This subject has no chapters yet —
-                  <a [routerLink]="['/admin/subjects', form.controls.subjectId.value, 'chapters']">add one</a>.
-                </span>
+            <label for="chapterId">Chapter (optional)</label>
+            <select id="chapterId" formControlName="chapterId">
+              <option value="">Whole subject</option>
+              @for (c of chapters(); track c.id) {
+                <option [value]="c.id">{{ c.name }}</option>
               }
-            </div>
-          }
-        </div>
-
-        @if (isChapterMode || isModelTest) {
-          <div class="row">
-            <div class="form-group">
-              <label for="topicName">Topic / Unit {{ isModelTest ? '(optional)' : '' }}</label>
-              <input
-                id="topicName"
-                type="text"
-                list="exam-topic-options"
-                formControlName="topicName"
-                placeholder="Choose or type a topic"
-              />
-              <datalist id="exam-topic-options">
-                @for (topic of topicOptions(); track topic) {
-                  <option [value]="topic"></option>
-                }
-              </datalist>
-            </div>
-            <div class="form-group">
-              <label for="questionCount">Random question count</label>
-              <input id="questionCount" type="number" min="1" formControlName="questionCount" placeholder="e.g. 15" />
-            </div>
+            </select>
+            @if (form.controls.subjectId.value && chapters().length === 0) {
+              <span class="muted" style="font-size: 0.8rem;">
+                This subject has no chapters yet —
+                <a [routerLink]="['/admin/subjects', form.controls.subjectId.value, 'chapters']">add one</a>.
+              </span>
+            }
           </div>
-        }
-
-        <div class="form-group" style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.5rem;">
-          <input id="isModelTest" type="checkbox" formControlName="isModelTest" />
-          <label for="isModelTest" style="margin: 0;">Mark as model test</label>
+          <div class="form-group">
+            <label for="topicName">Topic / Unit (optional)</label>
+            <input
+              id="topicName"
+              type="text"
+              list="exam-topic-options"
+              formControlName="topicName"
+              placeholder="Choose or type a topic"
+            />
+            <datalist id="exam-topic-options">
+              @for (topic of topicOptions(); track topic) {
+                <option [value]="topic"></option>
+              }
+            </datalist>
+          </div>
+          <div class="form-group">
+            <label for="questionCount">Random question count (optional)</label>
+            <input id="questionCount" type="number" min="1" formControlName="questionCount" placeholder="e.g. 15" />
+          </div>
         </div>
 
         @if (isModelTest) {
           <p class="muted" style="margin-top: -0.4rem; font-size: 0.8rem;">
-            Pick a subject above, and optionally a chapter or topic, then enter a random question
-            count to auto-generate the test — or leave the count blank and select questions
-            manually below to mix subjects, chapters, and topics freely.
+            Model tests mix freely: leave Section and Subject on "Any" to draw from everything, or
+            narrow to one to keep the mix within it. Enter a random count to auto-generate, or
+            select individual questions below.
+          </p>
+        } @else {
+          <p class="muted" style="margin-top: -0.4rem; font-size: 0.8rem;">
+            Leave chapter blank for a full-subject exam, or pick one for a chapter-wise exam. Enter
+            a random question count to auto-generate, or select questions manually below.
           </p>
         }
 
@@ -121,8 +134,6 @@
         <div class="card" style="max-height: 360px; overflow-y: auto;">
           @if (!isModelTest && !form.controls.subjectId.value) {
             <p class="muted">Pick a subject above to see matching questions.</p>
-          } @else if (!isModelTest && isChapterMode && !form.controls.chapterId.value) {
-            <p class="muted">Pick a chapter above to see matching questions.</p>
           } @else if (filteredQuestions.length === 0) {
             <p class="muted">No matching questions yet. Add some in the question bank first.</p>
           } @else {

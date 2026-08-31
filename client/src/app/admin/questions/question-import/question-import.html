@@ -33,7 +33,13 @@
 
   @if (apiKeySaved()) {
     <div class="card">
-      <h3 style="margin-top: 0;">1. Tag these questions</h3>
+      <h3 style="margin-top: 0;">1. Default tagging (optional)</h3>
+      <p class="muted" style="margin-top: -0.5rem;">
+        Applied to every extracted question as a starting point. For a single-subject paper, just
+        set this once. For a mixed set (e.g. a combined BCS paper covering several subjects),
+        leave this blank — each question gets its own Subject/Chapter/Topic/Section in the review
+        list below, and Gemini will try to guess each one's subject from the text automatically.
+      </p>
       <div class="row">
         <div class="form-group">
           <label for="subject">Subject</label>
@@ -66,9 +72,35 @@
             </select>
           </div>
         }
+        @if (subjectId) {
+          <div class="form-group">
+            <label for="sectionName">Section</label>
+            <select id="sectionName" [(ngModel)]="sectionName" [ngModelOptions]="{ standalone: true }">
+              <option value="">Select...</option>
+              @for (s of allSections(); track s.id) {
+                <option [value]="s.name">{{ s.name }}</option>
+              }
+            </select>
+            @if (hasChapter) {
+              <span class="muted" style="font-size: 0.76rem;">Defaulted from the chapter — change it if this batch is for a different section.</span>
+            }
+          </div>
+          @if (isAdmission) {
+            <div class="form-group">
+              <label for="categoryName">Category</label>
+              <select id="categoryName" [(ngModel)]="categoryName" [ngModelOptions]="{ standalone: true }">
+                <option value="">Select...</option>
+                @for (cat of admissionCategories; track cat) {
+                  <option [value]="cat">{{ cat }}</option>
+                }
+              </select>
+            </div>
+          }
+        }
       </div>
 
       <h3>2. Choose a source</h3>
+      <p class="muted" style="margin-top: -0.5rem;">Extracting/generating no longer requires a subject above — tag questions individually in step 3 if this is a mixed set.</p>
       <div class="row" style="margin-bottom: 0.75rem;">
         <button
           class="btn"
@@ -99,17 +131,31 @@
         }
 
         <div class="row" style="margin-top: 1rem;">
-          <button class="btn" type="button" [disabled]="extracting() || !selectedFile || !subjectId" (click)="extract()">
+          <button class="btn" type="button" [disabled]="extracting() || !selectedFile" (click)="extract()">
             {{ extracting() ? 'Extracting...' : 'Extract questions' }}
           </button>
         </div>
       } @else {
-        <p class="muted">
-          Paste or type any notes — English, Bengali, or Banglish. Gemini will turn it into exam
-          question(s) with an answer and explanation.
-        </p>
+        <div class="form-group" style="display: flex; align-items: center; gap: 0.5rem;">
+          <input id="extractMode" type="checkbox" [(ngModel)]="extractMode" [ngModelOptions]="{ standalone: true }" />
+          <label for="extractMode" style="margin: 0;">This text already contains complete question(s) — extract them as-is</label>
+        </div>
+
+        @if (extractMode) {
+          <p class="muted">
+            Paste already-written question(s) with options/answers (e.g. copied from a book or
+            website) — Gemini will extract them into the question bank exactly as given, without
+            changing the content.
+          </p>
+        } @else {
+          <p class="muted">
+            Paste or type any notes — English, Bengali, or Banglish. Gemini will turn it into exam
+            question(s) with an answer and explanation.
+          </p>
+        }
+
         <div class="form-group">
-          <label for="sourceText">Source text</label>
+          <label for="sourceText">{{ extractMode ? 'Question(s) to extract' : 'Source text' }}</label>
           <textarea
             id="sourceText"
             rows="6"
@@ -118,28 +164,31 @@
             placeholder="e.g. Newton's second law bole force = mass x acceleration..."
           ></textarea>
         </div>
-        <div class="row">
-          <div class="form-group" style="flex: 0 0 auto;">
-            <label for="generateType">Question type</label>
-            <select id="generateType" [(ngModel)]="generateType" [ngModelOptions]="{ standalone: true }">
-              <option value="AUTO">Auto (let AI decide)</option>
-              <option value="MCQ">MCQ</option>
-              <option value="CQ">CQ</option>
-            </select>
+
+        @if (!extractMode) {
+          <div class="row">
+            <div class="form-group" style="flex: 0 0 auto;">
+              <label for="generateType">Question type</label>
+              <select id="generateType" [(ngModel)]="generateType" [ngModelOptions]="{ standalone: true }">
+                <option value="AUTO">Auto (let AI decide)</option>
+                <option value="MCQ">MCQ</option>
+                <option value="CQ">CQ</option>
+              </select>
+            </div>
+            <div class="form-group" style="flex: 0 0 auto;">
+              <label for="generateCount">Number of questions</label>
+              <input id="generateCount" type="number" min="1" max="10" [(ngModel)]="generateCount" [ngModelOptions]="{ standalone: true }" style="width: 100px;" />
+            </div>
           </div>
-          <div class="form-group" style="flex: 0 0 auto;">
-            <label for="generateCount">Number of questions</label>
-            <input id="generateCount" type="number" min="1" max="10" [(ngModel)]="generateCount" [ngModelOptions]="{ standalone: true }" style="width: 100px;" />
-          </div>
-        </div>
+        }
 
         @if (extractError()) {
           <p class="error-text">{{ extractError() }}</p>
         }
 
         <div class="row" style="margin-top: 1rem;">
-          <button class="btn" type="button" [disabled]="extracting() || !sourceText.trim() || !subjectId" (click)="generate()">
-            {{ extracting() ? 'Generating...' : 'Generate questions' }}
+          <button class="btn" type="button" [disabled]="extracting() || !sourceText.trim()" (click)="generate()">
+            {{ extracting() ? (extractMode ? 'Extracting...' : 'Generating...') : (extractMode ? 'Extract questions' : 'Generate questions') }}
           </button>
         </div>
       }
@@ -173,6 +222,69 @@
             <button class="link-btn" type="button" style="margin-left: auto;" (click)="removeDraft($index)">Remove</button>
           </div>
 
+          <div class="row">
+            <div class="form-group">
+              <label>Subject</label>
+              <select [(ngModel)]="d.subjectId" [ngModelOptions]="{ standalone: true }" (ngModelChange)="onDraftSubjectChange($index)">
+                <option value="">Select...</option>
+                @for (s of allSubjects(); track s.id) {
+                  <option [value]="s.id">{{ s.name }}</option>
+                }
+              </select>
+              @if (d.subjectHint && !d.subjectId) {
+                <span class="muted" style="font-size: 0.76rem;">Gemini guessed "{{ d.subjectHint }}" — no matching subject found, pick one.</span>
+              }
+            </div>
+            @if (d.chapters.length > 0) {
+              <div class="form-group">
+                <label>Chapter (optional)</label>
+                <select [(ngModel)]="d.chapterId" [ngModelOptions]="{ standalone: true }" (ngModelChange)="onDraftChapterChange($index)">
+                  <option value="">None</option>
+                  @for (c of d.chapters; track c.id) {
+                    <option [value]="c.id">{{ c.name }} ({{ c.section }})</option>
+                  }
+                </select>
+              </div>
+            }
+            <div class="form-group">
+              <label>Topic (optional)</label>
+              <input
+                type="text"
+                [(ngModel)]="d.topicName"
+                [ngModelOptions]="{ standalone: true }"
+                [attr.list]="'draft-topic-options-' + $index"
+                placeholder="Choose or type a topic"
+              />
+              <datalist [id]="'draft-topic-options-' + $index">
+                @for (t of d.topicOptions; track t) {
+                  <option [value]="t"></option>
+                }
+              </datalist>
+            </div>
+            @if (d.subjectId) {
+              <div class="form-group">
+                <label>Section</label>
+                <select [(ngModel)]="d.sectionName" [ngModelOptions]="{ standalone: true }">
+                  <option value="">Select...</option>
+                  @for (s of allSections(); track s.id) {
+                    <option [value]="s.name">{{ s.name }}</option>
+                  }
+                </select>
+              </div>
+              @if (draftIsAdmission(d)) {
+                <div class="form-group">
+                  <label>Category</label>
+                  <select [(ngModel)]="d.categoryName" [ngModelOptions]="{ standalone: true }">
+                    <option value="">Select...</option>
+                    @for (cat of admissionCategories; track cat) {
+                      <option [value]="cat">{{ cat }}</option>
+                    }
+                  </select>
+                </div>
+              }
+            }
+          </div>
+
           <div class="form-group">
             <label>Question</label>
             <textarea rows="3" [(ngModel)]="d.question" [ngModelOptions]="{ standalone: true }"></textarea>
@@ -201,14 +313,32 @@
           }
 
           <div class="form-group">
-            <label>Explanation (optional)</label>
+            <div class="row" style="align-items: center; justify-content: space-between;">
+              <label style="margin: 0;">Explanation (optional)</label>
+              <button
+                class="btn btn-secondary btn-sm"
+                type="button"
+                [disabled]="explainingIndex() === $index"
+                (click)="explainDraft($index)"
+              >
+                {{ explainingIndex() === $index ? 'Writing...' : '✨ Expand with AI' }}
+              </button>
+            </div>
             <textarea rows="2" [(ngModel)]="d.explanation" [ngModelOptions]="{ standalone: true }"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Source / reference (optional)</label>
+            <input type="text" [(ngModel)]="d.source" [ngModelOptions]="{ standalone: true }" placeholder="e.g. Primary Assistant Teacher: 19" />
           </div>
         </div>
       }
 
       @if (saveError()) {
         <p class="error-text">{{ saveError() }}</p>
+      }
+      @if (explainError()) {
+        <p class="error-text">{{ explainError() }}</p>
       }
 
       <button class="btn" type="button" [disabled]="saving()" (click)="saveAll()">

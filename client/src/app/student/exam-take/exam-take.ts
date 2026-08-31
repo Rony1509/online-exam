@@ -2,7 +2,10 @@ import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ExamService } from '../../core/services/exam.service';
+import { PracticeService } from '../../core/services/practice.service';
 import { AnswerSubmission, ExamPaper } from '../../core/models/models';
+
+const PRACTICE_ID = 'practice';
 
 @Component({
   selector: 'app-exam-take',
@@ -14,6 +17,7 @@ export class ExamTake implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private examService = inject(ExamService);
+  private practiceService = inject(PracticeService);
 
   exam = signal<ExamPaper | null>(null);
   answers = signal<Record<string, number | number[] | string>>({});
@@ -54,6 +58,22 @@ export class ExamTake implements OnInit, OnDestroy {
   loadExam(): void {
     this.loading.set(true);
     this.errorMessage.set(null);
+
+    if (this.examId === PRACTICE_ID) {
+      const paper = this.practiceService.loadPending();
+      if (!paper) {
+        this.errorMessage.set('This practice session has expired — go back and start a new one.');
+        this.loading.set(false);
+        return;
+      }
+      this.exam.set(paper);
+      this.totalSeconds = paper.duration * 60;
+      this.remainingSeconds.set(this.totalSeconds);
+      this.loading.set(false);
+      this.startTimer();
+      return;
+    }
+
     this.examService.take(this.examId).subscribe({
       next: (paper) => {
         this.exam.set(paper);
@@ -129,7 +149,12 @@ export class ExamTake implements OnInit, OnDestroy {
       response: this.answers()[q.id] ?? null,
     }));
 
-    this.examService.submit(this.examId, submissionAnswers).subscribe({
+    const request =
+      this.examId === PRACTICE_ID
+        ? this.practiceService.submit(submissionAnswers)
+        : this.examService.submit(this.examId, submissionAnswers);
+
+    request.subscribe({
       next: (result) => {
         this.router.navigate(['/results', result.id]);
       },

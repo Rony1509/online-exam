@@ -1,4 +1,4 @@
-<div class="page question-form-page">
+<div class="question-form-page" [class.page]="!embedded">
   <div class="page-header">
     <div>
       <p class="eyebrow">{{ editingId ? 'Edit question bank item' : 'Question builder' }}</p>
@@ -26,21 +26,27 @@
 
           <div class="row">
             <div class="form-group">
-              <label for="section-{{ i }}">Section</label>
-              <select id="section-{{ i }}" [formControl]="getQuestionCardControl(asQuestionGroup(card), 'section')">
-                <option value="SSC">SSC</option>
-                <option value="HSC">HSC</option>
-                <option value="Admission">Admission</option>
+              <label for="subjectId-{{ i }}">Subject</label>
+              <select id="subjectId-{{ i }}" [formControl]="getQuestionCardControl(asQuestionGroup(card), 'subjectId')">
+                <option value="">Select...</option>
+                @for (subject of allSubjects(); track subject.id) {
+                  <option [value]="subject.id">{{ subject.name }}</option>
+                }
               </select>
+              @if (allSubjects().length === 0) {
+                <span class="muted tiny-copy">
+                  No subjects yet — <a routerLink="/admin/subjects/new">add one</a>.
+                </span>
+              }
             </div>
 
-            @if (isAdmissionForCard(asQuestionGroup(card))) {
+            @if (asQuestionGroup(card).get('subjectId')?.value) {
               <div class="form-group">
-                <label for="category-{{ i }}">Category</label>
-                <select id="category-{{ i }}" [formControl]="getQuestionCardControl(asQuestionGroup(card), 'category')">
-                  <option value="">Select...</option>
-                  @for (cat of admissionCategories; track cat) {
-                    <option [value]="cat">{{ cat }}</option>
+                <label for="chapterId-{{ i }}">Chapter (optional)</label>
+                <select id="chapterId-{{ i }}" [formControl]="getQuestionCardControl(asQuestionGroup(card), 'chapterId')">
+                  <option value="">None (subject-level)</option>
+                  @for (chapter of getChapterOptions(asQuestionGroup(card)); track chapter.id) {
+                    <option [value]="chapter.id">{{ chapter.name }} ({{ chapter.section }})</option>
                   }
                 </select>
               </div>
@@ -61,31 +67,30 @@
           </div>
 
           <div class="row">
-            <div class="form-group">
-              <label for="subjectId-{{ i }}">Subject</label>
-              <select id="subjectId-{{ i }}" [formControl]="getQuestionCardControl(asQuestionGroup(card), 'subjectId')">
-                <option value="">Select...</option>
-                @for (subject of filteredSubjects(asQuestionGroup(card)); track subject.id) {
-                  <option [value]="subject.id">{{ subject.name }}</option>
-                }
-              </select>
-              @if (filteredSubjects(asQuestionGroup(card)).length === 0) {
-                <span class="muted tiny-copy">
-                  No subjects for this section yet — <a routerLink="/admin/subjects/new">add one</a>.
-                </span>
-              }
-            </div>
-
             @if (asQuestionGroup(card).get('subjectId')?.value) {
               <div class="form-group">
-                <label for="chapterId-{{ i }}">Chapter (optional)</label>
-                <select id="chapterId-{{ i }}" [formControl]="getQuestionCardControl(asQuestionGroup(card), 'chapterId')">
-                  <option value="">None (subject-level)</option>
-                  @for (chapter of asQuestionGroup(card).get('chapters')?.value ?? []; track chapter.id) {
-                    <option [value]="chapter.id">{{ chapter.name }}</option>
+                <label for="section-{{ i }}">Section</label>
+                <select id="section-{{ i }}" [formControl]="getQuestionCardControl(asQuestionGroup(card), 'section')">
+                  <option value="">Select...</option>
+                  @for (s of allSections(); track s.id) {
+                    <option [value]="s.name">{{ s.name }}</option>
                   }
                 </select>
+                @if (hasChapter(asQuestionGroup(card))) {
+                  <span class="muted" style="font-size: 0.76rem;">Defaulted from the chapter — change it if needed.</span>
+                }
               </div>
+              @if (isAdmissionForCard(asQuestionGroup(card))) {
+                <div class="form-group">
+                  <label for="category-{{ i }}">Category</label>
+                  <select id="category-{{ i }}" [formControl]="getQuestionCardControl(asQuestionGroup(card), 'category')">
+                    <option value="">Select...</option>
+                    @for (cat of admissionCategories; track cat) {
+                      <option [value]="cat">{{ cat }}</option>
+                    }
+                  </select>
+                </div>
+              }
             }
           </div>
 
@@ -166,7 +171,17 @@
           }
 
           <div class="form-group">
-            <label for="explanation-{{ i }}">Explanation (optional)</label>
+            <div class="row" style="align-items: center; justify-content: space-between;">
+              <label for="explanation-{{ i }}" style="margin: 0;">Explanation (optional)</label>
+              <button
+                class="btn btn-secondary btn-sm"
+                type="button"
+                [disabled]="explainingIndex() === i"
+                (click)="explainWithAi(asQuestionGroup(card), i)"
+              >
+                {{ explainingIndex() === i ? 'Writing...' : '✨ Expand with AI' }}
+              </button>
+            </div>
             <textarea
               id="explanation-{{ i }}"
               rows="3"
@@ -174,18 +189,35 @@
               placeholder="Shown after result submission if filled in"
             ></textarea>
           </div>
+
+          <div class="form-group">
+            <label for="source-{{ i }}">Source / reference (optional)</label>
+            <input
+              id="source-{{ i }}"
+              type="text"
+              [formControl]="getQuestionCardControl(asQuestionGroup(card), 'source')"
+              placeholder="e.g. Primary Assistant Teacher: 19"
+            />
+          </div>
         </div>
       }
 
       @if (errorMessage()) {
         <p class="error-text">{{ errorMessage() }}</p>
       }
+      @if (explainError()) {
+        <p class="error-text">{{ explainError() }}</p>
+      }
 
       <div class="submit-row">
         <button class="btn" type="submit" [disabled]="saving()">
           {{ saving() ? 'Saving...' : editingId ? 'Save question' : 'Save questions' }}
         </button>
-        <a class="btn btn-secondary" routerLink="/admin/questions">Cancel</a>
+        @if (embedded) {
+          <button class="btn btn-secondary" type="button" (click)="cancelled.emit()">Cancel</button>
+        } @else {
+          <a class="btn btn-secondary" routerLink="/admin/questions">Cancel</a>
+        }
       </div>
     </form>
   }

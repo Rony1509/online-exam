@@ -4,9 +4,36 @@
     <a class="btn" routerLink="/admin/subjects/new">Add subject</a>
   </div>
   <p class="muted">
-    Subjects and chapters organize the question bank and exams. Students browse by subject, then
-    choose a chapter or the full-subject exam list.
+    A subject (e.g. "English") is shared across every section. Open its chapters to tag each one
+    with a section (SSC, HSC, Admission, ...) and, optionally, a topic.
   </p>
+
+  <div class="card" style="background: var(--color-surface-alt);">
+    <div class="row" style="align-items: center; justify-content: space-between;">
+      <div>
+        <h3 style="margin: 0 0 0.25rem;">One-time structure migration</h3>
+        <p class="muted" style="margin: 0;">
+          If you have old subjects like "Math (SSC)" and "Math (HSC)" as separate entries, this
+          merges same-named subjects into one and moves their section onto each chapter. Safe to
+          run more than once.
+        </p>
+      </div>
+      <button class="btn btn-secondary" type="button" [disabled]="migrating()" (click)="migrate()">
+        {{ migrating() ? 'Migrating...' : 'Run migration' }}
+      </button>
+    </div>
+    @if (migrationSummary(); as summary) {
+      <p class="muted" style="margin-top: 0.75rem;">
+        Done — merged {{ summary.subjectsMerged }} duplicate subject(s), tagged
+        {{ summary.chaptersTaggedWithSection }} chapter(s) with a section, and repointed
+        {{ summary.chaptersRepointed }} chapter(s), {{ summary.topicsRepointed }} topic(s),
+        {{ summary.questionsRepointed }} question(s) and {{ summary.examsRepointed }} exam(s).
+      </p>
+    }
+    @if (migrationError()) {
+      <p class="error-text" style="margin-top: 0.75rem;">{{ migrationError() }}</p>
+    }
+  </div>
 
   @if (loading()) {
     <p class="muted">Loading subjects...</p>
@@ -18,7 +45,6 @@
         <thead>
           <tr>
             <th>Name</th>
-            <th>Section</th>
             <th>Status</th>
             <th></th>
           </tr>
@@ -27,7 +53,6 @@
           @for (s of subjects(); track s.id) {
             <tr>
               <td>{{ s.name }}</td>
-              <td>{{ s.section }}{{ s.category ? ' · ' + s.category : '' }}</td>
               <td>
                 <span class="badge" [class.badge-success]="isPublished(s)">
                   {{ isPublished(s) ? 'Published' : 'Unpublished' }}

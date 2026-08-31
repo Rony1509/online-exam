@@ -3,7 +3,8 @@ import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { ResultService } from '../../../core/services/result.service';
-import { ExamResult, Section } from '../../../core/models/models';
+import { SectionService } from '../../../core/services/section.service';
+import { ExamResult, Section, SectionItem } from '../../../core/models/models';
 
 @Component({
   selector: 'app-admin-results-list',
@@ -13,8 +14,10 @@ import { ExamResult, Section } from '../../../core/models/models';
 })
 export class ResultsList {
   private resultService = inject(ResultService);
+  private sectionService = inject(SectionService);
 
   results = signal<ExamResult[]>([]);
+  allSections = signal<SectionItem[]>([]);
   loading = signal(true);
 
   sectionFilter: '' | Section = '';
@@ -35,6 +38,7 @@ export class ResultsList {
   });
 
   ngOnInit(): void {
+    this.sectionService.list().subscribe((sections) => this.allSections.set(sections));
     this.resultService.list().subscribe({
       next: (results) => {
         results.sort((a, b) => b.submittedAt.localeCompare(a.submittedAt));

@@ -6,7 +6,6 @@ import {
   doc,
   getDocs,
   query,
-  QueryConstraint,
   setDoc,
   updateDoc,
   where,
@@ -17,16 +16,12 @@ import { Subject } from '../models/models';
 
 @Injectable({ providedIn: 'root' })
 export class SubjectService {
-  list(filters: { section?: string; category?: string } = {}): Observable<Subject[]> {
-    return from(this.listAsync(filters));
+  list(): Observable<Subject[]> {
+    return from(this.listAsync());
   }
 
-  private async listAsync(filters: { section?: string; category?: string }): Promise<Subject[]> {
-    const constraints: QueryConstraint[] = [];
-    if (filters.section) constraints.push(where('section', '==', filters.section));
-    if (filters.category) constraints.push(where('category', '==', filters.category));
-
-    const snap = await getDocs(query(collection(db, 'subjects'), ...constraints));
+  private async listAsync(): Promise<Subject[]> {
+    const snap = await getDocs(collection(db, 'subjects'));
     return snap.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<Subject, 'id'>) }));
   }
 

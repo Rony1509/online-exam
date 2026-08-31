@@ -6,7 +6,10 @@ import { ExamService } from '../../../core/services/exam.service';
 import { QuestionService } from '../../../core/services/question.service';
 import { SubjectService } from '../../../core/services/subject.service';
 import { ChapterService } from '../../../core/services/chapter.service';
-import { AdmissionCategory, Chapter, ExamMode, Question, Section, Subject } from '../../../core/models/models';
+import { SectionService } from '../../../core/services/section.service';
+import { AdmissionCategory, Chapter, ExamMode, Question, SectionItem, Subject } from '../../../core/models/models';
+
+type ExamKind = 'subject' | 'modelTest';
 
 const ADMISSION_CATEGORIES: AdmissionCategory[] = ['Medical', 'Engineering', 'Varsity'];
 
@@ -24,6 +27,7 @@ export class ExamForm {
   private questionService = inject(QuestionService);
   private subjectService = inject(SubjectService);
   private chapterService = inject(ChapterService);
+  private sectionService = inject(SectionService);
 
   editingId: string | null = null;
   loading = signal(false);
@@ -32,6 +36,7 @@ export class ExamForm {
 
   allQuestions = signal<Question[]>([]);
   allSubjects = signal<Subject[]>([]);
+  allSections = signal<SectionItem[]>([]);
   chapters = signal<Chapter[]>([]);
   topicOptions = signal<string[]>([]);
   selectedIds = signal<Set<string>>(new Set());
@@ -40,35 +45,30 @@ export class ExamForm {
 
   form = this.fb.nonNullable.group({
     title: ['', [Validators.required]],
-    section: ['SSC', [Validators.required]],
+    examKind: ['subject' as ExamKind, [Validators.required]],
+    // Any/all of these left blank means "no restriction" — that's what powers free mixing in
+    // Model Test mode (any section, any subject, any chapter, any topic).
+    section: [''],
     category: [''],
     subjectId: [''],
-    mode: ['full' as ExamMode, [Validators.required]],
     chapterId: [''],
     topicName: [''],
     questionCount: [0, [Validators.min(0)]],
-    isModelTest: [false],
     duration: [30, [Validators.required, Validators.min(1)]],
+    passMark: [0, [Validators.min(0)]],
   });
 
   get isAdmission(): boolean {
     return this.form.controls.section.value === 'Admission';
   }
 
-  get isChapterMode(): boolean {
-    return this.form.controls.mode.value === 'chapter';
-  }
-
   get isModelTest(): boolean {
-    return Boolean(this.form.controls.isModelTest.value);
+    return this.form.controls.examKind.value === 'modelTest';
   }
 
-  get filteredSubjects(): Subject[] {
-    const section = this.form.controls.section.value;
-    const category = this.form.controls.category.value;
-    return this.allSubjects().filter(
-      (s) => s.section === section && (!this.isAdmission || s.category === category),
-    );
+  /** Chapter-wise vs full-subject is derived from whether a chapter is picked — not a separate field. */
+  get isChapterScoped(): boolean {
+    return !this.isModelTest && !!this.form.controls.chapterId.value;
   }
 
   get filteredQuestions(): Question[] {
@@ -79,12 +79,11 @@ export class ExamForm {
     const topicName = this.form.controls.topicName.value?.trim();
 
     return this.allQuestions().filter((q) => {
-      if (q.section !== section) return false;
-      if (this.isAdmission && q.category !== category) return false;
+      if (section && q.section !== section) return false;
+      if (category && q.category !== category) return false;
       if (selectedSubjectId && q.subjectId !== selectedSubjectId) return false;
       if (selectedChapterId && q.chapterId !== selectedChapterId) return false;
       if (topicName && (q.topicName ?? '').trim() !== topicName) return false;
-      if (this.isModelTest) return true;
       return true;
     });
   }
@@ -100,6 +99,7 @@ export class ExamForm {
   ngOnInit(): void {
     this.questionService.list().subscribe((questions) => this.allQuestions.set(questions));
     this.subjectService.list().subscribe((subjects) => this.allSubjects.set(subjects));
+    this.sectionService.list().subscribe((sections) => this.allSections.set(sections));
 
     this.form.controls.subjectId.valueChanges.subscribe((subjectId) => {
       this.form.controls.chapterId.setValue('');
@@ -135,13 +135,13 @@ export class ExamForm {
         next: (exam) => {
           this.form.patchValue({
             title: exam.title,
-            section: exam.section,
+            section: exam.section && exam.section !== 'Mixed' ? exam.section : '',
             category: exam.category ?? '',
+            examKind: exam.isModelTest ? 'modelTest' : 'subject',
             subjectId: exam.subjectId,
-            mode: exam.mode,
             topicName: exam.topicName ?? '',
             questionCount: exam.questionCount ?? 0,
-            isModelTest: !!exam.isModelTest,
+            passMark: exam.passMark ?? 0,
           });
           if (exam.subjectId) this.loadChapters(exam.subjectId);
           this.form.controls.chapterId.setValue(exam.chapterId ?? '');
@@ -177,7 +177,7 @@ export class ExamForm {
       return;
     }
 
-    if (!this.isModelTest && this.isChapterMode && this.selectedIds().size >= this.availableQuestionCount) {
+    if (this.isChapterScoped && this.selectedIds().size >= this.availableQuestionCount) {
       this.selectionWarning.set(
         `You already selected all ${this.availableQuestionCount} available question${this.availableQuestionCount === 1 ? '' : 's'} in this chapter/topic.`,
       );
@@ -203,15 +203,8 @@ export class ExamForm {
     return Math.max(5, mcqCount + cqCount * 10);
   }
 
-  private buildRandomQuestionIds(subject: Subject, chapter: Chapter | undefined, raw: any): string[] {
-    const chapterQuestions = this.allQuestions().filter((q) => {
-      if (q.subjectId !== subject.id) return false;
-      if (chapter && q.chapterId !== chapter.id) return false;
-      if (raw.topicName?.trim()) return (q.topicName ?? '').trim() === raw.topicName.trim();
-      return true;
-    });
-
-    const available = [...chapterQuestions].sort(() => Math.random() - 0.5);
+  private buildRandomQuestionIds(raw: { questionCount?: number }): string[] {
+    const available = [...this.filteredQuestions].sort(() => Math.random() - 0.5);
     const needed = Math.min(Number(raw.questionCount || 0), available.length);
     return available.slice(0, needed).map((q) => q.id);
   }
@@ -226,59 +219,54 @@ export class ExamForm {
       this.errorMessage.set('Select a category for an Admission exam.');
       return;
     }
-    if (!this.isModelTest && this.isChapterMode && !this.form.controls.chapterId.value) {
-      this.errorMessage.set('Select a chapter for a chapter-wise exam.');
-      return;
-    }
 
     const raw = this.form.getRawValue();
     const subject = raw.subjectId ? this.allSubjects().find((s) => s.id === raw.subjectId) : undefined;
-    const selectedQuestionIds = Array.from(this.selectedIds());
-    const selectedQuestions = this.allQuestions().filter((q) => selectedQuestionIds.includes(q.id));
-    const primarySubject = subject ?? (selectedQuestions[0] ? this.allSubjects().find((s) => s.id === selectedQuestions[0].subjectId) ?? null : null);
     if (!this.isModelTest && !subject) {
       this.errorMessage.set('Select a subject.');
       return;
     }
-    const chapter = (this.isChapterMode || this.isModelTest)
-      ? this.chapters().find((c) => c.id === raw.chapterId)
-      : undefined;
+    const chapter = this.chapters().find((c) => c.id === raw.chapterId);
 
     let questionIds = Array.from(this.selectedIds());
-    if ((this.isChapterMode || this.isModelTest) && questionIds.length === 0 && (raw.questionCount ?? 0) > 0) {
-      if (!subject) {
-        this.errorMessage.set('Select a subject before generating random questions.');
-        return;
-      }
-      questionIds = this.buildRandomQuestionIds(subject, chapter, raw);
+    if (questionIds.length === 0 && (raw.questionCount ?? 0) > 0) {
+      questionIds = this.buildRandomQuestionIds(raw);
     }
 
     if (questionIds.length === 0) {
-      this.errorMessage.set('Select at least one question for this exam or enter a question count for random chapter questions.');
+      this.errorMessage.set('Select at least one question for this exam or enter a question count for random questions.');
       return;
     }
 
     const maxAvailable = this.availableQuestionCount;
-    if (this.isChapterMode && questionIds.length > maxAvailable) {
+    if (this.isChapterScoped && questionIds.length > maxAvailable) {
       this.errorMessage.set(
         `You selected ${questionIds.length} questions, but only ${maxAvailable} are available in this chapter/topic.`,
       );
       return;
     }
 
+    const selectedQuestions = this.allQuestions().filter((q) => questionIds.includes(q.id));
+    const primarySubject = subject ?? (selectedQuestions[0] ? this.allSubjects().find((s) => s.id === selectedQuestions[0].subjectId) ?? null : null);
+    const distinctSubjectIds = new Set(selectedQuestions.map((q) => q.subjectId));
+    const distinctSections = new Set(selectedQuestions.map((q) => q.section));
+
     const finalDuration = this.estimateDurationForQuestions(questionIds);
+    const totalMarks = selectedQuestions.reduce((sum, q) => sum + q.marks, 0);
     const payload = {
       title: raw.title,
-      section: raw.section as Section,
+      section: raw.section || (distinctSections.size === 1 ? [...distinctSections][0] : 'Mixed'),
       subjectId: primarySubject?.id ?? subject?.id ?? selectedQuestions[0]?.subjectId ?? raw.subjectId ?? '',
-      subjectName: primarySubject?.name ?? subject?.name ?? selectedQuestions[0]?.subjectName ?? 'Mixed subjects',
-      mode: this.isModelTest ? 'full' : raw.mode,
+      subjectName: distinctSubjectIds.size > 1 ? 'Mixed subjects' : (primarySubject?.name ?? subject?.name ?? selectedQuestions[0]?.subjectName ?? 'Mixed subjects'),
+      mode: (chapter ? 'chapter' : 'full') as ExamMode,
       duration: finalDuration,
+      totalMarks,
+      ...(raw.passMark ? { passMark: Number(raw.passMark) } : {}),
       questionIds,
       ...(raw.topicName?.trim() ? { topicName: raw.topicName.trim() } : {}),
       ...(this.isAdmission ? { category: raw.category as AdmissionCategory } : {}),
       ...(chapter ? { chapterId: chapter.id, chapterName: chapter.name } : {}),
-      isModelTest: Boolean(raw.isModelTest),
+      isModelTest: this.isModelTest,
     };
 
     this.saving.set(true);

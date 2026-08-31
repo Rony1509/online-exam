@@ -3,22 +3,27 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { QuestionService } from '../../../core/services/question.service';
 import { SubjectService } from '../../../core/services/subject.service';
-import { Question, Subject } from '../../../core/models/models';
+import { SectionService } from '../../../core/services/section.service';
+import { QuestionForm } from '../question-form/question-form';
+import { Question, SectionItem, Subject } from '../../../core/models/models';
 
 @Component({
   selector: 'app-question-list',
   standalone: true,
-  imports: [FormsModule, RouterLink],
+  imports: [FormsModule, RouterLink, QuestionForm],
   templateUrl: './question-list.html',
 })
 export class QuestionList {
   private questionService = inject(QuestionService);
   private subjectService = inject(SubjectService);
+  private sectionService = inject(SectionService);
 
   questions = signal<Question[]>([]);
   allSubjects = signal<Subject[]>([]);
+  allSections = signal<SectionItem[]>([]);
   loading = signal(true);
   errorMessage = signal<string | null>(null);
+  showAddForm = signal(false);
 
   readonly admissionCategories = ['Medical', 'Engineering', 'Varsity'];
 
@@ -27,14 +32,6 @@ export class QuestionList {
   subjectFilter = '';
   typeFilter = '';
   topicFilter = '';
-
-  get filteredSubjects(): Subject[] {
-    return this.allSubjects().filter(
-      (s) =>
-        (!this.sectionFilter || s.section === this.sectionFilter) &&
-        (this.sectionFilter !== 'Admission' || !this.categoryFilter || s.category === this.categoryFilter),
-    );
-  }
 
   get topicOptions(): string[] {
     const topics = new Set<string>();
@@ -46,6 +43,7 @@ export class QuestionList {
 
   ngOnInit(): void {
     this.subjectService.list().subscribe((subjects) => this.allSubjects.set(subjects));
+    this.sectionService.list().subscribe((sections) => this.allSections.set(sections));
     this.load();
   }
 
@@ -66,6 +64,15 @@ export class QuestionList {
         },
         error: () => this.loading.set(false),
       });
+  }
+
+  toggleAddForm(): void {
+    this.showAddForm.update((v) => !v);
+  }
+
+  onQuestionSaved(): void {
+    this.showAddForm.set(false);
+    this.load();
   }
 
   remove(question: Question): void {

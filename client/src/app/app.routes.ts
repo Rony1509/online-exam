@@ -40,6 +40,11 @@ export const routes: Routes = [
     loadComponent: () => import('./student/dashboard/dashboard').then((m) => m.Dashboard),
   },
   {
+    path: 'question-bank',
+    canActivate: [authGuard],
+    loadComponent: () => import('./student/question-bank/question-bank').then((m) => m.QuestionBank),
+  },
+  {
     path: 'subject/:id',
     canActivate: [authGuard],
     loadComponent: () =>
@@ -50,6 +55,11 @@ export const routes: Routes = [
     canActivate: [authGuard],
     loadComponent: () =>
       import('./student/chapter-exams/chapter-exams').then((m) => m.ChapterExams),
+  },
+  {
+    path: 'exam/:id/details',
+    canActivate: [authGuard],
+    loadComponent: () => import('./student/exam-details/exam-details').then((m) => m.ExamDetails),
   },
   {
     path: 'exam/:id',
@@ -73,6 +83,12 @@ export const routes: Routes = [
     canActivate: [authGuard, adminGuard],
     loadComponent: () =>
       import('./admin/admin-dashboard/admin-dashboard').then((m) => m.AdminDashboard),
+  },
+  {
+    path: 'admin/sections',
+    canActivate: [authGuard, adminGuard],
+    loadComponent: () =>
+      import('./admin/sections/section-list/section-list').then((m) => m.SectionList),
   },
   {
     path: 'admin/subjects',

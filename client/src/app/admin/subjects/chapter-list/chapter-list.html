@@ -4,7 +4,7 @@
 
   <div class="card">
     <div class="row" style="align-items: flex-end;">
-      <div class="form-group" style="flex: 3;">
+      <div class="form-group" style="flex: 2;">
         <label for="newChapter">New chapter name</label>
         <input
           id="newChapter"
@@ -15,10 +15,34 @@
           (keyup.enter)="add()"
         />
       </div>
-      <button class="btn" type="button" style="flex: 0 0 auto;" [disabled]="adding()" (click)="add()">
+      <div class="form-group" style="flex: 0 0 auto;">
+        <label for="newChapterSection">Section</label>
+        <select id="newChapterSection" [(ngModel)]="newChapterSection" [ngModelOptions]="{ standalone: true }">
+          @for (s of sections(); track s.id) {
+            <option [value]="s.name">{{ s.name }}</option>
+          }
+        </select>
+      </div>
+      @if (isNewAdmission) {
+        <div class="form-group" style="flex: 0 0 auto;">
+          <label for="newChapterCategory">Category</label>
+          <select id="newChapterCategory" [(ngModel)]="newChapterCategory" [ngModelOptions]="{ standalone: true }">
+            <option value="">Select...</option>
+            @for (cat of admissionCategories; track cat) {
+              <option [value]="cat">{{ cat }}</option>
+            }
+          </select>
+        </div>
+      }
+      <button class="btn" type="button" style="flex: 0 0 auto;" [disabled]="adding() || sections().length === 0" (click)="add()">
         {{ adding() ? 'Adding...' : 'Add chapter' }}
       </button>
     </div>
+    @if (sections().length === 0) {
+      <p class="muted tiny-copy" style="margin-top: 0.5rem;">
+        No sections defined yet — <a routerLink="/admin/sections">add one</a> first (e.g. SSC, HSC, Admission).
+      </p>
+    }
     @if (errorMessage()) {
       <p class="error-text">{{ errorMessage() }}</p>
     }
@@ -34,6 +58,7 @@
         <thead>
           <tr>
             <th>Name</th>
+            <th>Section</th>
             <th>Status</th>
             <th></th>
           </tr>
@@ -46,6 +71,25 @@
                   <input type="text" [(ngModel)]="editingName" [ngModelOptions]="{ standalone: true }" (keyup.enter)="saveEdit(c)" />
                 } @else {
                   {{ c.name }}
+                }
+              </td>
+              <td>
+                @if (editingId === c.id) {
+                  <select [(ngModel)]="editingSection" [ngModelOptions]="{ standalone: true }">
+                    @for (s of sections(); track s.id) {
+                      <option [value]="s.name">{{ s.name }}</option>
+                    }
+                  </select>
+                  @if (isEditingAdmission()) {
+                    <select [(ngModel)]="editingCategory" [ngModelOptions]="{ standalone: true }" style="margin-left: 0.35rem;">
+                      <option value="">Category...</option>
+                      @for (cat of admissionCategories; track cat) {
+                        <option [value]="cat">{{ cat }}</option>
+                      }
+                    </select>
+                  }
+                } @else {
+                  <span class="badge">{{ c.section }}{{ c.category ? ' · ' + c.category : '' }}</span>
                 }
               </td>
               <td>

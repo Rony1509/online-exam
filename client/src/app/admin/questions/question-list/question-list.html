@@ -3,9 +3,17 @@
     <h2 style="margin: 0;">Question bank</h2>
     <div class="row" style="gap: 0.5rem;">
       <a class="btn btn-secondary" routerLink="/admin/questions/import">Import from PDF/Image</a>
-      <a class="btn" routerLink="/admin/questions/new">Add question</a>
+      <button class="btn" type="button" (click)="toggleAddForm()">
+        {{ showAddForm() ? 'Close' : '+ Add question' }}
+      </button>
     </div>
   </div>
+
+  @if (showAddForm()) {
+    <div class="card">
+      <app-question-form [embedded]="true" (saved)="onQuestionSaved()" (cancelled)="showAddForm.set(false)" />
+    </div>
+  }
 
   <div class="card">
     <div class="row">
@@ -13,9 +21,9 @@
         <label>Section</label>
         <select [(ngModel)]="sectionFilter" (ngModelChange)="load()">
           <option value="">All</option>
-          <option value="SSC">SSC</option>
-          <option value="HSC">HSC</option>
-          <option value="Admission">Admission</option>
+          @for (s of allSections(); track s.id) {
+            <option [value]="s.name">{{ s.name }}</option>
+          }
         </select>
       </div>
       @if (sectionFilter === 'Admission') {
@@ -41,7 +49,7 @@
         <label>Subject</label>
         <select [(ngModel)]="subjectFilter" (ngModelChange)="load()">
           <option value="">All</option>
-          @for (s of filteredSubjects; track s.id) {
+          @for (s of allSubjects(); track s.id) {
             <option [value]="s.id">{{ s.name }}</option>
           }
         </select>
@@ -79,7 +87,12 @@
         <tbody>
           @for (q of questions(); track q.id) {
             <tr>
-              <td>{{ q.question }}</td>
+              <td>
+                {{ q.question }}
+                @if (q.source) {
+                  <br /><span class="badge badge-primary" style="margin-top: 0.25rem;">{{ q.source }}</span>
+                }
+              </td>
               <td>{{ q.section }}{{ q.category ? ' · ' + q.category : '' }}</td>
               <td>{{ q.subjectName }}{{ q.chapterName ? ' · ' + q.chapterName : '' }}{{ q.topicName ? ' · ' + q.topicName : '' }}</td>
               <td><span class="badge">{{ q.type }}</span></td>

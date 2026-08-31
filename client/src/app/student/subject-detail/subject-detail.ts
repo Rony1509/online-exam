@@ -3,6 +3,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { SubjectService } from '../../core/services/subject.service';
 import { ChapterService } from '../../core/services/chapter.service';
 import { ExamService } from '../../core/services/exam.service';
+import { AuthService } from '../../core/services/auth.service';
 import { Chapter, ExamSummary, Subject } from '../../core/models/models';
 import { colorFor, initialsFor } from '../../core/utils/avatar-color';
 
@@ -17,6 +18,7 @@ export class SubjectDetail {
   private subjectService = inject(SubjectService);
   private chapterService = inject(ChapterService);
   private examService = inject(ExamService);
+  private auth = inject(AuthService);
 
   subjectId = '';
   subject = signal<Subject | null>(null);
@@ -45,8 +47,16 @@ export class SubjectDetail {
       error: () => this.errorMessage.set('Could not load this subject — check your connection and try again.'),
     });
 
+    const section = this.auth.currentUser()?.section;
+    const category = this.auth.currentUser()?.category;
     this.chapterService.list({ subjectId: this.subjectId }).subscribe({
-      next: (chapters) => this.chapters.set(chapters.filter((c) => c.isPublished !== false)),
+      next: (chapters) =>
+        this.chapters.set(
+          chapters
+            .filter((c) => c.isPublished !== false)
+            .filter((c) => !section || c.section === section)
+            .filter((c) => section !== 'Admission' || !category || c.category === category),
+        ),
       error: () => this.errorMessage.set('Could not load chapters — check your connection and try again.'),
     });
 

@@ -34,7 +34,7 @@
               <span class="badge">{{ exam.questionCount }} questions</span>
               <span class="badge">{{ exam.duration }} min</span>
             </div>
-            <a class="btn" [routerLink]="['/exam', exam.id]">Start exam</a>
+            <a class="btn" [routerLink]="['/exam', exam.id, 'details']">View exam</a>
           </div>
         </div>
       }
@@ -52,7 +52,7 @@
               <span class="badge">{{ exam.questionCount }} questions</span>
               <span class="badge">{{ exam.duration }} min</span>
             </div>
-            <a class="btn" [routerLink]="['/exam', exam.id]">Start exam</a>
+            <a class="btn" [routerLink]="['/exam', exam.id, 'details']">View exam</a>
           </div>
         </div>
       }

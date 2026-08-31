@@ -50,6 +50,12 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
+    // Admin-managed list of sections/streams (SSC, HSC, Admission, BCS, ...).
+    match /sections/{id} {
+      allow read: if isVerified();
+      allow write: if isAdmin();
+    }
+
     // Subject/chapter/topic catalog that questions and exams are organized under.
     match /subjects/{id} {
       allow read: if isVerified();

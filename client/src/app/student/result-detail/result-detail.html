@@ -7,40 +7,82 @@
   } @else if (result(); as r) {
     <a [routerLink]="auth.isAdmin() ? '/admin/results' : '/results'" class="back-link">&larr; Back to results</a>
 
-    <div class="card">
-      <h2>{{ r.examTitle }}</h2>
-      <p class="muted">
-        {{ r.section }} &middot; {{ r.subjectName }} &middot; Submitted {{ r.submittedAt | date: 'medium' }}
-      </p>
-      @if (auth.isAdmin()) {
-        <p class="muted">Student: {{ r.studentName }} ({{ r.studentEmail }})</p>
-      }
+    <div class="card exam-summary-card">
+      <div class="exam-summary-header">
+        <h2>{{ r.examTitle }}</h2>
+        <span class="badge" [class.badge-success]="r.cqGraded" [class.badge-warning]="!r.cqGraded">
+          {{ r.cqGraded ? 'Graded' : 'Pending CQ grading' }}
+        </span>
+      </div>
 
-      <div class="row" style="margin-top: 1rem;">
-        <div class="stat-card">
-          <p class="stat-label">MCQ score</p>
-          <p class="stat-value">{{ r.mcqScore }}<span class="muted" style="font-size: 1rem; font-weight: 500;"> / {{ r.mcqTotal }}</span></p>
-        </div>
-        <div class="stat-card">
-          <p class="stat-label">CQ score</p>
-          <p class="stat-value">
-            @if (r.cqGraded) {
-              {{ r.cqScore }}<span class="muted" style="font-size: 1rem; font-weight: 500;"> / {{ r.cqTotal }}</span>
-            } @else {
-              <span style="font-size: 1.1rem; color: var(--color-warning);">Pending</span>
+      <div class="exam-summary-grid">
+        <table class="exam-summary-table">
+          <tbody>
+            <tr>
+              <td class="muted">Subject</td>
+              <td class="exam-summary-value">{{ r.subjectName }}</td>
+            </tr>
+            <tr>
+              <td class="muted">Class / Section</td>
+              <td class="exam-summary-value">{{ r.section }}</td>
+            </tr>
+            <tr>
+              <td class="muted">Submitted</td>
+              <td class="exam-summary-value">{{ r.submittedAt | date: 'medium' }}</td>
+            </tr>
+            @if (auth.isAdmin()) {
+              <tr>
+                <td class="muted">Student</td>
+                <td class="exam-summary-value">{{ r.studentName }}</td>
+              </tr>
             }
-          </p>
-        </div>
-        <div class="stat-card">
-          <p class="stat-label">Total</p>
-          <p class="stat-value">
-            @if (r.cqGraded) {
-              {{ r.finalScore }}<span class="muted" style="font-size: 1rem; font-weight: 500;"> / {{ r.totalMarks }}</span>
-            } @else {
-              <span style="font-size: 1.1rem; color: var(--color-warning);">Awaiting CQ</span>
+          </tbody>
+        </table>
+
+        <table class="exam-summary-table">
+          <tbody>
+            <tr>
+              <td class="muted">MCQ Score</td>
+              <td class="exam-summary-value">{{ r.mcqScore }} / {{ r.mcqTotal }}</td>
+            </tr>
+            <tr>
+              <td class="muted">Correct Answers</td>
+              <td class="exam-summary-value" style="color: var(--color-success);">{{ correctCount }}</td>
+            </tr>
+            <tr>
+              <td class="muted">Wrong Answers</td>
+              <td class="exam-summary-value" style="color: var(--color-danger);">{{ wrongCount }}</td>
+            </tr>
+            @if (skippedCount > 0) {
+              <tr>
+                <td class="muted">Skipped</td>
+                <td class="exam-summary-value">{{ skippedCount }}</td>
+              </tr>
             }
-          </p>
-        </div>
+            <tr>
+              <td class="muted">CQ Score</td>
+              <td class="exam-summary-value">
+                @if (r.cqGraded) { {{ r.cqScore }} / {{ r.cqTotal }} } @else { <span class="muted">Pending</span> }
+              </td>
+            </tr>
+            <tr>
+              <td class="muted">Total Score</td>
+              <td class="exam-summary-value">
+                @if (r.cqGraded) { {{ grossScore }} / {{ r.totalMarks }} } @else { <span class="muted">Awaiting CQ</span> }
+              </td>
+            </tr>
+            <tr>
+              <td class="muted">Negative Mark</td>
+              <td class="exam-summary-value">-{{ negativeMark }} &times; {{ wrongCount }}</td>
+            </tr>
+            <tr>
+              <td class="muted">Score after Negative Mark</td>
+              <td class="exam-summary-value">
+                @if (r.cqGraded) { {{ netScore }} / {{ r.totalMarks }} } @else { <span class="muted">Awaiting CQ</span> }
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
 

@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, EventEmitter, inject, Input, Output, signal } from '@angular/core';
 import {
   AbstractControl,
   FormArray,
@@ -14,7 +14,9 @@ import { QuestionService } from '../../../core/services/question.service';
 import { SubjectService } from '../../../core/services/subject.service';
 import { ChapterService } from '../../../core/services/chapter.service';
 import { TopicService } from '../../../core/services/topic.service';
-import { Chapter, Question, Subject } from '../../../core/models/models';
+import { SectionService } from '../../../core/services/section.service';
+import { QuestionImportService } from '../../../core/services/question-import.service';
+import { Chapter, Question, SectionItem, Subject } from '../../../core/models/models';
 
 const ADMISSION_CATEGORIES = ['Medical', 'Engineering', 'Varsity'] as const;
 
@@ -26,6 +28,11 @@ const ADMISSION_CATEGORIES = ['Medical', 'Engineering', 'Varsity'] as const;
   styleUrl: './question-form.scss',
 })
 export class QuestionForm {
+  /** When true, this form is embedded inline (e.g. on the question bank list) instead of being its own routed page — submit/cancel emit events instead of navigating. */
+  @Input() embedded = false;
+  @Output() saved = new EventEmitter<void>();
+  @Output() cancelled = new EventEmitter<void>();
+
   private fb = inject(FormBuilder);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
@@ -33,6 +40,8 @@ export class QuestionForm {
   private subjectService = inject(SubjectService);
   private chapterService = inject(ChapterService);
   private topicService = inject(TopicService);
+  private sectionService = inject(SectionService);
+  private importService = inject(QuestionImportService);
 
   editingId: string | null = null;
   loading = signal(false);
@@ -40,6 +49,13 @@ export class QuestionForm {
   errorMessage = signal<string | null>(null);
 
   allSubjects = signal<Subject[]>([]);
+  allSections = signal<SectionItem[]>([]);
+  explainingIndex = signal<number | null>(null);
+  explainError = signal<string | null>(null);
+
+  get hasAiKey(): boolean {
+    return this.importService.hasApiKey();
+  }
 
   form = this.fb.nonNullable.group({
     questionCards: this.fb.array<FormGroup>([this.createQuestionGroup()]),
@@ -53,10 +69,12 @@ export class QuestionForm {
 
   private createQuestionGroup(initial?: Partial<Record<string, unknown>>): FormGroup {
     const group = this.fb.nonNullable.group({
-      section: ['SSC', [Validators.required]],
-      category: [''],
       subjectId: ['', [Validators.required]],
       chapterId: [''],
+      // Manual section/category — only used (and required) when no chapter is picked, i.e. a
+      // subject-level question. When a chapter is picked, these are auto-filled from it.
+      section: [''],
+      category: [''],
       topicName: [''],
       type: ['MCQ', [Validators.required]],
       question: ['', [Validators.required]],
@@ -65,6 +83,7 @@ export class QuestionForm {
       multiSelect: [false],
       correctAnswers: [[] as number[]],
       explanation: [''],
+      source: [''],
       chapters: [[] as Chapter[]],
       topicOptions: [[] as string[]],
       options: this.fb.array([
@@ -95,15 +114,13 @@ export class QuestionForm {
     subjectIdControl.valueChanges.subscribe((subjectId) => {
       chapterIdControl.setValue('', { emitEvent: false });
       group.get('topicName')?.setValue('', { emitEvent: false });
+      group.get('section')?.setValue('');
+      group.get('category')?.setValue('');
       chaptersControl.setValue([]);
       topicOptionsControl.setValue([]);
       if (subjectId) {
         this.chapterService.list({ subjectId }).subscribe((chapters) => {
           chaptersControl.setValue(chapters);
-          const activeChapterId = chapterIdControl.value;
-          if (activeChapterId) {
-            this.loadTopicsForCard(group);
-          }
         });
       }
     });
@@ -111,6 +128,14 @@ export class QuestionForm {
     chapterIdControl.valueChanges.subscribe((chapterId) => {
       group.get('topicName')?.setValue('', { emitEvent: false });
       topicOptionsControl.setValue([]);
+      const chapter = (chaptersControl.value as Chapter[] | undefined)?.find((c) => c.id === chapterId);
+      if (chapter) {
+        group.get('section')?.setValue(chapter.section);
+        group.get('category')?.setValue(chapter.category ?? '');
+      } else {
+        group.get('section')?.setValue('');
+        group.get('category')?.setValue('');
+      }
       if (!chapterId) return;
       this.loadTopicsForCard(group);
     });
@@ -142,16 +167,13 @@ export class QuestionForm {
     });
   }
 
-  filteredSubjects(card: FormGroup): Subject[] {
-    const section = card.get('section')?.value ?? 'SSC';
-    const category = card.get('category')?.value ?? '';
-    return this.allSubjects().filter(
-      (subject) => subject.section === section && (!this.isAdmissionForCard(card) || subject.category === category),
-    );
-  }
-
   asQuestionGroup(control: AbstractControl): FormGroup {
     return control as FormGroup;
+  }
+
+  /** True once a chapter is picked — section/category then come from the chapter, not manual pickers. */
+  hasChapter(card: FormGroup): boolean {
+    return !!card.get('chapterId')?.value;
   }
 
   isAdmissionForCard(card: FormGroup): boolean {
@@ -168,6 +190,10 @@ export class QuestionForm {
 
   getQuestionOptionControl(card: FormGroup, index: number): FormControl {
     return this.getQuestionCardOptions(card).at(index) as FormControl;
+  }
+
+  getChapterOptions(card: FormGroup): Chapter[] {
+    return card.get('chapters')?.value ?? [];
   }
 
   getTopicOptions(card: FormGroup): string[] {
@@ -199,6 +225,52 @@ export class QuestionForm {
     control?.setValue(next);
   }
 
+  explainWithAi(card: FormGroup, index: number): void {
+    if (!this.hasAiKey) {
+      this.explainError.set('Add a Gemini API key on the "Import from PDF/Image" page first.');
+      return;
+    }
+
+    const raw = card.getRawValue() as {
+      type: Question['type'];
+      question: string;
+      options: string[];
+      correctAnswer: number;
+      multiSelect: boolean;
+      correctAnswers: number[];
+      explanation: string;
+    };
+
+    if (!raw.question.trim()) {
+      this.explainError.set('Write the question text first.');
+      return;
+    }
+
+    this.explainingIndex.set(index);
+    this.explainError.set(null);
+
+    this.importService
+      .explainSolution({
+        type: raw.type,
+        question: raw.question,
+        ...(raw.type === 'MCQ' ? { options: raw.options } : {}),
+        ...(raw.type === 'MCQ' && raw.multiSelect
+          ? { correctAnswers: raw.correctAnswers }
+          : raw.type === 'MCQ'
+            ? { correctAnswer: raw.correctAnswer }
+            : {}),
+        ...(raw.explanation.trim() ? { currentExplanation: raw.explanation.trim() } : {}),
+      })
+      .then((explanation) => {
+        card.get('explanation')?.setValue(explanation);
+        this.explainingIndex.set(null);
+      })
+      .catch((err) => {
+        this.explainingIndex.set(null);
+        this.explainError.set(err?.message || 'Could not generate an explanation.');
+      });
+  }
+
   addQuestionCard(): void {
     this.questionCards.push(this.createQuestionGroup());
   }
@@ -221,6 +293,7 @@ export class QuestionForm {
 
   ngOnInit(): void {
     this.subjectService.list().subscribe((subjects) => this.allSubjects.set(subjects));
+    this.sectionService.list().subscribe((sections) => this.allSections.set(sections));
 
     const id = this.route.snapshot.paramMap.get('id');
     if (id && id !== 'new') {
@@ -242,10 +315,10 @@ export class QuestionForm {
 
   private populateCard(card: FormGroup, q: Question): void {
     card.patchValue({
-      section: q.section,
-      category: q.category ?? '',
       subjectId: q.subjectId,
       chapterId: q.chapterId ?? '',
+      section: q.section,
+      category: q.category ?? '',
       topicName: q.topicName ?? '',
       type: q.type,
       question: q.question,
@@ -254,6 +327,7 @@ export class QuestionForm {
       multiSelect: !!q.multiSelect,
       correctAnswers: q.correctAnswers ?? [],
       explanation: q.explanation ?? '',
+      source: q.source ?? '',
     });
 
     const options = this.getQuestionCardOptions(card);
@@ -294,6 +368,7 @@ export class QuestionForm {
       multiSelect: boolean;
       correctAnswers: number[];
       explanation: string;
+      source: string;
       options: string[];
     };
 
@@ -316,6 +391,7 @@ export class QuestionForm {
           }
         : {}),
       ...(typedValues.explanation?.trim() ? { explanation: typedValues.explanation.trim() } : {}),
+      ...(typedValues.source?.trim() ? { source: typedValues.source.trim() } : {}),
     };
   }
 
@@ -327,7 +403,6 @@ export class QuestionForm {
         return card.invalid || this.getQuestionCardOptions(card).invalid;
       }
       return (
-        card.get('section')?.invalid ||
         card.get('subjectId')?.invalid ||
         card.get('question')?.invalid ||
         card.get('marks')?.invalid
@@ -341,6 +416,10 @@ export class QuestionForm {
     }
 
     for (const card of cards) {
+      if (!card.get('section')?.value) {
+        this.errorMessage.set('Pick a chapter, or select a section directly, for each question.');
+        return;
+      }
       const isAdmission = this.isAdmissionForCard(card);
       if (isAdmission && !card.get('category')?.value) {
         this.errorMessage.set('Select a category for each Admission question.');
@@ -371,7 +450,7 @@ export class QuestionForm {
     if (this.editingId) {
       const payload = payloads[0];
       this.questionService.update(this.editingId, payload).subscribe({
-        next: () => this.router.navigate(['/admin/questions']),
+        next: () => this.onSaved(),
         error: (err) => {
           this.saving.set(false);
           this.errorMessage.set(err.message || 'Could not save question.');
@@ -381,11 +460,20 @@ export class QuestionForm {
     }
 
     forkJoin(payloads.map((payload) => this.questionService.create(payload))).subscribe({
-      next: () => this.router.navigate(['/admin/questions']),
+      next: () => this.onSaved(),
       error: (err) => {
         this.saving.set(false);
         this.errorMessage.set(err.message || 'Could not save questions.');
       },
     });
+  }
+
+  private onSaved(): void {
+    if (this.embedded) {
+      this.saving.set(false);
+      this.saved.emit();
+    } else {
+      this.router.navigate(['/admin/questions']);
+    }
   }
 }

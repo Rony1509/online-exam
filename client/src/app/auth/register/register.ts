@@ -6,7 +6,8 @@ import {
   EmailNotVerifiedError,
   firebaseErrorMessage,
 } from '../../core/services/auth.service';
-import { AdmissionCategory, Section } from '../../core/models/models';
+import { SectionService } from '../../core/services/section.service';
+import { AdmissionCategory, SectionItem } from '../../core/models/models';
 
 const ADMISSION_CATEGORIES: AdmissionCategory[] = ['Medical', 'Engineering', 'Varsity'];
 
@@ -19,23 +20,34 @@ const ADMISSION_CATEGORIES: AdmissionCategory[] = ['Medical', 'Engineering', 'Va
 export class Register {
   private fb = inject(FormBuilder);
   private auth = inject(AuthService);
+  private sectionService = inject(SectionService);
 
   loading = signal(false);
   errorMessage = signal<string | null>(null);
   registeredEmail = signal<string | null>(null);
   resendStatus = signal<'idle' | 'sending' | 'sent'>('idle');
   readonly admissionCategories = ADMISSION_CATEGORIES;
+  allSections = signal<SectionItem[]>([]);
 
   form = this.fb.nonNullable.group({
     name: ['', [Validators.required]],
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(6)]],
-    section: ['SSC' as Section, [Validators.required]],
+    section: ['', [Validators.required]],
     category: [''],
   });
 
   get isAdmission(): boolean {
     return this.form.controls.section.value === 'Admission';
+  }
+
+  ngOnInit(): void {
+    this.sectionService.list().subscribe((sections) => {
+      this.allSections.set(sections);
+      if (!this.form.controls.section.value && sections.length > 0) {
+        this.form.controls.section.setValue(sections[0].name);
+      }
+    });
   }
 
   submit(): void {

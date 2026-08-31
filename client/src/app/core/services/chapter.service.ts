@@ -17,13 +17,14 @@ import { Chapter } from '../models/models';
 
 @Injectable({ providedIn: 'root' })
 export class ChapterService {
-  list(filters: { subjectId?: string } = {}): Observable<Chapter[]> {
+  list(filters: { subjectId?: string; section?: string } = {}): Observable<Chapter[]> {
     return from(this.listAsync(filters));
   }
 
-  private async listAsync(filters: { subjectId?: string }): Promise<Chapter[]> {
+  private async listAsync(filters: { subjectId?: string; section?: string }): Promise<Chapter[]> {
     const constraints: QueryConstraint[] = [];
     if (filters.subjectId) constraints.push(where('subjectId', '==', filters.subjectId));
+    if (filters.section) constraints.push(where('section', '==', filters.section));
 
     const snap = await getDocs(query(collection(db, 'chapters'), ...constraints));
     return snap.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<Chapter, 'id'>) }));
